@@ -32,6 +32,7 @@ export function ThemeProvider({ children }: Props) {
       >
         <CssBaseline />
         {/* <RTL direction={settings.direction}>{children}</RTL> */}
+        {children}
       </CssVarsProvider>
     </AppRouterCacheProvider>
   );
