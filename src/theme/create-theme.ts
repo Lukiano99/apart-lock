@@ -1,5 +1,5 @@
 import {
-  extendTheme,
+  experimental_extendTheme,
   shouldSkipGeneratingVar,
   type Theme,
 } from "@mui/material/styles";
@@ -28,7 +28,7 @@ export function createTheme(): Theme {
     shouldSkipGeneratingVar,
   };
 
-  const theme = extendTheme(initialTheme);
+  const theme = experimental_extendTheme(initialTheme);
 
   return theme;
 }
