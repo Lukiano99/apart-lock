@@ -32,7 +32,7 @@ import { StyledDivider, useNavColorVars } from "./styles";
 // import { LanguagePopover } from "../components/language-popover";
 // import { ContactsPopover } from "../components/contacts-popover";
 import { WorkspacesPopover } from "../components/workspaces-popover";
-import { navData as dashboardNavData } from "../config-nav-dashboard";
+import { navData as apartmentsNavData } from "../config-nav-apartments";
 import { NotificationsDrawer } from "../components/notifications-drawer";
 
 // ----------------------------------------------------------------------
@@ -64,7 +64,7 @@ export function ApartmentsLayout({
 
   const layoutQuery: Breakpoint = "lg";
 
-  const navData = data?.nav ?? dashboardNavData;
+  const navData = data?.nav ?? apartmentsNavData;
 
   const isNavMini = settings.navLayout === "mini";
   // const isNavHorizontal = settings.navLayout === "horizontal";
@@ -108,13 +108,7 @@ export function ApartmentsLayout({
                 This is an info Alert.
               </Alert>
             ),
-            bottomArea: isNavHorizontal ? (
-              <NavHorizontal
-                data={navData}
-                layoutQuery={layoutQuery}
-                cssVars={navColorVars.section}
-              />
-            ) : null,
+            bottomArea: null,
             leftArea: (
               <>
                 {/* -- Nav mobile -- */}
@@ -157,6 +151,13 @@ export function ApartmentsLayout({
                   sx={{ color: "var(--layout-nav-text-primary-color)" }}
                 /> */}
               </>
+            ),
+            centerArea: (
+              <NavHorizontal
+                data={navData}
+                layoutQuery={layoutQuery}
+                cssVars={navColorVars.section}
+              />
             ),
             rightArea: (
               <Box display="flex" alignItems="center" gap={{ xs: 0, sm: 0.75 }}>
