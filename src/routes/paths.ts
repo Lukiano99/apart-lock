@@ -1,15 +1,16 @@
 // ----------------------------------------------------------------------
 
 const ROOTS = {
-  AUTH: '/auth',
-  DASHBOARD: '/dashboard',
+  AUTH: "/auth",
+  DASHBOARD: "/pregled",
+  APPARTMENTS: "/apartmani",
 };
 
 // ----------------------------------------------------------------------
 
 export const paths = {
-  faqs: '/faqs',
-  minimalStore: 'https://mui.com/store/items/minimal-dashboard/',
+  faqs: "/faqs",
+  minimalStore: "https://mui.com/store/items/minimal-dashboard/",
   // AUTH
   auth: {
     amplify: {
@@ -50,5 +51,11 @@ export const paths = {
       five: `${ROOTS.DASHBOARD}/group/five`,
       six: `${ROOTS.DASHBOARD}/group/six`,
     },
+  },
+  apartments: {
+    root: ROOTS.APPARTMENTS,
+    expiriences: `${ROOTS.APPARTMENTS}/iskustva`,
+    details: (id: string) => `${ROOTS.APPARTMENTS}/${id}`,
+    edit: (id: string) => `${ROOTS.APPARTMENTS}/tour/${id}/edit`,
   },
 };
