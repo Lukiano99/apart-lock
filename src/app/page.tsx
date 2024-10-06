@@ -1,10 +1,19 @@
-import { HydrateClient } from "@/trpc/server";
-import styles from "./index.module.css";
+"use client";
 
-export default async function Home() {
-  return (
-    <HydrateClient>
-      <main className={styles.main}></main>
-    </HydrateClient>
-  );
+import { useEffect } from "react";
+
+import { useRouter } from "src/routes/hooks";
+
+import { CONFIG } from "src/config-global";
+
+// ----------------------------------------------------------------------
+
+export default function Page() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push(CONFIG.auth.redirectPath);
+  }, [router]);
+
+  return null;
 }
