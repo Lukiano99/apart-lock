@@ -22,11 +22,11 @@ export const navData = [
    * Overview
    */
   {
-    subheader: "Overview",
+    subheader: "Pregled",
     items: [
-      { title: "Stays", path: paths.apartments.root, icon: ICONS.house },
+      { title: "Apartmani", path: paths.apartments.root, icon: ICONS.house },
       {
-        title: "Experiences",
+        title: "Iskustva",
         path: paths.apartments.expiriences,
         icon: ICONS.smile,
       },

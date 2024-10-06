@@ -20,6 +20,8 @@ import {
 } from "src/components/settings";
 
 import { AuthProvider } from "src/auth/context/jwt";
+import { I18nProvider, LocalizationProvider } from "@/locales";
+import { detectLanguage } from "@/locales/server";
 
 // ----------------------------------------------------------------------
 
@@ -43,25 +45,30 @@ type Props = {
 };
 
 export default async function RootLayout({ children }: Props) {
+  const lang = CONFIG.isStaticExport ? "en" : await detectLanguage();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={lang ?? "en"} suppressHydrationWarning>
       <body>
         <InitColorSchemeScript
           // defaultMode={schemeConfig.defaultMode}
           modeStorageKey={schemeConfig.modeStorageKey}
         />
-
-        <AuthProvider>
-          <SettingsProvider settings={defaultSettings}>
-            <ThemeProvider>
-              <MotionLazy>
-                <ProgressBar />
-                <SettingsDrawer />
-                {children}
-              </MotionLazy>
-            </ThemeProvider>
-          </SettingsProvider>
-        </AuthProvider>
+        <I18nProvider lang={CONFIG.isStaticExport ? undefined : lang}>
+          <LocalizationProvider>
+            <AuthProvider>
+              <SettingsProvider settings={defaultSettings}>
+                <ThemeProvider>
+                  <MotionLazy>
+                    <ProgressBar />
+                    <SettingsDrawer />
+                    {children}
+                  </MotionLazy>
+                </ThemeProvider>
+              </SettingsProvider>
+            </AuthProvider>
+          </LocalizationProvider>
+        </I18nProvider>
       </body>
     </html>
   );

@@ -34,6 +34,7 @@ import { StyledDivider, useNavColorVars } from "./styles";
 import { WorkspacesPopover } from "../components/workspaces-popover";
 import { navData as apartmentsNavData } from "../config-nav-apartments";
 import { NotificationsDrawer } from "../components/notifications-drawer";
+import { LanguagePopover } from "../components/language-popover";
 
 // ----------------------------------------------------------------------
 
@@ -164,15 +165,12 @@ export function ApartmentsLayout({
                 {/* -- Searchbar -- */}
                 <Searchbar data={navData} />
                 {/* -- Language popover -- */}
-                {/* <LanguagePopover
+                <LanguagePopover
                   data={[
                     { value: "en", label: "English", countryCode: "GB" },
-                    { value: "fr", label: "French", countryCode: "FR" },
-                    { value: "vi", label: "Vietnamese", countryCode: "VN" },
-                    { value: "cn", label: "Chinese", countryCode: "CN" },
-                    { value: "ar", label: "Arabic", countryCode: "SA" },
+                    { value: "rs", label: "Serbian", countryCode: "RS" },
                   ]}
-                /> */}
+                />
                 {/* -- Notifications popover -- */}
                 {/* <NotificationsDrawer data={_notifications} /> */}
                 {/* -- Contacts popover -- */}

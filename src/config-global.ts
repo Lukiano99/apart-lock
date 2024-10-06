@@ -9,7 +9,8 @@ export const CONFIG = {
   auth: {
     method: "jwt",
     skip: true,
-    redirectPath: paths.dashboard.root,
+    redirectPath: paths.apartments.root,
   },
   serverUrl: process.env.NEXT_PUBLIC_SERVER_URL ?? "",
+  isStaticExport: true,
 };

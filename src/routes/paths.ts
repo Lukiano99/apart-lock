@@ -2,8 +2,8 @@
 
 const ROOTS = {
   AUTH: "/auth",
-  DASHBOARD: "/dashboard",
-  APPARTMENTS: "/apartments",
+  DASHBOARD: "/pregled",
+  APPARTMENTS: "/apartmani",
 };
 
 // ----------------------------------------------------------------------
@@ -54,6 +54,8 @@ export const paths = {
   },
   apartments: {
     root: ROOTS.APPARTMENTS,
-    expiriences: `${ROOTS.APPARTMENTS}/experiences`,
+    expiriences: `${ROOTS.APPARTMENTS}/iskustva`,
+    details: (id: string) => `${ROOTS.APPARTMENTS}/${id}`,
+    edit: (id: string) => `${ROOTS.APPARTMENTS}/tour/${id}/edit`,
   },
 };
