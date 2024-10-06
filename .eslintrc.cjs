@@ -10,7 +10,8 @@ const config = {
     "@typescript-eslint",
     "prettier",
   ],
-  extends: ["airbnb", "airbnb-typescript", "airbnb/hooks", "prettier"],
+  // extends: ["airbnb", "airbnb-typescript", "airbnb/hooks", "prettier"],
+  extends: ["airbnb", "prettier"],
   parserOptions: {
     sourceType: "module",
     ecmaVersion: "latest",

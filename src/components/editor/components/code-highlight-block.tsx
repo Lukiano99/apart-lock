@@ -1,12 +1,7 @@
 import "./code-highlight-block.css";
-
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
-
 import { editorClasses } from "../classes";
-
-import type { EditorCodeHighlightBlockProps } from "../types";
-
-// ----------------------------------------------------------------------
+import { NodeViewProps } from "@tiptap/core"; // Dodato: ispravan tip
 
 export function CodeHighlightBlock({
   node: {
@@ -14,7 +9,8 @@ export function CodeHighlightBlock({
   },
   extension,
   updateAttributes,
-}: EditorCodeHighlightBlockProps) {
+}: NodeViewProps) {
+  // Promenjeno: koristi NodeViewProps
   return (
     <NodeViewWrapper className={editorClasses.content.codeBlock}>
       <select

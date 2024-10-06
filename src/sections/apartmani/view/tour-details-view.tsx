@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import type { ITourItem } from 'src/types/tour';
+import type { ITourItem } from "src/types/tour";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 
-import { paths } from 'src/routes/paths';
+import { paths } from "src/routes/paths";
 
-import { useTabs } from 'src/hooks/use-tabs';
+import { useTabs } from "src/hooks/use-tabs";
 
-import { DashboardContent } from 'src/layouts/dashboard';
-import { TOUR_DETAILS_TABS, TOUR_PUBLISH_OPTIONS } from 'src/_mock';
+import { DashboardContent } from "src/layouts/dashboard";
+import { TOUR_DETAILS_TABS, TOUR_PUBLISH_OPTIONS } from "src/_mock";
 
-import { Label } from 'src/components/label';
+import { Label } from "src/components/label";
 
-import { TourDetailsContent } from '../tour-details-content';
-import { TourDetailsBookers } from '../tour-details-bookers';
-import { TourDetailsToolbar } from '../tour-details-toolbar';
+import { TourDetailsContent } from "../tour-details-content";
+import { TourDetailsBookers } from "../tour-details-bookers";
+import { TourDetailsToolbar } from "../tour-details-toolbar";
 
 // ----------------------------------------------------------------------
 
@@ -29,14 +29,18 @@ type Props = {
 export function TourDetailsView({ tour }: Props) {
   const [publish, setPublish] = useState(tour?.publish);
 
-  const tabs = useTabs('content');
+  const tabs = useTabs("content");
 
   const handleChangePublish = useCallback((newValue: string) => {
     setPublish(newValue);
   }, []);
 
   const renderTabs = (
-    <Tabs value={tabs.value} onChange={tabs.onChange} sx={{ mb: { xs: 3, md: 5 } }}>
+    <Tabs
+      value={tabs.value}
+      onChange={tabs.onChange}
+      sx={{ mb: { xs: 3, md: 5 } }}
+    >
       {TOUR_DETAILS_TABS.map((tab) => (
         <Tab
           key={tab.value}
@@ -44,7 +48,11 @@ export function TourDetailsView({ tour }: Props) {
           value={tab.value}
           label={tab.label}
           icon={
-            tab.value === 'bookers' ? <Label variant="filled">{tour?.bookers.length}</Label> : ''
+            tab.value === "bookers" ? (
+              <Label variant="filled">{tour?.bookers.length}</Label>
+            ) : (
+              ""
+            )
           }
         />
       ))}
@@ -54,18 +62,20 @@ export function TourDetailsView({ tour }: Props) {
   return (
     <DashboardContent>
       <TourDetailsToolbar
-        backLink={paths.dashboard.tour.root}
-        editLink={paths.dashboard.tour.edit(`${tour?.id}`)}
+        backLink={paths.apartments.root}
+        editLink={paths.apartments.edit(`${tour?.id}`)}
         liveLink="#"
-        publish={publish || ''}
+        publish={publish || ""}
         onChangePublish={handleChangePublish}
         publishOptions={TOUR_PUBLISH_OPTIONS}
       />
       {renderTabs}
 
-      {tabs.value === 'content' && <TourDetailsContent tour={tour} />}
+      {tabs.value === "content" && <TourDetailsContent tour={tour} />}
 
-      {tabs.value === 'bookers' && <TourDetailsBookers bookers={tour?.bookers} />}
+      {tabs.value === "bookers" && (
+        <TourDetailsBookers bookers={tour?.bookers} />
+      )}
     </DashboardContent>
   );
 }
