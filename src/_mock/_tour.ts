@@ -4,8 +4,10 @@ import { _tags } from "./assets";
 // ----------------------------------------------------------------------
 
 export const TOUR_DETAILS_TABS = [
-  { label: "Tour content", value: "content" },
-  { label: "Booker", value: "bookers" },
+  // { label: "Tour content", value: "content" },
+  // { label: "Booker", value: "bookers" },
+  { label: "Pregled", value: "content" },
+  { label: "Sobe", value: "bookers" },
 ];
 
 export const TOUR_SORT_OPTIONS = [
