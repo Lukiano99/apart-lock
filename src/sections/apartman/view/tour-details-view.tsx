@@ -11,7 +11,6 @@ import { paths } from "src/routes/paths";
 
 import { useTabs } from "src/hooks/use-tabs";
 
-import { DashboardContent } from "src/layouts/dashboard";
 import { TOUR_DETAILS_TABS, TOUR_PUBLISH_OPTIONS } from "src/_mock";
 
 import { Label } from "src/components/label";
@@ -19,6 +18,7 @@ import { Label } from "src/components/label";
 import { TourDetailsContent } from "../tour-details-content";
 import { TourDetailsBookers } from "../tour-details-bookers";
 import { TourDetailsToolbar } from "../tour-details-toolbar";
+import { ApartmentsContent } from "@/layouts/apartments";
 
 // ----------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ export function TourDetailsView({ tour }: Props) {
   );
 
   return (
-    <DashboardContent>
+    <ApartmentsContent>
       <TourDetailsToolbar
         backLink={paths.apartments.root}
         editLink={paths.apartments.edit(`${tour?.id}`)}
@@ -76,6 +76,6 @@ export function TourDetailsView({ tour }: Props) {
       {tabs.value === "bookers" && (
         <TourDetailsBookers bookers={tour?.bookers} />
       )}
-    </DashboardContent>
+    </ApartmentsContent>
   );
 }
