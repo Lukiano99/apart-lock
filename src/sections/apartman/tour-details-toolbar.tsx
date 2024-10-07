@@ -1,18 +1,18 @@
-import type { StackProps } from '@mui/material/Stack';
+import type { StackProps } from "@mui/material/Stack";
 
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuList from "@mui/material/MenuList";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
+import LoadingButton from "@mui/lab/LoadingButton";
 
-import { RouterLink } from 'src/routes/components';
+import { RouterLink } from "src/routes/components";
 
-import { Iconify } from 'src/components/iconify';
-import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { Iconify } from "src/components/iconify";
+import { usePopover, CustomPopover } from "src/components/custom-popover";
 
 // ----------------------------------------------------------------------
 
@@ -42,18 +42,25 @@ export function TourDetailsToolbar({
 
   return (
     <>
-      <Stack spacing={1.5} direction="row" sx={{ mb: { xs: 3, md: 5 }, ...sx }} {...other}>
+      <Stack
+        spacing={1.5}
+        direction="row"
+        sx={{ mb: { xs: 3, md: 5 }, ...sx }}
+        {...other}
+      >
         <Button
           component={RouterLink}
           href={backLink}
           startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
         >
-          Back
+          {/* Back  */}
+          Nazad na apartmane
         </Button>
 
-        <Box sx={{ flexGrow: 1 }} />
+        {/* Admin only */}
+        {/* <Box sx={{ flexGrow: 1 }} />
 
-        {publish === 'published' && (
+        {publish === "published" && (
           <Tooltip title="Go Live">
             <IconButton component={RouterLink} href={liveLink}>
               <Iconify icon="eva:external-link-fill" />
@@ -74,17 +81,17 @@ export function TourDetailsToolbar({
           loadingIndicator="Loading…"
           endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
           onClick={popover.onOpen}
-          sx={{ textTransform: 'capitalize' }}
+          sx={{ textTransform: "capitalize" }}
         >
           {publish}
-        </LoadingButton>
+        </LoadingButton> */}
       </Stack>
 
-      <CustomPopover
+      {/* <CustomPopover
         open={popover.open}
         anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        slotProps={{ arrow: { placement: 'top-right' } }}
+        slotProps={{ arrow: { placement: "top-right" } }}
       >
         <MenuList>
           {publishOptions.map((option) => (
@@ -96,13 +103,17 @@ export function TourDetailsToolbar({
                 onChangePublish(option.value);
               }}
             >
-              {option.value === 'published' && <Iconify icon="eva:cloud-upload-fill" />}
-              {option.value === 'draft' && <Iconify icon="solar:file-text-bold" />}
+              {option.value === "published" && (
+                <Iconify icon="eva:cloud-upload-fill" />
+              )}
+              {option.value === "draft" && (
+                <Iconify icon="solar:file-text-bold" />
+              )}
               {option.label}
             </MenuItem>
           ))}
         </MenuList>
-      </CustomPopover>
+      </CustomPopover> */}
     </>
   );
 }
