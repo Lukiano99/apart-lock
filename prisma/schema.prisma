@@ -1,20 +1,82 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Admin {
+  id         String      @id @default(uuid())
+  name       String
+  email      String      @unique
+  password   String
+  apartments Apartment[]
+}
 
-    @@index([name])
+model Apartment {
+  id              String        @id @default(uuid())
+  name            String
+  location        String
+  price           Float
+  requiresPayment Boolean
+  adminId         String
+  owner           Admin         @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  images          Image[]
+  reservations    Reservation[]
+  rooms           Room[]
+}
+
+model Room {
+  id            String    @id @default(uuid())
+  number        Int
+  isOccupied    Boolean   @default(false)
+  occupiedFrom  DateTime?
+  occupiedUntil DateTime?
+  apartmentId   String
+  images        Image[]
+  apartment     Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+}
+
+model Reservation {
+  id              String            @id @default(uuid())
+  apartmentId     String
+  status          ReservationStatus @default(PENDING)
+  createdAt       DateTime          @default(now())
+  confirmedAt     DateTime?
+  paymentMethod   PaymentMethod
+  customerEmail   String
+  customerName    String
+  confirmationKey ConfirmationKey[]
+  apartment       Apartment         @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+}
+
+model ConfirmationKey {
+  id            String      @id @default(uuid())
+  reservationId String
+  key           String
+  createdAt     DateTime    @default(now())
+  expiresAt     DateTime
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+model Image {
+  id          String     @id @default(uuid())
+  imageUrl    String
+  apartmentId String?
+  roomId      String?
+  apartment   Apartment? @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  room        Room?      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CARD
+  CASH
 }
