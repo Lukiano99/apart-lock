@@ -1,3 +1,4 @@
+"use client";
 import type { ITourItem } from "src/types/tour";
 
 import { useCallback } from "react";
@@ -8,7 +9,11 @@ import Pagination, { paginationClasses } from "@mui/material/Pagination";
 import { paths } from "src/routes/paths";
 import { useRouter } from "src/routes/hooks";
 
-import { TourItem } from "./tour-item";
+import { ApartmentItem } from "./tour-item";
+import { api } from "@/trpc/react";
+import { TableSkeleton } from "@/components/table";
+import { Grid, Skeleton } from "@mui/material";
+import ApartmentsSkeleton from "./apartments-skeleton";
 
 // ----------------------------------------------------------------------
 
@@ -16,8 +21,10 @@ type Props = {
   tours: ITourItem[];
 };
 
-export function TourList({ tours }: Props) {
+export function ApartmentList({ tours }: Props) {
   const router = useRouter();
+
+  const { data: apartments, isPending } = api.apartment.list.useQuery({});
 
   const handleView = useCallback(
     (id: string) => {
@@ -48,15 +55,18 @@ export function TourList({ tours }: Props) {
           md: "repeat(3, 1fr)",
         }}
       >
-        {tours.map((tour) => (
-          <TourItem
-            key={tour.id}
-            tour={tour}
-            onView={() => handleView(tour.id)}
-            onEdit={() => handleEdit(tour.id)}
-            onDelete={() => handleDelete(tour.id)}
-          />
-        ))}
+        {!isPending &&
+          apartments &&
+          apartments.map((apartment) => (
+            <ApartmentItem
+              key={apartment.id}
+              apartment={apartment}
+              onView={() => handleView(apartment.id)}
+              onEdit={() => handleEdit(apartment.id)}
+              onDelete={() => handleDelete(apartment.id)}
+            />
+          ))}
+        {isPending && !apartments && <ApartmentsSkeleton />}
       </Box>
 
       {tours.length > 8 && (

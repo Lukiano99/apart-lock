@@ -11,29 +11,26 @@ import { paths } from "src/routes/paths";
 
 import { useTabs } from "src/hooks/use-tabs";
 
-import { TOUR_DETAILS_TABS, TOUR_PUBLISH_OPTIONS } from "src/_mock";
+import { _bookings, TOUR_DETAILS_TABS, TOUR_PUBLISH_OPTIONS } from "src/_mock";
 
 import { Label } from "src/components/label";
 
 import { TourDetailsContent } from "../tour-details-content";
-import { TourDetailsBookers } from "../tour-details-bookers";
 import { TourDetailsToolbar } from "../tour-details-toolbar";
 import { ApartmentsContent } from "@/layouts/apartments";
+import { ApartmentRooms } from "../sobe/apartment-rooms";
+import { Apartment, Image, Room } from "@prisma/client";
+import { RouterOutputs } from "@/trpc/react";
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  tour?: ITourItem;
+  // tour?: ITourItem;
+  apartment: RouterOutputs["apartment"]["get"];
 };
 
-export function TourDetailsView({ tour }: Props) {
-  const [publish, setPublish] = useState(tour?.publish);
-
+export function TourDetailsView({ apartment }: Props) {
   const tabs = useTabs("content");
-
-  const handleChangePublish = useCallback((newValue: string) => {
-    setPublish(newValue);
-  }, []);
 
   const renderTabs = (
     <Tabs
@@ -48,8 +45,8 @@ export function TourDetailsView({ tour }: Props) {
           value={tab.value}
           label={tab.label}
           icon={
-            tab.value === "bookers" ? (
-              <Label variant="filled">{tour?.bookers.length}</Label>
+            tab.value === "rooms" ? (
+              <Label variant="filled">{apartment?.rooms.length}</Label>
             ) : (
               ""
             )
@@ -63,18 +60,29 @@ export function TourDetailsView({ tour }: Props) {
     <ApartmentsContent>
       <TourDetailsToolbar
         backLink={paths.apartments.root}
-        editLink={paths.apartments.edit(`${tour?.id}`)}
+        editLink={paths.apartments.edit(`${apartment?.id}`)}
         liveLink="#"
-        publish={publish || ""}
-        onChangePublish={handleChangePublish}
+        publish={""}
+        onChangePublish={() => {}}
         publishOptions={TOUR_PUBLISH_OPTIONS}
       />
       {renderTabs}
 
-      {tabs.value === "content" && <TourDetailsContent tour={tour} />}
+      {tabs.value === "content" && <TourDetailsContent apartment={apartment} />}
 
-      {tabs.value === "bookers" && (
-        <TourDetailsBookers bookers={tour?.bookers} />
+      {tabs.value === "rooms" && (
+        <ApartmentRooms
+          // title="Izaberite sobu koja vam odgovara"
+          tableData={_bookings}
+          headLabel={[
+            { id: "destination", label: "Tip sobe" },
+            { id: "customer", label: "Broj gostiju" },
+            { id: "checkIn", label: "Cena za X noći" },
+            { id: "checkOut", label: "Način plaćanja" },
+            { id: "status", label: "Status" },
+            { id: "", label: "Rezerviši" },
+          ]}
+        />
       )}
     </ApartmentsContent>
   );

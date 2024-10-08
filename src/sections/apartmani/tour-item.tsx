@@ -18,17 +18,19 @@ import { fDateTime, fDateRangeShortLabel } from "src/utils/format-time";
 import { Image } from "src/components/image";
 import { Iconify } from "src/components/iconify";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
+import { Apartment, Image as ApartmentImage } from "@prisma/client";
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  tour: ITourItem;
+  // apartment: ITourItem;
+  apartment: Apartment & { images: ApartmentImage[] };
   onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
 };
 
-export function TourItem({ tour, onView, onEdit, onDelete }: Props) {
+export function ApartmentItem({ apartment, onView, onEdit, onDelete }: Props) {
   const popover = usePopover();
 
   const renderRating = (
@@ -47,7 +49,8 @@ export function TourItem({ tour, onView, onEdit, onDelete }: Props) {
       }}
     >
       <Iconify icon="eva:star-fill" sx={{ color: "warning.main", mr: 0.25 }} />{" "}
-      {tour.ratingNumber}
+      {/* {apartment.ratingNumber} */}
+      {/* TODO */}4
     </Stack>
   );
 
@@ -67,15 +70,15 @@ export function TourItem({ tour, onView, onEdit, onDelete }: Props) {
         typography: "subtitle2",
       }}
     >
-      {!!tour.priceSale && (
+      {/* {!!apartment.priceSale && (
         <Box
           component="span"
           sx={{ color: "grey.500", mr: 0.25, textDecoration: "line-through" }}
         >
-          {fCurrency(tour.priceSale)}
+          {fCurrency(apartment.priceSale)}
         </Box>
-      )}
-      {fCurrency(tour.price)}
+      )} */}
+      {fCurrency(apartment.price)}
     </Stack>
   );
 
@@ -85,22 +88,22 @@ export function TourItem({ tour, onView, onEdit, onDelete }: Props) {
         {renderPrice}
         {renderRating}
         <Image
-          alt={tour.images[0]}
-          src={tour.images[0]}
+          alt={apartment.images[0].imageUrl}
+          src={apartment.images[0].imageUrl}
           sx={{ width: 1, height: 164, borderRadius: 1 }}
         />
       </Box>
 
       <Box gap={0.5} display="flex" flexDirection="column">
         <Image
-          alt={tour.images[1]}
-          src={tour.images[1]}
+          alt={apartment.images[1].imageUrl}
+          src={apartment.images[1].imageUrl}
           ratio="1/1"
           sx={{ borderRadius: 1, width: 80, height: 80 }}
         />
         <Image
-          alt={tour.images[2]}
-          src={tour.images[2]}
+          alt={apartment.images[2].imageUrl}
+          src={apartment.images[2].imageUrl}
           ratio="1/1"
           sx={{ borderRadius: 1, width: 80, height: 80 }}
         />
@@ -111,14 +114,14 @@ export function TourItem({ tour, onView, onEdit, onDelete }: Props) {
   const renderTexts = (
     <ListItemText
       sx={{ p: (theme) => theme.spacing(2.5, 2.5, 2, 2.5) }}
-      primary={`Posted date: ${fDateTime(tour.createdAt)}`}
+      primary={`Posted date: ${fDateTime(apartment.createdAt)}`}
       secondary={
         <Link
           component={RouterLink}
-          href={paths.apartments.details(tour.id)}
+          href={paths.apartments.details(apartment.id)}
           color="inherit"
         >
-          {tour.name}
+          {apartment.name}
         </Link>
       }
       primaryTypographyProps={{ typography: "caption", color: "text.disabled" }}
@@ -156,29 +159,30 @@ export function TourItem({ tour, onView, onEdit, onDelete }: Props) {
               sx={{ color: "error.main" }}
             />
           ),
-          label: tour.destination,
+          // label: apartment.destination,
+          label: apartment.location,
         },
-        {
-          icon: (
-            <Iconify
-              icon="solar:clock-circle-bold"
-              sx={{ color: "info.main" }}
-            />
-          ),
-          label: fDateRangeShortLabel(
-            tour.available.startDate,
-            tour.available.endDate
-          ),
-        },
-        {
-          icon: (
-            <Iconify
-              icon="solar:users-group-rounded-bold"
-              sx={{ color: "primary.main" }}
-            />
-          ),
-          label: `${tour.bookers.length} Booked`,
-        },
+        // {
+        //   icon: (
+        //     <Iconify
+        //       icon="solar:clock-circle-bold"
+        //       sx={{ color: "info.main" }}
+        //     />
+        //   ),
+        //   label: fDateRangeShortLabel(
+        //     apartment.available.startDate,
+        //     apartment.available.endDate
+        //   ),
+        // },
+        // {
+        //   icon: (
+        //     <Iconify
+        //       icon="solar:users-group-rounded-bold"
+        //       sx={{ color: "primary.main" }}
+        //     />
+        //   ),
+        //   label: `${apartment.bookers.length} Booked`,
+        // },
       ].map((item) => (
         <Stack
           key={item.label}

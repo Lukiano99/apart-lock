@@ -2,6 +2,7 @@ import { _tours } from "src/_mock/_tour";
 import { CONFIG } from "src/config-global";
 
 import { TourDetailsView } from "@/sections/apartman/view";
+import { api } from "@/trpc/server";
 
 // ----------------------------------------------------------------------
 
@@ -13,12 +14,13 @@ type Props = {
   params: { id: string };
 };
 
-export default function Page({ params }: Props) {
+export default async function Page({ params }: Props) {
   const { id } = params;
 
   const currentTour = _tours.find((tour) => tour.id === id);
+  const currentAppartment = await api.apartment.get({ id });
 
-  return <TourDetailsView tour={currentTour} />;
+  return <TourDetailsView apartment={currentAppartment} />;
 }
 
 // ----------------------------------------------------------------------

@@ -16,32 +16,47 @@ model Admin {
 }
 
 model Apartment {
-  id              String        @id @default(uuid())
-  name            String
-  location        String
-  price           Float
+  id          String  @id @default(uuid())
+  name        String
+  location    String
+  price       Float
+  description String? @db.Text
+
   requiresPayment Boolean
   adminId         String
-  owner           Admin         @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  owner           Admin   @relation(fields: [adminId], references: [id], onDelete: Cascade)
   images          Image[]
-  reservations    Reservation[]
   rooms           Room[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  services Service[]
+}
+
+model Service {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  apartments Apartment[]
 }
 
 model Room {
-  id            String    @id @default(uuid())
+  id            String        @id @default(uuid())
   number        Int
-  isOccupied    Boolean   @default(false)
+  isOccupied    Boolean       @default(false)
   occupiedFrom  DateTime?
   occupiedUntil DateTime?
   apartmentId   String
+  bed_count     Int           @default(1)
+  price         Float         @default(50)
   images        Image[]
-  apartment     Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  reservations  Reservation[]
+
+  apartment Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
 }
 
 model Reservation {
   id              String            @id @default(uuid())
-  apartmentId     String
   status          ReservationStatus @default(PENDING)
   createdAt       DateTime          @default(now())
   confirmedAt     DateTime?
@@ -49,7 +64,8 @@ model Reservation {
   customerEmail   String
   customerName    String
   confirmationKey ConfirmationKey[]
-  apartment       Apartment         @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  Room            Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId          String
 }
 
 model ConfirmationKey {

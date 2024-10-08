@@ -28,11 +28,13 @@ import { Iconify } from "src/components/iconify";
 import { EmptyContent } from "src/components/empty-content";
 // import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { TourList } from "../tour-list";
+import { ApartmentList } from "../apartments-list";
 import { TourSort } from "../tour-sort";
 import { TourSearch } from "../tour-search";
 import { TourFilters } from "../tour-filters";
 import { TourFiltersResult } from "../tour-filters-result";
+import { ApartmentsContent } from "@/layouts/apartments";
+import { api } from "@/trpc/react";
 
 // ----------------------------------------------------------------------
 
@@ -93,6 +95,23 @@ export function ApartmentsListView() {
     },
     [search]
   );
+  const { mutate: addService } = api.apartment.addService.useMutation();
+  const testAddService = () => {
+    addService(
+      {
+        apartmentId: "1fd69fbe-589c-42c5-92e3-017cd7c6e946",
+        serviceId: "2e079d4c-ef21-408b-bb81-43b7a279a4bb",
+      },
+      {
+        onSuccess: () => {
+          alert("Success");
+        },
+        onError: () => {
+          alert("Error");
+        },
+      }
+    );
+  };
 
   const renderFilters = (
     <Stack
@@ -131,7 +150,7 @@ export function ApartmentsListView() {
   );
 
   return (
-    <DashboardContent>
+    <ApartmentsContent>
       {/* <CustomBreadcrumbs
         heading="List"
         links={[
@@ -151,7 +170,9 @@ export function ApartmentsListView() {
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       /> */}
-
+      <Button variant="contained" onClick={testAddService}>
+        Add Service
+      </Button>
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         {renderFilters}
 
@@ -160,8 +181,8 @@ export function ApartmentsListView() {
 
       {notFound && <EmptyContent filled sx={{ py: 10 }} />}
 
-      <TourList tours={dataFiltered} />
-    </DashboardContent>
+      <ApartmentList tours={dataFiltered} />
+    </ApartmentsContent>
   );
 }
 

@@ -17,22 +17,29 @@ import { Image } from "src/components/image";
 import { Iconify } from "src/components/iconify";
 import { Markdown } from "src/components/markdown";
 import { Lightbox, useLightBox } from "src/components/lightbox";
+import { api, RouterOutputs } from "@/trpc/react";
 
 // ----------------------------------------------------------------------
 
+// type Props = {
+//   tour?: ITourItem;
+// };
 type Props = {
-  tour?: ITourItem;
+  apartment: RouterOutputs["apartment"]["get"];
 };
 
-export function TourDetailsContent({ tour }: Props) {
-  const slides = tour?.images.map((slide) => ({ src: slide })) || [];
-
+export function TourDetailsContent({ apartment }: Props) {
+  const slides =
+    apartment?.images.map((slide) => ({ src: slide.imageUrl })) || [];
+  console.log({ slides });
   const {
     selected: selectedImage,
     open: openLightbox,
     onOpen: handleOpenLightbox,
     onClose: handleCloseLightbox,
   } = useLightBox(slides);
+
+  const { data: services } = api.services.list.useQuery();
 
   const renderGallery = (
     <>
@@ -89,7 +96,7 @@ export function TourDetailsContent({ tour }: Props) {
     <>
       <Stack direction="row" sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          {tour?.name}
+          {apartment?.name}
         </Typography>
 
         <IconButton>
@@ -117,7 +124,7 @@ export function TourDetailsContent({ tour }: Props) {
         >
           <Iconify icon="eva:star-fill" sx={{ color: "warning.main" }} />
           <Box component="span" sx={{ typography: "subtitle2" }}>
-            {tour?.ratingNumber}
+            {/* {appartment?.ratingNumber} */}4
           </Box>
           <Link sx={{ color: "text.secondary" }}>(234 reviews)</Link>
         </Stack>
@@ -129,23 +136,7 @@ export function TourDetailsContent({ tour }: Props) {
           sx={{ typography: "body2" }}
         >
           <Iconify icon="mingcute:location-fill" sx={{ color: "error.main" }} />
-          {tour?.destination}
-        </Stack>
-
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={0.5}
-          sx={{ typography: "subtitle2" }}
-        >
-          <Iconify icon="solar:flag-bold" sx={{ color: "info.main" }} />
-          <Box
-            component="span"
-            sx={{ typography: "body2", color: "text.secondary" }}
-          >
-            Guide by
-          </Box>
-          {tour?.tourGuides.map((tourGuide) => tourGuide.name).join(", ")}
+          {apartment?.location}
         </Stack>
       </Stack>
     </>
@@ -160,24 +151,21 @@ export function TourDetailsContent({ tour }: Props) {
       {[
         {
           label: "Available",
-          value: `${fDate(tour?.available.startDate)} - ${fDate(tour?.available.endDate)}`,
+          value: !apartment?.rooms.some(
+            (room) => !room.occupiedFrom && !room.occupiedUntil
+          )
+            ? "now"
+            : `unavailable`,
           icon: <Iconify icon="solar:calendar-date-bold" />,
         },
         {
-          label: "Contact name",
-          value: tour?.tourGuides
-            .map((tourGuide) => tourGuide.phoneNumber)
-            .join(", "),
-          icon: <Iconify icon="solar:user-rounded-bold" />,
-        },
-        {
           label: "Durations",
-          value: tour?.durations,
+          value: "To do",
           icon: <Iconify icon="solar:clock-circle-bold" />,
         },
         {
           label: "Contact phone",
-          value: tour?.tourGuides.map((tourGuide) => tourGuide.name).join(", "),
+          value: apartment?.owner.name ?? "No info",
           icon: <Iconify icon="solar:phone-bold" />,
         },
       ].map((item) => (
@@ -204,7 +192,7 @@ export function TourDetailsContent({ tour }: Props) {
 
   const renderContent = (
     <>
-      <Markdown children={tour?.content} />
+      <Markdown children={apartment?.description ?? "Opis apartmana"} />
 
       <Stack spacing={2}>
         <Typography variant="h6">
@@ -217,14 +205,16 @@ export function TourDetailsContent({ tour }: Props) {
           display="grid"
           gridTemplateColumns={{ xs: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
         >
-          {TOUR_SERVICE_OPTIONS.map((service) => (
+          {services?.map((service) => (
             <Stack
-              key={service.label}
+              key={service.name}
               spacing={1}
               direction="row"
               alignItems="center"
               sx={{
-                ...(tour?.services.includes(service.label) && {
+                ...(!apartment?.services
+                  .map((service) => service.name)
+                  .includes(service.name) && {
                   color: "text.disabled",
                 }),
               }}
@@ -233,12 +223,15 @@ export function TourDetailsContent({ tour }: Props) {
                 icon="eva:checkmark-circle-2-outline"
                 sx={{
                   color: "primary.main",
-                  ...(tour?.services.includes(service.label) && {
+                  ...(!apartment?.services
+                    .map((service) => service.name)
+                    .includes(service.name) && {
+                    // .includes(service.name) && {
                     color: "text.disabled",
                   }),
                 }}
               />
-              {service.label}
+              {service.name}
             </Stack>
           ))}
         </Box>
@@ -250,7 +243,7 @@ export function TourDetailsContent({ tour }: Props) {
     <>
       {renderGallery}
 
-      <Stack sx={{ maxWidth: 720, mx: "auto" }}>
+      <Stack>
         {renderHead}
 
         <Divider sx={{ borderStyle: "dashed", my: 5 }} />

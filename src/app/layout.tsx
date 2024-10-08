@@ -22,6 +22,8 @@ import {
 import { AuthProvider } from "src/auth/context/jwt";
 import { I18nProvider, LocalizationProvider } from "@/locales";
 import { detectLanguage } from "@/locales/server";
+import { TRPCReactProvider } from "@/trpc/react";
+import { HydrateClient } from "@/trpc/server";
 
 // ----------------------------------------------------------------------
 
@@ -55,19 +57,23 @@ export default async function RootLayout({ children }: Props) {
           modeStorageKey={schemeConfig.modeStorageKey}
         />
         <I18nProvider lang={CONFIG.isStaticExport ? undefined : lang}>
-          <LocalizationProvider>
-            <AuthProvider>
-              <SettingsProvider settings={defaultSettings}>
-                <ThemeProvider>
-                  <MotionLazy>
-                    <ProgressBar />
-                    <SettingsDrawer />
-                    {children}
-                  </MotionLazy>
-                </ThemeProvider>
-              </SettingsProvider>
-            </AuthProvider>
-          </LocalizationProvider>
+          <TRPCReactProvider>
+            <HydrateClient>
+              <LocalizationProvider>
+                <AuthProvider>
+                  <SettingsProvider settings={defaultSettings}>
+                    <ThemeProvider>
+                      <MotionLazy>
+                        <ProgressBar />
+                        <SettingsDrawer />
+                        {children}
+                      </MotionLazy>
+                    </ThemeProvider>
+                  </SettingsProvider>
+                </AuthProvider>
+              </LocalizationProvider>
+            </HydrateClient>
+          </TRPCReactProvider>
         </I18nProvider>
       </body>
     </html>
