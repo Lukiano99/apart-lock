@@ -170,9 +170,6 @@ export function ApartmentsListView() {
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       /> */}
-      <Button variant="contained" onClick={testAddService}>
-        Add Service
-      </Button>
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         {renderFilters}
 
