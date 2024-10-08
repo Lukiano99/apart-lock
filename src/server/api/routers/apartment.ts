@@ -70,7 +70,6 @@ export const apartmentRouter = createTRPCRouter({
         },
       });
 
-      console.log({ test });
       return { test };
     }),
 });

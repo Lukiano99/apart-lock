@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
 import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
@@ -18,14 +17,20 @@ import IconButton from "@mui/material/IconButton";
 import CardHeader from "@mui/material/CardHeader";
 import ListItemText from "@mui/material/ListItemText";
 
-import { fDate, fTime } from "src/utils/format-time";
+import { fDate, fIsAfter, fTime } from "src/utils/format-time";
 
 import { Label } from "src/components/label";
 import { Iconify } from "src/components/iconify";
 import { Scrollbar } from "src/components/scrollbar";
 import { TableHeadCustom } from "src/components/table";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
-import { api } from "@/trpc/react";
+import { Room } from "@prisma/client";
+import { fCurrency } from "@/utils/format-number";
+import { Stack } from "@mui/material";
+import { RoomsTableToolbar } from "../rooms-table-toolbar";
+import { useSetState } from "@/hooks/use-set-state";
+import { IInvoiceTableFilters } from "@/types/invoice";
+import { INVOICE_SERVICE_OPTIONS } from "@/_mock";
 
 // ----------------------------------------------------------------------
 
@@ -33,21 +38,7 @@ type Props = CardProps & {
   title?: string;
   subheader?: string;
   headLabel: TableHeadCustomProps["headLabel"];
-  tableData: {
-    id: string;
-    status: string;
-    checkIn: IDateValue;
-    checkOut: IDateValue;
-    destination: {
-      name: string;
-      coverUrl: string;
-    };
-    customer: {
-      name: string;
-      avatarUrl: string;
-      phoneNumber: string;
-    };
-  }[];
+  tableData: Room[];
 };
 
 export function ApartmentRooms({
@@ -57,15 +48,17 @@ export function ApartmentRooms({
   tableData,
   ...other
 }: Props) {
-  const mockupApartmentId = "1fd69fbe-589c-42c5-92e3-017cd7c6e946";
-  const { data: rooms } = api.room.list.useQuery({
-    apartmentId: mockupApartmentId,
-  });
-
   return (
     <Card {...other}>
       {/* <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} /> */}
-
+      <RoomsTableToolbar
+        // filters={filters}
+        dateError={false}
+        // onResetPage={table.onResetPage}
+        options={{
+          services: INVOICE_SERVICE_OPTIONS.map((option) => option.name),
+        }}
+      />
       <Scrollbar sx={{ minHeight: 462 }}>
         <Table sx={{ minWidth: 960 }}>
           <TableHeadCustom headLabel={headLabel} />
@@ -79,22 +72,6 @@ export function ApartmentRooms({
       </Scrollbar>
 
       <Divider sx={{ borderStyle: "dashed" }} />
-
-      <Box sx={{ p: 2, textAlign: "right" }}>
-        <Button
-          size="small"
-          color="inherit"
-          endIcon={
-            <Iconify
-              icon="eva:arrow-ios-forward-fill"
-              width={18}
-              sx={{ ml: -0.5 }}
-            />
-          }
-        >
-          View all
-        </Button>
-      </Box>
     </Card>
   );
 }
@@ -136,67 +113,59 @@ function RowItem({ row }: RowItemProps) {
     <>
       <TableRow>
         <TableCell>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar
-              variant="rounded"
-              alt={row.destination.name}
-              src={row.destination.coverUrl}
-              sx={{ width: 48, height: 48 }}
-            />
-            {row.destination.name}
-          </Box>
+          {row.bed_count} {row.bed_count === 1 ? "krevet" : "kreveta"}
         </TableCell>
 
         <TableCell>
-          <ListItemText
-            primary={row.customer.name}
-            secondary={row.customer.phoneNumber}
-            primaryTypographyProps={{ typography: "body2", noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: "span",
-              typography: "caption",
-            }}
-          />
+          {[...Array(row.bed_count)].map((_, index) => (
+            <Iconify icon="mdi:account" style={{ marginLeft: 0 }} />
+          ))}
         </TableCell>
 
-        <TableCell>
-          <ListItemText
-            primary={fDate(row.checkIn)}
-            secondary={fTime(row.checkIn)}
-            primaryTypographyProps={{ typography: "body2", noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: "span",
-              typography: "caption",
-            }}
-          />
-        </TableCell>
+        <TableCell>{fCurrency(row.price, { currency: "eur" })}</TableCell>
 
         <TableCell>
-          <ListItemText
-            primary={fDate(row.checkOut)}
-            secondary={fTime(row.checkOut)}
-            primaryTypographyProps={{ typography: "body2", noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: "span",
-              typography: "caption",
-            }}
-          />
+          <Label
+            variant={lightMode ? "soft" : "filled"}
+            color={
+              (row.paymentMethod === "CARD" && "warning") ||
+              (row.paymentMethod === "CASH" && "info") ||
+              "error"
+            }
+          >
+            {row.paymentMethod === "CASH" ? "Gotovina po dolasku" : "Karticom"}
+          </Label>
         </TableCell>
 
         <TableCell>
           <Label
             variant={lightMode ? "soft" : "filled"}
             color={
-              (row.status === "Paid" && "success") ||
-              (row.status === "Pending" && "warning") ||
+              (!row.occupiedFrom && !row.occupiedUntil && "success") ||
+              (row.occupiedFrom &&
+                new Date() < row.occupiedFrom &&
+                "success") ||
+              (row.occupiedUntil &&
+                new Date() > row.occupiedUntil &&
+                "success") ||
               "error"
             }
           >
-            {row.status}
+            {(!row.occupiedFrom && !row.occupiedUntil && "dostupno") ||
+              (row.occupiedFrom &&
+                new Date() < row.occupiedFrom &&
+                "dostupno") ||
+              (row.occupiedUntil &&
+                new Date() > row.occupiedUntil &&
+                "dostupno") ||
+              "nedostupno"}
           </Label>
+        </TableCell>
+
+        <TableCell align="left" sx={{ pr: 1 }}>
+          <Button color="primary" variant="contained">
+            Reserviši
+          </Button>
         </TableCell>
 
         <TableCell align="right" sx={{ pr: 1 }}>
@@ -221,21 +190,9 @@ function RowItem({ row }: RowItemProps) {
             Download
           </MenuItem>
 
-          <MenuItem onClick={handlePrint}>
-            <Iconify icon="solar:printer-minimalistic-bold" />
-            Print
-          </MenuItem>
-
           <MenuItem onClick={handleShare}>
             <Iconify icon="solar:share-bold" />
             Share
-          </MenuItem>
-
-          <Divider sx={{ borderStyle: "dashed" }} />
-
-          <MenuItem onClick={handleDelete} sx={{ color: "error.main" }}>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
           </MenuItem>
         </MenuList>
       </CustomPopover>

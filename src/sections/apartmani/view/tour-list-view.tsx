@@ -5,10 +5,6 @@ import type { ITourItem, ITourFilters } from "src/types/tour";
 import { useState, useCallback } from "react";
 
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-
-import { paths } from "src/routes/paths";
-import { RouterLink } from "src/routes/components";
 
 import { useBoolean } from "src/hooks/use-boolean";
 import { useSetState } from "src/hooks/use-set-state";
@@ -16,7 +12,6 @@ import { useSetState } from "src/hooks/use-set-state";
 import { orderBy } from "src/utils/helper";
 import { fIsAfter, fIsBetween } from "src/utils/format-time";
 
-import { DashboardContent } from "src/layouts/dashboard";
 import {
   _tours,
   _tourGuides,
@@ -24,9 +19,7 @@ import {
   TOUR_SERVICE_OPTIONS,
 } from "src/_mock";
 
-import { Iconify } from "src/components/iconify";
 import { EmptyContent } from "src/components/empty-content";
-// import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { ApartmentList } from "../apartments-list";
 import { TourSort } from "../tour-sort";
@@ -151,25 +144,6 @@ export function ApartmentsListView() {
 
   return (
     <ApartmentsContent>
-      {/* <CustomBreadcrumbs
-        heading="List"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Tour', href: paths.dashboard.tour.root },
-          { name: 'List' },
-        ]}
-        action={
-          <Button
-            component={RouterLink}
-            href={paths.dashboard.tour.new}
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-          >
-            New Tour
-          </Button>
-        }
-        sx={{ mb: { xs: 3, md: 5 } }}
-      /> */}
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         {renderFilters}
 

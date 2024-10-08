@@ -1,8 +1,9 @@
 import { _tours } from "src/_mock/_tour";
 import { CONFIG } from "src/config-global";
 
-import { TourDetailsView } from "@/sections/apartman/view";
+import { ApartmentDetailsView } from "@/sections/apartman/view";
 import { api } from "@/trpc/server";
+import { EmptyContent } from "@/components/empty-content";
 
 // ----------------------------------------------------------------------
 
@@ -19,8 +20,10 @@ export default async function Page({ params }: Props) {
 
   const currentTour = _tours.find((tour) => tour.id === id);
   const currentAppartment = await api.apartment.get({ id });
-
-  return <TourDetailsView apartment={currentAppartment} />;
+  if (!currentAppartment) {
+    return <EmptyContent title="Traženi apartman ne postoji" />;
+  }
+  return <ApartmentDetailsView apartment={currentAppartment} />;
 }
 
 // ----------------------------------------------------------------------

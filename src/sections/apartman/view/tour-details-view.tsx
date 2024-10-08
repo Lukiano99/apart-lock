@@ -29,7 +29,7 @@ type Props = {
   apartment: RouterOutputs["apartment"]["get"];
 };
 
-export function TourDetailsView({ apartment }: Props) {
+export function ApartmentDetailsView({ apartment }: Props) {
   const tabs = useTabs("content");
 
   const renderTabs = (
@@ -73,14 +73,15 @@ export function TourDetailsView({ apartment }: Props) {
       {tabs.value === "rooms" && (
         <ApartmentRooms
           // title="Izaberite sobu koja vam odgovara"
-          tableData={_bookings}
+          tableData={apartment?.rooms!}
           headLabel={[
             { id: "destination", label: "Tip sobe" },
             { id: "customer", label: "Broj gostiju" },
             { id: "checkIn", label: "Cena za X noći" },
             { id: "checkOut", label: "Način plaćanja" },
             { id: "status", label: "Status" },
-            { id: "", label: "Rezerviši" },
+            { id: "reservation", label: "Rezervacije" },
+            { id: "", label: "" },
           ]}
         />
       )}

@@ -31,7 +31,6 @@ type Props = {
 export function TourDetailsContent({ apartment }: Props) {
   const slides =
     apartment?.images.map((slide) => ({ src: slide.imageUrl })) || [];
-  console.log({ slides });
   const {
     selected: selectedImage,
     open: openLightbox,

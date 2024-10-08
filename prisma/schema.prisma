@@ -49,10 +49,13 @@ model Room {
   apartmentId   String
   bed_count     Int           @default(1)
   price         Float         @default(50)
+  paymentMethod PaymentMethod @default(CARD)
   images        Image[]
   reservations  Reservation[]
 
   apartment Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+
+  @@unique([number, apartmentId])
 }
 
 model Reservation {
