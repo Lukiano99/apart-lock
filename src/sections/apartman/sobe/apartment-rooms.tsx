@@ -31,6 +31,8 @@ import { RoomsTableToolbar } from "../rooms-table-toolbar";
 import { useSetState } from "@/hooks/use-set-state";
 import { IInvoiceTableFilters } from "@/types/invoice";
 import { INVOICE_SERVICE_OPTIONS } from "@/_mock";
+import Link from "next/link";
+import { paths } from "@/routes/paths";
 
 // ----------------------------------------------------------------------
 
@@ -163,9 +165,14 @@ function RowItem({ row }: RowItemProps) {
         </TableCell>
 
         <TableCell align="left" sx={{ pr: 1 }}>
-          <Button color="primary" variant="contained">
-            Reserviši
-          </Button>
+          <Link
+            href={paths.apartments.roomReservation(row.apartmentId, row.id)}
+            target="_blank"
+          >
+            <Button color="primary" variant="contained">
+              Rezerviši
+            </Button>
+          </Link>
         </TableCell>
 
         <TableCell align="right" sx={{ pr: 1 }}>
