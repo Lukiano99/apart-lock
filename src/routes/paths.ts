@@ -56,6 +56,8 @@ export const paths = {
     root: ROOTS.APPARTMENTS,
     expiriences: `${ROOTS.APPARTMENTS}/iskustva`,
     details: (id: string) => `${ROOTS.APPARTMENTS}/${id}`,
+    roomReservation: (apartmentId: string, roomId: string) =>
+      `${ROOTS.APPARTMENTS}/${apartmentId}/sobe/${roomId}/rezervacija`,
     edit: (id: string) => `${ROOTS.APPARTMENTS}/tour/${id}/edit`,
   },
 };

@@ -12,14 +12,13 @@ export const metadata = {
 };
 
 type Props = {
-  params: { id: string };
+  params: { apartmentId: string };
 };
 
 export default async function Page({ params }: Props) {
-  const { id } = params;
+  const { apartmentId } = params;
 
-  const currentTour = _tours.find((tour) => tour.id === id);
-  const currentAppartment = await api.apartment.get({ id });
+  const currentAppartment = await api.apartment.get({ id: apartmentId });
   if (!currentAppartment) {
     return <EmptyContent title="Traženi apartman ne postoji" />;
   }
