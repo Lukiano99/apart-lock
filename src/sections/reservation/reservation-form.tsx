@@ -8,8 +8,6 @@ import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Unstable_Grid2";
 import LoadingButton from "@mui/lab/LoadingButton";
 
-import { useRouter } from "src/routes/hooks";
-
 import { Form, Field } from "src/components/hook-form";
 import { Typography } from "@mui/material";
 import { Iconify } from "@/components/iconify";
@@ -19,6 +17,8 @@ import {
 } from "@/schemas/reservation";
 import { api } from "@/trpc/react";
 import { Snackbar, toast } from "src/components/snackbar";
+import { paths } from "@/routes/paths";
+import { useRouter } from "next/navigation";
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +56,6 @@ export function CustomerReservationForm({
 
   const { mutate: createReservation, isPending: isPendingReservation } =
     api.reservation.create.useMutation();
-
   const methods = useForm<CustomerReservationSchemaType>({
     mode: "onSubmit",
     resolver: zodResolver(CustomerReservationSchema),
@@ -70,21 +69,22 @@ export function CustomerReservationForm({
     },
   });
 
-  const {
-    reset,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
+  const { handleSubmit } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     createReservation(
       { ...data, paymentMethod: "CASH", roomId },
       {
-        onSuccess: () => {
-          toast.success("Rezervacija je kreirana");
+        onSuccess: (reservation) => {
+          toast.success("Rezervacija je kreirana", {
+            description: "Bićete preusmereni na stranicu sa detaljima",
+          });
+          router.replace(paths.apartments.reservation(reservation.id));
         },
         onError: (error) => {
-          toast.error(`Došlo je do greške. Poruka: \n ${error.message}`);
+          toast.error(`${error.message}`, {
+            description: `Došlo je do greške`,
+          });
         },
       }
     );

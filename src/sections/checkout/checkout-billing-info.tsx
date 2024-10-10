@@ -1,0 +1,61 @@
+import type { CardProps } from "@mui/material/Card";
+import type { IAddressItem } from "src/types/common";
+
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import CardHeader from "@mui/material/CardHeader";
+
+import { Iconify } from "src/components/iconify";
+import { Customer } from "@prisma/client";
+
+// ----------------------------------------------------------------------
+
+type Props = CardProps & {
+  onBackStep: () => void;
+  customer: Customer;
+};
+
+export function CheckoutBillingInfo({
+  customer,
+  onBackStep,
+  sx,
+  ...other
+}: Props) {
+  return (
+    <Card sx={{ mb: 3, ...sx }} {...other}>
+      <CardHeader
+        title="Lični podaci"
+        action={
+          <Button
+            size="small"
+            startIcon={<Iconify icon="solar:pen-bold" />}
+            onClick={onBackStep}
+          >
+            Izmeni
+          </Button>
+        }
+      />
+      <Stack spacing={1} sx={{ p: 3 }}>
+        <Box sx={{ typography: "subtitle2" }}>
+          {`${customer?.firstName} `}
+          <Box
+            component="span"
+            sx={{ color: "text.secondary", typography: "body2" }}
+          >
+            ({customer?.lastName})
+          </Box>
+        </Box>
+
+        <Box sx={{ color: "text.secondary", typography: "body2" }}>
+          {customer?.email}
+        </Box>
+
+        <Box sx={{ color: "text.secondary", typography: "body2" }}>
+          {customer?.phone}
+        </Box>
+      </Stack>
+    </Card>
+  );
+}

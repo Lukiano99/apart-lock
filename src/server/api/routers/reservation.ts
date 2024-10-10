@@ -1,8 +1,24 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { CustomerReservationSchema } from "@/schemas/reservation";
+import { z } from "zod";
 
 export const reservationRouter = createTRPCRouter({
+  get: publicProcedure
+    .input(
+      z.object({
+        reservationId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const reservation = await ctx.db.reservation.findUnique({
+        where: {
+          id: input.reservationId,
+        },
+      });
+
+      return reservation;
+    }),
   create: publicProcedure
     .input(CustomerReservationSchema)
     .mutation(async ({ ctx, input }) => {
@@ -35,7 +51,7 @@ export const reservationRouter = createTRPCRouter({
 
       if (reservation) {
         throw new TRPCError({
-          message: "Reservation already exists",
+          message: "Rezervacija vec postoji",
           code: "BAD_REQUEST",
         });
       }
@@ -49,5 +65,6 @@ export const reservationRouter = createTRPCRouter({
           status: "PENDING",
         },
       });
+      return reservation;
     }),
 });
