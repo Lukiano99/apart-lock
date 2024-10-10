@@ -24,6 +24,8 @@ import { I18nProvider, LocalizationProvider } from "@/locales";
 import { detectLanguage } from "@/locales/server";
 import { TRPCReactProvider } from "@/trpc/react";
 import { HydrateClient } from "@/trpc/server";
+import { Toaster } from "sonner";
+import { Snackbar } from "@/components/snackbar";
 
 // ----------------------------------------------------------------------
 
@@ -63,6 +65,7 @@ export default async function RootLayout({ children }: Props) {
                 <AuthProvider>
                   <SettingsProvider settings={defaultSettings}>
                     <ThemeProvider>
+                      <Snackbar />
                       <MotionLazy>
                         <ProgressBar />
                         <SettingsDrawer />

@@ -27,7 +27,7 @@ export function ReservationView({ apartment, room }: ReservationViewProps) {
         </Grid>
 
         <Grid xs={12} md={8} item>
-          <CustomerReservationForm />
+          <CustomerReservationForm roomId={room.id} />
         </Grid>
       </Grid>
     </ApartmentsContent>

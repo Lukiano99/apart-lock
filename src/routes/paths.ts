@@ -4,6 +4,7 @@ const ROOTS = {
   AUTH: "/auth",
   DASHBOARD: "/pregled",
   APPARTMENTS: "/apartmani",
+  RESERVATION: "/rezervacija",
 };
 
 // ----------------------------------------------------------------------
@@ -55,6 +56,8 @@ export const paths = {
   apartments: {
     root: ROOTS.APPARTMENTS,
     expiriences: `${ROOTS.APPARTMENTS}/iskustva`,
+    reservation: (reservationId: string) =>
+      `${ROOTS.RESERVATION}/${reservationId}`,
     details: (id: string) => `${ROOTS.APPARTMENTS}/${id}`,
     roomReservation: (apartmentId: string, roomId: string) =>
       `${ROOTS.APPARTMENTS}/${apartmentId}/sobe/${roomId}/rezervacija`,

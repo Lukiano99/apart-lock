@@ -1,3 +1,4 @@
+"use server";
 import { EmptyContent } from "@/components/empty-content";
 import { ReservationView } from "@/sections/reservation/view/reservation-view";
 import { api } from "@/trpc/server";
