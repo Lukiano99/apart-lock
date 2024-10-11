@@ -22,10 +22,10 @@ import {
 import { EmptyContent } from "src/components/empty-content";
 
 import { ApartmentList } from "../apartments-list";
-import { TourSort } from "../tour-sort";
-import { TourSearch } from "../tour-search";
-import { TourFilters } from "../tour-filters";
-import { TourFiltersResult } from "../tour-filters-result";
+import { ApartmentSort } from "../tour-sort";
+import { ApartmentSearch } from "../tour-search";
+import { ApartmentFilters } from "../tour-filters";
+import { ApartmentFiltersResult } from "../tour-filters-result";
 import { ApartmentsContent } from "@/layouts/apartments";
 import { api } from "@/trpc/react";
 
@@ -113,10 +113,10 @@ export function ApartmentsListView() {
       alignItems={{ xs: "flex-end", sm: "center" }}
       direction={{ xs: "column", sm: "row" }}
     >
-      <TourSearch search={search} onSearch={handleSearch} />
+      <ApartmentSearch search={search} onSearch={handleSearch} />
 
       <Stack direction="row" spacing={1} flexShrink={0}>
-        <TourFilters
+        <ApartmentFilters
           filters={filters}
           canReset={canReset}
           dateError={dateError}
@@ -129,7 +129,7 @@ export function ApartmentsListView() {
           }}
         />
 
-        <TourSort
+        <ApartmentSort
           sort={sortBy}
           onSort={handleSortBy}
           sortOptions={TOUR_SORT_OPTIONS}
@@ -139,7 +139,10 @@ export function ApartmentsListView() {
   );
 
   const renderResults = (
-    <TourFiltersResult filters={filters} totalResults={dataFiltered.length} />
+    <ApartmentFiltersResult
+      filters={filters}
+      totalResults={dataFiltered.length}
+    />
   );
 
   return (
