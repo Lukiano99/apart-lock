@@ -140,7 +140,7 @@ function RowItem({ row }: RowItemProps) {
         </TableCell>
 
         <TableCell>
-          <Label
+          {/* <Label
             variant={lightMode ? "soft" : "filled"}
             color={
               (!row.occupiedFrom && !row.occupiedUntil && "success") ||
@@ -161,6 +161,9 @@ function RowItem({ row }: RowItemProps) {
                 new Date() > row.occupiedUntil &&
                 "dostupno") ||
               "nedostupno"}
+          </Label> */}
+          <Label variant={lightMode ? "soft" : "filled"} color={"success"}>
+            dostupno
           </Label>
         </TableCell>
 
