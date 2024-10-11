@@ -43,9 +43,6 @@ model Service {
 model Room {
   id            String        @id @default(uuid())
   number        Int
-  isOccupied    Boolean       @default(false)
-  occupiedFrom  DateTime?
-  occupiedUntil DateTime?
   apartmentId   String
   bed_count     Int           @default(1)
   price         Float         @default(50)
@@ -59,10 +56,17 @@ model Room {
 }
 
 model Reservation {
-  id              String            @id @default(uuid())
-  status          ReservationStatus @default(PENDING)
-  createdAt       DateTime          @default(now())
-  confirmedAt     DateTime?
+  id          String            @id @default(uuid())
+  status      ReservationStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+  confirmedAt DateTime?
+
+  check_in  DateTime
+  check_out DateTime
+
+  adults   Int  @default(1)
+  children Int?
+
   paymentMethod   PaymentMethod
   confirmationKey ConfirmationKey[]
   Room            Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)

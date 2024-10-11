@@ -11,17 +11,17 @@ import { useRouter } from "src/routes/hooks";
 
 import { ApartmentItem } from "./tour-item";
 import { api } from "@/trpc/react";
-import { TableSkeleton } from "@/components/table";
-import { Grid, Skeleton } from "@mui/material";
 import ApartmentsSkeleton from "./apartments-skeleton";
+import { Apartment } from "@prisma/client";
 
 // ----------------------------------------------------------------------
 
 type Props = {
+  apartments?: Apartment[];
   tours: ITourItem[];
 };
 
-export function ApartmentList({ tours }: Props) {
+export function ApartmentList({ tours, apartments: _apartments }: Props) {
   const router = useRouter();
 
   const { data: apartments, isPending } = api.apartment.list.useQuery({});

@@ -24,7 +24,7 @@ type Props = StackProps & {
   filters: UseSetStateReturn<ITourFilters>;
 };
 
-export function TourFiltersResult({ filters, totalResults, sx }: Props) {
+export function ApartmentFiltersResult({ filters, totalResults, sx }: Props) {
   const handleRemoveServices = useCallback(
     (inputValue: string) => {
       const newValue = filters.state.services.filter(

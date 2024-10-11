@@ -43,7 +43,7 @@ type Props = {
   };
 };
 
-export function TourFilters({
+export function ApartmentFilters({
   open,
   onOpen,
   onClose,

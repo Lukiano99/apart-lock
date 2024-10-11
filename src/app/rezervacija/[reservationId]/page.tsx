@@ -20,50 +20,33 @@ const ReservationIdPage = async ({
     reservationId,
   });
 
+  const emptyContent = (
+    <EmptyContent
+      title="Rezervacija nije pronadjena"
+      action={
+        <Link href={paths.apartments.root}>
+          <Button
+            variant="contained"
+            sx={{ mt: 5 }}
+            startIcon={<Iconify icon="solar:arrow-left-outline" />}
+          >
+            Nazad na apartmane
+          </Button>
+        </Link>
+      }
+    />
+  );
+
   if (!reservation) {
-    return (
-      <ApartmentsLayout>
-        <EmptyContent
-          title="Rezervacija nije pronadjena"
-          action={
-            <Link href={paths.apartments.root}>
-              <Button
-                variant="contained"
-                sx={{ mt: 5 }}
-                startIcon={<Iconify icon="solar:arrow-left-outline" />}
-              >
-                Nazad na apartmane
-              </Button>
-            </Link>
-          }
-        />
-        ;
-      </ApartmentsLayout>
-    );
+    return emptyContent;
   }
+
   const customer = await api.customer.get({
     customerId: reservation.customerId,
   });
+
   if (!customer) {
-    return (
-      <ApartmentsLayout>
-        <EmptyContent
-          title="Rezervacija nije pronadjena"
-          action={
-            <Link href={paths.apartments.root}>
-              <Button
-                variant="contained"
-                sx={{ mt: 5 }}
-                startIcon={<Iconify icon="solar:arrow-left-outline" />}
-              >
-                Nazad na apartmane
-              </Button>
-            </Link>
-          }
-        />
-        ;
-      </ApartmentsLayout>
-    );
+    return emptyContent;
   }
   return (
     <ApartmentsLayout>
