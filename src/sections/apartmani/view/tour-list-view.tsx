@@ -101,6 +101,7 @@ export function ApartmentsListView() {
         <ApartmentFilters
           defaultFilters={filters}
           canReset={canReset}
+          onReset={filters.onResetState}
           open={openFilters.value}
           onOpen={openFilters.onTrue}
           onClose={openFilters.onFalse}

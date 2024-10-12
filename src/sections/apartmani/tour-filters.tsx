@@ -1,7 +1,7 @@
 import type { ITourGuide } from "src/types/tour";
 import { useSetState, type UseSetStateReturn } from "src/hooks/use-set-state";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -33,6 +33,7 @@ type Props = {
 
   onOpen: () => void;
   onClose: () => void;
+  onReset: () => void;
   onApply: (filters: IApartmentFilters) => void;
   defaultFilters: UseSetStateReturn<IApartmentFilters>;
 
@@ -46,13 +47,26 @@ export function ApartmentFilters({
   open,
   onOpen,
   onClose,
+  onReset,
   onApply,
   defaultFilters,
   canReset,
   services,
 }: Props) {
   const filters = useSetState<IApartmentFilters>(defaultFilters.state);
+
   const [dateError, setDateError] = useState(false);
+
+  const handleReset = () => {
+    onReset();
+    filters.onResetState;
+    filters.state.location = "";
+    filters.state.startDate = null;
+    filters.state.endDate = null;
+    filters.state.guests.adults = 1;
+    filters.state.guests.children = 0;
+    filters.state.services = [];
+  };
 
   const handleFilterServices = useCallback(
     (newValue: string) => {
@@ -83,30 +97,13 @@ export function ApartmentFilters({
     (newValue: Date) => {
       if (fIsAfter(filters.state.startDate, newValue)) {
         setDateError(true);
+      } else {
+        setDateError(false);
+        filters.setState({ endDate: newValue });
       }
-
-      filters.setState({ endDate: newValue });
     },
     [filters]
   );
-
-  const handleFilterDestination = useCallback(
-    (newValue: string) => {
-      filters.setState({ location: newValue });
-    },
-    [filters]
-  );
-
-  const handleFilterTourGuide = useCallback(
-    (newValue: ITourGuide[]) => {
-      // filters.setState({ guests: newValue });
-    },
-    [filters]
-  );
-
-  const handleApply = () => {
-    onApply(filters.state);
-  };
 
   const handleFilterAdultGuests = useCallback(
     (newValue: number) => {
@@ -119,6 +116,7 @@ export function ApartmentFilters({
     },
     [filters]
   );
+
   const handleFilterChildrenGuests = useCallback(
     (newValue: number) => {
       filters.setState({
@@ -131,6 +129,10 @@ export function ApartmentFilters({
     [filters]
   );
 
+  const handleApply = () => {
+    onApply(filters.state);
+  };
+
   const renderHead = (
     <>
       <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
@@ -140,7 +142,7 @@ export function ApartmentFilters({
         </Typography>
 
         <Tooltip title="Reset">
-          <IconButton onClick={filters.onResetState}>
+          <IconButton onClick={handleReset}>
             <Badge color="error" variant="dot" invisible={!canReset}>
               <Iconify icon="solar:restart-bold" />
             </Badge>
@@ -165,20 +167,20 @@ export function ApartmentFilters({
 
       <DatePicker
         label="Datum dolaska"
-        value={dayjs(filters.state.startDate) as Dayjs}
+        value={filters.state.startDate ? dayjs(filters.state.startDate) : null}
         onChange={(_date) => handleFilterStartDate(_date?.toDate() as Date)}
         sx={{ mb: 2.5 }}
       />
 
       <DatePicker
         label="Datum odlaska"
-        value={dayjs(filters.state.endDate) as Dayjs}
+        value={filters.state.endDate ? dayjs(filters.state.endDate) : null}
         onChange={(_date) => handleFilterEndDate(_date?.toDate() as Date)}
         slotProps={{
           textField: {
             error: dateError,
             helperText: dateError
-              ? "End date must be later than start date"
+              ? "Datum odlaska mora biti nakon datuma dolaska"
               : null,
           },
         }}
