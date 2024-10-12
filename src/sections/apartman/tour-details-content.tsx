@@ -150,11 +150,11 @@ export function TourDetailsContent({ apartment }: Props) {
       {[
         {
           label: "Available",
-          value: !apartment?.rooms.some(
-            (room) => !room.occupiedFrom && !room.occupiedUntil
-          )
-            ? "now"
-            : `unavailable`,
+          // TODO!
+          // value: !apartment?.rooms.some((room) => room.bed_count < 2)
+          //   ? "now"
+          //   : `unavailable`,
+          value: "now",
           icon: <Iconify icon="solar:calendar-date-bold" />,
         },
         {
