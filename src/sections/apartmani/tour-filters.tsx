@@ -194,6 +194,7 @@ export function ApartmentFilters({
       <Autocomplete
         value={filters.state.location}
         options={[
+          "",
           "Beograd",
           "Novi Sad",
           "Niš",
