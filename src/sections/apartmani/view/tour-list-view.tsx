@@ -10,7 +10,7 @@ import { useBoolean } from "src/hooks/use-boolean";
 import { useSetState } from "src/hooks/use-set-state";
 
 import { orderBy } from "src/utils/helper";
-import { fIsAfter, fIsBetween } from "src/utils/format-time";
+import { fIsBetween } from "src/utils/format-time";
 
 import {
   _tours,
@@ -28,6 +28,8 @@ import { ApartmentFilters } from "../tour-filters";
 import { ApartmentFiltersResult } from "../tour-filters-result";
 import { ApartmentsContent } from "@/layouts/apartments";
 import { api } from "@/trpc/react";
+import { IApartmentFilters } from "@/schemas/apartment";
+import { APARTMENT_SERVICE_OPTIONS } from "@/_mock/_apartment";
 
 // ----------------------------------------------------------------------
 
@@ -42,30 +44,23 @@ export function ApartmentsListView() {
     results: ITourItem[];
   }>({ query: "", results: [] });
 
-  const filters = useSetState<ITourFilters>({
-    destination: [],
-    tourGuides: [],
-    services: [],
+  const filters = useSetState<IApartmentFilters>({
+    location: "",
     startDate: null,
     endDate: null,
-  });
-
-  const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);
-
-  const dataFiltered = applyFilter({
-    inputData: _tours,
-    filters: filters.state,
-    sortBy,
-    dateError,
+    guests: {
+      adults: 1,
+      children: 0,
+    },
+    services: [],
   });
 
   const canReset =
-    filters.state.destination.length > 0 ||
-    filters.state.tourGuides.length > 0 ||
+    filters.state.location.length > 0 ||
+    filters.state.guests.children > 0 ||
+    filters.state.guests.adults > 1 ||
     filters.state.services.length > 0 ||
     (!!filters.state.startDate && !!filters.state.endDate);
-
-  const notFound = !dataFiltered.length && canReset;
 
   const handleSortBy = useCallback((newValue: string) => {
     setSortBy(newValue);
@@ -88,23 +83,10 @@ export function ApartmentsListView() {
     },
     [search]
   );
-  const { mutate: addService } = api.apartment.addService.useMutation();
-  const testAddService = () => {
-    addService(
-      {
-        apartmentId: "1fd69fbe-589c-42c5-92e3-017cd7c6e946",
-        serviceId: "2e079d4c-ef21-408b-bb81-43b7a279a4bb",
-      },
-      {
-        onSuccess: () => {
-          alert("Success");
-        },
-        onError: () => {
-          alert("Error");
-        },
-      }
-    );
-  };
+  const { data: apartments, isPending } = api.apartment.list.useQuery(
+    filters.state
+  );
+  const notFound = apartments && apartments.length === 0 && canReset;
 
   const renderFilters = (
     <Stack
@@ -117,16 +99,13 @@ export function ApartmentsListView() {
 
       <Stack direction="row" spacing={1} flexShrink={0}>
         <ApartmentFilters
-          filters={filters}
+          defaultFilters={filters}
           canReset={canReset}
-          dateError={dateError}
           open={openFilters.value}
           onOpen={openFilters.onTrue}
           onClose={openFilters.onFalse}
-          options={{
-            tourGuides: _tourGuides,
-            services: TOUR_SERVICE_OPTIONS.map((option) => option),
-          }}
+          services={APARTMENT_SERVICE_OPTIONS.map((option) => option)}
+          onApply={(_filters) => filters.setState(_filters)}
         />
 
         <ApartmentSort
@@ -141,7 +120,7 @@ export function ApartmentsListView() {
   const renderResults = (
     <ApartmentFiltersResult
       filters={filters}
-      totalResults={dataFiltered.length}
+      totalResults={apartments?.length ?? 0}
     />
   );
 
@@ -153,9 +132,15 @@ export function ApartmentsListView() {
         {canReset && renderResults}
       </Stack>
 
-      {notFound && <EmptyContent filled sx={{ py: 10 }} />}
+      {notFound && (
+        <EmptyContent
+          title="Žao nam je, nema traženih apartmana"
+          filled
+          sx={{ py: 10 }}
+        />
+      )}
 
-      <ApartmentList tours={dataFiltered} />
+      <ApartmentList apartments={apartments} isLoading={isPending} />
     </ApartmentsContent>
   );
 }

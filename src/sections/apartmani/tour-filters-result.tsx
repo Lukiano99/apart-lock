@@ -15,13 +15,14 @@ import {
   FiltersBlock,
   FiltersResult,
 } from "src/components/filters-result";
+import { IApartmentFilters } from "@/schemas/apartment";
 
 // ----------------------------------------------------------------------
 
 type Props = StackProps & {
   totalResults: number;
   sx?: SxProps<Theme>;
-  filters: UseSetStateReturn<ITourFilters>;
+  filters: UseSetStateReturn<IApartmentFilters>;
 };
 
 export function ApartmentFiltersResult({ filters, totalResults, sx }: Props) {
@@ -35,32 +36,24 @@ export function ApartmentFiltersResult({ filters, totalResults, sx }: Props) {
     },
     [filters]
   );
+  const handleRemoveGuests = useCallback(() => {
+    filters.setState({
+      guests: {
+        adults: 1,
+        children: 0,
+      },
+    });
+  }, [filters]);
 
   const handleRemoveAvailable = useCallback(() => {
     filters.setState({ startDate: null, endDate: null });
   }, [filters]);
 
-  const handleRemoveTourGuide = useCallback(
-    (inputValue: ITourGuide) => {
-      const newValue = filters.state.tourGuides.filter(
-        (item) => item.name !== inputValue.name
-      );
+  const handleRemoveLocation = useCallback(() => {
+    const newValue = "";
 
-      filters.setState({ tourGuides: newValue });
-    },
-    [filters]
-  );
-
-  const handleRemoveDestination = useCallback(
-    (inputValue: string) => {
-      const newValue = filters.state.destination.filter(
-        (item) => item !== inputValue
-      );
-
-      filters.setState({ destination: newValue });
-    },
-    [filters]
-  );
+    filters.setState({ location: newValue });
+  }, [filters]);
 
   return (
     <FiltersResult
@@ -93,30 +86,33 @@ export function ApartmentFiltersResult({ filters, totalResults, sx }: Props) {
         ))}
       </FiltersBlock>
 
-      <FiltersBlock label="Gosti:" isShow={!!filters.state.tourGuides.length}>
-        {filters.state.tourGuides.map((item) => (
+      <FiltersBlock label="Odrasli:" isShow={filters.state.guests.adults > 0}>
+        {filters.state.guests.adults > 0 && (
           <Chip
             {...chipProps}
-            key={item.id}
-            avatar={<Avatar alt={item.name} src={item.avatarUrl} />}
-            label={item.name}
-            onDelete={() => handleRemoveTourGuide(item)}
+            label={filters.state.guests.adults}
+            onDelete={handleRemoveGuests}
           />
-        ))}
+        )}
+      </FiltersBlock>
+      <FiltersBlock label="Deca:" isShow={filters.state.guests.children > 0}>
+        {filters.state.guests.children > 0 && (
+          <Chip
+            {...chipProps}
+            label={filters.state.guests.children}
+            onDelete={handleRemoveGuests}
+          />
+        )}
       </FiltersBlock>
 
-      <FiltersBlock
-        label="Lokacija:"
-        isShow={!!filters.state.destination.length}
-      >
-        {filters.state.destination.map((item) => (
+      <FiltersBlock label="Lokacija:" isShow={!!filters.state.location}>
+        {filters.state.location && (
           <Chip
             {...chipProps}
-            key={item}
-            label={item}
-            onDelete={() => handleRemoveDestination(item)}
+            label={filters.state.location}
+            onDelete={handleRemoveLocation}
           />
-        ))}
+        )}
       </FiltersBlock>
     </FiltersResult>
   );
