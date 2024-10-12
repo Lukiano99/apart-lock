@@ -27,7 +27,7 @@ type Props = {
   }>;
 };
 
-export function TourSearch({ search, onSearch }: Props) {
+export function ApartmentSearch({ search, onSearch }: Props) {
   const router = useRouter();
 
   const { state } = search;

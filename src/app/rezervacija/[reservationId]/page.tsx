@@ -1,8 +1,11 @@
 import { EmptyContent } from "@/components/empty-content";
-import { ApartmentsContent, ApartmentsLayout } from "@/layouts/apartments";
+import { Iconify } from "@/components/iconify";
+import { ApartmentsLayout } from "@/layouts/apartments";
+import { paths } from "@/routes/paths";
 import { ReservationDetailsView } from "@/sections/reservation/view/reservation-details-view";
 import { api } from "@/trpc/server";
-import { Typography } from "@mui/material";
+import { Button } from "@mui/material";
+import Link from "next/link";
 
 const ReservationIdPage = async ({
   params,
@@ -17,14 +20,33 @@ const ReservationIdPage = async ({
     reservationId,
   });
 
+  const emptyContent = (
+    <EmptyContent
+      title="Rezervacija nije pronadjena"
+      action={
+        <Link href={paths.apartments.root}>
+          <Button
+            variant="contained"
+            sx={{ mt: 5 }}
+            startIcon={<Iconify icon="solar:arrow-left-outline" />}
+          >
+            Nazad na apartmane
+          </Button>
+        </Link>
+      }
+    />
+  );
+
   if (!reservation) {
-    return <EmptyContent title="Rezervacija nije pronadjena" />;
+    return emptyContent;
   }
+
   const customer = await api.customer.get({
     customerId: reservation.customerId,
   });
+
   if (!customer) {
-    return <EmptyContent title="Rezervacija nije pronadjena" />;
+    return emptyContent;
   }
   return (
     <ApartmentsLayout>

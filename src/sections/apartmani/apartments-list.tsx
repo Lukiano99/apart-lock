@@ -10,21 +10,19 @@ import { paths } from "src/routes/paths";
 import { useRouter } from "src/routes/hooks";
 
 import { ApartmentItem } from "./tour-item";
-import { api } from "@/trpc/react";
-import { TableSkeleton } from "@/components/table";
-import { Grid, Skeleton } from "@mui/material";
+import { api, RouterOutputs } from "@/trpc/react";
 import ApartmentsSkeleton from "./apartments-skeleton";
+import { Apartment, Image as ApartmentImages } from "@prisma/client";
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  tours: ITourItem[];
+  apartments?: RouterOutputs["apartment"]["list"];
+  isLoading: boolean;
 };
 
-export function ApartmentList({ tours }: Props) {
+export function ApartmentList({ apartments, isLoading }: Props) {
   const router = useRouter();
-
-  const { data: apartments, isPending } = api.apartment.list.useQuery({});
 
   const handleView = useCallback(
     (id: string) => {
@@ -55,7 +53,7 @@ export function ApartmentList({ tours }: Props) {
           md: "repeat(3, 1fr)",
         }}
       >
-        {!isPending &&
+        {!isLoading &&
           apartments &&
           apartments.map((apartment) => (
             <ApartmentItem
@@ -66,10 +64,10 @@ export function ApartmentList({ tours }: Props) {
               onDelete={() => handleDelete(apartment.id)}
             />
           ))}
-        {isPending && !apartments && <ApartmentsSkeleton />}
+        {isLoading && !apartments && <ApartmentsSkeleton />}
       </Box>
 
-      {tours.length > 8 && (
+      {apartments && apartments.length > 8 && (
         <Pagination
           count={8}
           sx={{

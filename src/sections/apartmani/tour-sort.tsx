@@ -17,7 +17,7 @@ type Props = {
   }[];
 };
 
-export function TourSort({ sort, onSort, sortOptions }: Props) {
+export function ApartmentSort({ sort, onSort, sortOptions }: Props) {
   const popover = usePopover();
 
   return (

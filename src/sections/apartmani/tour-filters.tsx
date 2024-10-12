@@ -1,16 +1,13 @@
-import type { IDatePickerControl } from "src/types/common";
-import type { ITourGuide, ITourFilters } from "src/types/tour";
-import type { UseSetStateReturn } from "src/hooks/use-set-state";
+import type { ITourGuide } from "src/types/tour";
+import { useSetState, type UseSetStateReturn } from "src/hooks/use-set-state";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Badge from "@mui/material/Badge";
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
 import Tooltip from "@mui/material/Tooltip";
 import Checkbox from "@mui/material/Checkbox";
@@ -23,35 +20,54 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { Iconify } from "src/components/iconify";
 import { Scrollbar } from "src/components/scrollbar";
-import { CountrySelect } from "src/components/country-select";
+import { IApartmentFilters } from "@/schemas/apartment";
+import dayjs, { Dayjs } from "dayjs";
+import { fIsAfter } from "@/utils/format-time";
+import { IncrementerButton } from "./components/incrementer-button";
 
 // ----------------------------------------------------------------------
 
 type Props = {
   open: boolean;
   canReset: boolean;
-  dateError: boolean;
+
   onOpen: () => void;
   onClose: () => void;
-  filters: UseSetStateReturn<ITourFilters>;
-  options: {
-    services: {
-      label: string;
-      value: string;
-    }[];
-    tourGuides: ITourGuide[];
-  };
+  onReset: () => void;
+  onApply: (filters: IApartmentFilters) => void;
+  defaultFilters: UseSetStateReturn<IApartmentFilters>;
+
+  services: {
+    label: string;
+    value: string;
+  }[];
 };
 
-export function TourFilters({
+export function ApartmentFilters({
   open,
   onOpen,
   onClose,
-  filters,
-  options,
+  onReset,
+  onApply,
+  defaultFilters,
   canReset,
-  dateError,
+  services,
 }: Props) {
+  const filters = useSetState<IApartmentFilters>(defaultFilters.state);
+
+  const [dateError, setDateError] = useState(false);
+
+  const handleReset = () => {
+    onReset();
+    filters.onResetState;
+    filters.state.location = "";
+    filters.state.startDate = null;
+    filters.state.endDate = null;
+    filters.state.guests.adults = 1;
+    filters.state.guests.children = 0;
+    filters.state.services = [];
+  };
+
   const handleFilterServices = useCallback(
     (newValue: string) => {
       const checked = filters.state.services.includes(newValue)
@@ -63,33 +79,59 @@ export function TourFilters({
     [filters]
   );
 
+  const handleLocationChange = useCallback(
+    (newValue: string) => {
+      filters.setState({ location: newValue });
+    },
+    [filters]
+  );
+
   const handleFilterStartDate = useCallback(
-    (newValue: IDatePickerControl) => {
+    (newValue: Date) => {
       filters.setState({ startDate: newValue });
     },
     [filters]
   );
 
   const handleFilterEndDate = useCallback(
-    (newValue: IDatePickerControl) => {
-      filters.setState({ endDate: newValue });
+    (newValue: Date) => {
+      if (fIsAfter(filters.state.startDate, newValue)) {
+        setDateError(true);
+      } else {
+        setDateError(false);
+        filters.setState({ endDate: newValue });
+      }
     },
     [filters]
   );
 
-  const handleFilterDestination = useCallback(
-    (newValue: string[]) => {
-      filters.setState({ destination: newValue });
+  const handleFilterAdultGuests = useCallback(
+    (newValue: number) => {
+      filters.setState({
+        guests: {
+          adults: newValue,
+          children: filters.state.guests.children,
+        },
+      });
     },
     [filters]
   );
 
-  const handleFilterTourGuide = useCallback(
-    (newValue: ITourGuide[]) => {
-      filters.setState({ tourGuides: newValue });
+  const handleFilterChildrenGuests = useCallback(
+    (newValue: number) => {
+      filters.setState({
+        guests: {
+          children: newValue,
+          adults: filters.state.guests.adults,
+        },
+      });
     },
     [filters]
   );
+
+  const handleApply = () => {
+    onApply(filters.state);
+  };
 
   const renderHead = (
     <>
@@ -100,7 +142,7 @@ export function TourFilters({
         </Typography>
 
         <Tooltip title="Reset">
-          <IconButton onClick={filters.onResetState}>
+          <IconButton onClick={handleReset}>
             <Badge color="error" variant="dot" invisible={!canReset}>
               <Iconify icon="solar:restart-bold" />
             </Badge>
@@ -125,20 +167,20 @@ export function TourFilters({
 
       <DatePicker
         label="Datum dolaska"
-        value={filters.state.startDate}
-        onChange={handleFilterStartDate}
+        value={filters.state.startDate ? dayjs(filters.state.startDate) : null}
+        onChange={(_date) => handleFilterStartDate(_date?.toDate() as Date)}
         sx={{ mb: 2.5 }}
       />
 
       <DatePicker
         label="Datum odlaska"
-        value={filters.state.endDate}
-        onChange={handleFilterEndDate}
+        value={filters.state.endDate ? dayjs(filters.state.endDate) : null}
+        onChange={(_date) => handleFilterEndDate(_date?.toDate() as Date)}
         slotProps={{
           textField: {
             error: dateError,
             helperText: dateError
-              ? "End date must be later than start date"
+              ? "Datum odlaska mora biti nakon datuma dolaska"
               : null,
           },
         }}
@@ -149,82 +191,84 @@ export function TourFilters({
   const renderDestination = (
     <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
-        {/* Destination */}
         Lokacija
       </Typography>
-      <CountrySelect
-        id="multiple-destinations"
-        multiple
-        fullWidth
-        placeholder={
-          filters.state.destination.length
-            ? "+ Destination"
-            : "Izaberite lokaciju"
-        }
-        value={filters.state.destination}
-        onChange={(event, newValue) => handleFilterDestination(newValue)}
+      <Autocomplete
+        value={filters.state.location}
+        options={[
+          "",
+          "Beograd",
+          "Novi Sad",
+          "Niš",
+          "Pirot",
+          "Kopaonik",
+          "Zlatibor",
+          "Subotica",
+          "Tara",
+        ]}
+        onChange={(_, value) => handleLocationChange(value ?? "")}
+        autoHighlight={false}
+        disableCloseOnSelect={false}
+        renderInput={(params) => <TextField {...params} label="Grad" />}
       />
     </Box>
   );
 
-  const renderTourGuide = (
-    <Box display="flex" flexDirection="column">
-      <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
-        {/* Tour guide */}
-        Ko dolazi
+  const renderAdultGuests = (
+    <Stack direction="row">
+      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+        Odrasli
       </Typography>
 
-      <Autocomplete
-        multiple
-        disableCloseOnSelect
-        options={options.tourGuides}
-        value={filters.state.tourGuides}
-        onChange={(event, newValue) => handleFilterTourGuide(newValue)}
-        getOptionLabel={(option) => option.name}
-        renderInput={(params) => (
-          <TextField placeholder="Dodajte goste" {...params} />
-        )}
-        renderOption={(props, tourGuide) => (
-          <li {...props} key={tourGuide.id}>
-            <Avatar
-              key={tourGuide.id}
-              alt={tourGuide.avatarUrl}
-              src={tourGuide.avatarUrl}
-              sx={{ mr: 1, width: 24, height: 24, flexShrink: 0 }}
-            />
-
-            {tourGuide.name}
-          </li>
-        )}
-        renderTags={(selected, getTagProps) =>
-          selected.map((tourGuide, index) => (
-            <Chip
-              {...getTagProps({ index })}
-              key={tourGuide.id}
-              size="small"
-              variant="soft"
-              label={tourGuide.name}
-              avatar={<Avatar alt={tourGuide.name} src={tourGuide.avatarUrl} />}
-            />
-          ))
-        }
-      />
-    </Box>
+      <Stack spacing={1}>
+        <IncrementerButton
+          name="quantity"
+          quantity={filters.state.guests.adults}
+          disabledDecrease={filters.state.guests.adults <= 1}
+          onIncrease={() =>
+            handleFilterAdultGuests(filters.state.guests.adults + 1)
+          }
+          onDecrease={() =>
+            handleFilterAdultGuests(filters.state.guests.adults - 1)
+          }
+        />
+      </Stack>
+    </Stack>
   );
+  const renderChildrenGuests = (
+    <Stack direction="row">
+      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+        Deca
+      </Typography>
 
+      <Stack spacing={1}>
+        <IncrementerButton
+          name="quantity"
+          quantity={filters.state.guests.children}
+          disabledDecrease={filters.state.guests.children <= 0}
+          onIncrease={() =>
+            handleFilterChildrenGuests(filters.state.guests.children + 1)
+          }
+          onDecrease={() =>
+            handleFilterChildrenGuests(filters.state.guests.children - 1)
+          }
+        />
+      </Stack>
+    </Stack>
+  );
   const renderServices = (
     <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
         {/* Services */}
         Usluge
       </Typography>
-      {options.services.map((option) => (
+      {services.map((option) => (
         <FormControlLabel
-          key={option.value}
+          key={option.label}
           control={
             <Checkbox
-              checked={filters.state.services.includes(option.value)}
-              onClick={() => handleFilterServices(option.value)}
+              checked={filters.state.services.includes(option.label)}
+              onClick={() => handleFilterServices(option.label)}
             />
           }
           label={option.label}
@@ -260,9 +304,13 @@ export function TourFilters({
 
         <Scrollbar sx={{ px: 2.5, py: 3 }}>
           <Stack spacing={3}>
+            <Button variant="contained" onClick={handleApply}>
+              Primeni filtere
+            </Button>
             {renderDestination}
             {renderDateRange}
-            {renderTourGuide}
+            {renderAdultGuests}
+            {renderChildrenGuests}
             {renderServices}
           </Stack>
         </Scrollbar>

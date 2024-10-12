@@ -4,19 +4,14 @@ import { _tags } from "./assets";
 // ----------------------------------------------------------------------
 
 export const TOUR_DETAILS_TABS = [
-  // { label: "Tour content", value: "content" },
-  // { label: "Booker", value: "bookers" },
-  { label: "Pregled", value: "content" },
-  { label: "Sobe", value: "rooms" },
+  { label: "Tour content", value: "content" },
+  { label: "Booker", value: "bookers" },
 ];
 
 export const TOUR_SORT_OPTIONS = [
-  // { label: 'Latest', value: 'latest' },
-  // { label: 'Popular', value: 'popular' },
-  // { label: 'Oldest', value: 'oldest' },
-  { label: "Najnoviji", value: "latest" },
-  { label: "Popularni", value: "popular" },
-  { label: "Najstariji", value: "oldest" },
+  { label: "Latest", value: "latest" },
+  { label: "Popular", value: "popular" },
+  { label: "Oldest", value: "oldest" },
 ];
 
 export const TOUR_PUBLISH_OPTIONS = [
@@ -25,30 +20,17 @@ export const TOUR_PUBLISH_OPTIONS = [
 ];
 
 export const TOUR_SERVICE_OPTIONS = [
-  // { label: "Audio guide", value: "Audio guide" },
-  // { label: "Food and drinks", value: "Food and drinks" },
-  // { label: "Lunch", value: "Lunch" },
-  // { label: "Private tour", value: "Private tour" },
-  // { label: "Special activities", value: "Special activities" },
-  // { label: "Entrance fees", value: "Entrance fees" },
-  // { label: "Gratuities", value: "Gratuities" },
-  // { label: "Pick-up and drop off", value: "Pick-up and drop off" },
-  // { label: "Professional guide", value: "Professional guide" },
-  // {
-  //   label: "Transport by air-conditioned",
-  //   value: "Transport by air-conditioned",
-  // },
-  { label: "Kuhinja", value: "Audio guide" },
-  { label: "Wifi", value: "Food and drinks" },
-  { label: "Odvojeni radni prostor", value: "Lunch" },
-  { label: "Besplatan parking", value: "Private tour" },
-  { label: "Bazen", value: "Special activities" },
-  { label: "Sauna", value: "Entrance fees" },
-  { label: "Tv", value: "Gratuities" },
-  { label: "Lift", value: "Pick-up and drop off" },
-  { label: "Veš mašina", value: "Professional guide" },
+  { label: "Audio guide", value: "Audio guide" },
+  { label: "Food and drinks", value: "Food and drinks" },
+  { label: "Lunch", value: "Lunch" },
+  { label: "Private tour", value: "Private tour" },
+  { label: "Special activities", value: "Special activities" },
+  { label: "Entrance fees", value: "Entrance fees" },
+  { label: "Gratuities", value: "Gratuities" },
+  { label: "Pick-up and drop off", value: "Pick-up and drop off" },
+  { label: "Professional guide", value: "Professional guide" },
   {
-    label: "Balkon",
+    label: "Transport by air-conditioned",
     value: "Transport by air-conditioned",
   },
 ];
