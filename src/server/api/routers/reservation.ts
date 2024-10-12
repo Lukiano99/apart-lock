@@ -63,6 +63,9 @@ export const reservationRouter = createTRPCRouter({
           paymentMethod: input.paymentMethod,
           createdAt: new Date(),
           status: "PENDING",
+          // TODO
+          check_in: new Date(),
+          check_out: new Date(new Date().getDate() + 1),
         },
       });
       return reservation;
