@@ -49,13 +49,11 @@ const ReservationIdPage = async ({
     return emptyContent;
   }
   return (
-    <ApartmentsLayout>
-      <ReservationDetailsView
-        reservation={reservation}
-        customer={customer}
-        title="Detalji rezervacije"
-      />
-    </ApartmentsLayout>
+    <ReservationDetailsView
+      reservation={reservation}
+      customer={customer}
+      title="Detalji rezervacije"
+    />
   );
 };
 
