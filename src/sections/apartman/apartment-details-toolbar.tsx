@@ -54,9 +54,9 @@ export function TourDetailsToolbar({
         {...other}
       >
         <Button
-          // component={RouterLink}
-          // href={backLink}
-          onClick={handleBack}
+          component={RouterLink}
+          href={backLink}
+          // onClick={handleBack}
           startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
         >
           {/* Back  */}

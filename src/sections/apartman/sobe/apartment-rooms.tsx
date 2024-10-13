@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 
 import qs from "query-string";
 import { LoadingIcon } from "yet-another-react-lightbox";
+import { fDuration } from "@/utils/format-time";
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
@@ -80,7 +81,6 @@ export function ApartmentRooms({
   const { data: tableDateRooms, isPending } = api.room.list.useQuery({
     apartmentId,
   });
-  const ids = tableDateRooms?.map((r) => r.id);
   return (
     <Card {...other}>
       {/* <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} /> */}
@@ -94,7 +94,7 @@ export function ApartmentRooms({
       <Scrollbar sx={{ minHeight: 462 }}>
         {
           <Table sx={{ minWidth: 960 }}>
-            <TableHeadCustom headLabel={headLabel} />
+            <TableHeadCustom headLabel={headLabel} orderBy="false" />
 
             <TableBody>
               {!isPending &&
@@ -102,18 +102,18 @@ export function ApartmentRooms({
                 tableDateRooms.length > 0 &&
                 tableDateRooms.map((row, idx) => (
                   <RowItem
-                    key={row.id}
+                    key={`${row.id}_${idx}`}
                     row={row}
                     startDate={startDate as Date}
                     endDate={endDate as Date}
                     guests={guests}
                   />
                 ))}
-              {/* {isPending &&
+              {isPending &&
                 !tableDateRooms &&
                 Array(10)
                   .fill(null)
-                  .map((_, idx) => <TableSkeleton key={idx} />)} */}
+                  .map((_, idx) => <TableSkeleton key={`${idx}_${idx}`} />)}
             </TableBody>
           </Table>
         }
@@ -143,6 +143,13 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
       (reservation) =>
         startDate <= reservation.check_out && endDate >= reservation.check_in
     ) && row.bed_count >= guests.adults + guests.children;
+
+  const nights = fDuration({
+    startDate,
+    endDate,
+  });
+
+  const totalPrice = row.price * nights;
 
   const theme = useTheme();
 
@@ -178,11 +185,16 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
 
       <TableCell>
         {[...Array(row.bed_count)].map((_, index) => (
-          <Iconify key={index} icon="mdi:account" style={{ marginLeft: 0 }} />
+          <Iconify
+            key={`${index}/${index}`}
+            icon="mdi:account"
+            style={{ marginLeft: 0 }}
+          />
         ))}
       </TableCell>
 
       <TableCell>{fCurrency(row.price, { currency: "eur" })}</TableCell>
+      <TableCell>{fCurrency(totalPrice, { currency: "eur" })}</TableCell>
 
       <TableCell>
         <Label
@@ -209,7 +221,7 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
           </Label>*/}
       </TableCell>
 
-      <TableCell align="left" sx={{ pr: 1 }}>
+      <TableCell>
         <Button
           component={RouterLink}
           href={paths.apartments.roomReservation(row.apartmentId, row.id)}

@@ -73,10 +73,11 @@ export function ApartmentDetailsView({ apartment }: Props) {
           // title="Izaberite sobu koja vam odgovara"
           apartmentId={apartment.id}
           headLabel={[
-            { id: "destination", label: "Tip sobe" },
-            { id: "customer", label: "Broj gostiju" },
-            { id: "checkIn", label: "Cena za X noći" },
-            { id: "checkOut", label: "Način plaćanja" },
+            { id: "bed_count", label: "Tip sobe" },
+            { id: "guests_count", label: "Broj gostiju" },
+            { id: "price_per_night", label: "Cena po noćenju" },
+            { id: "total_price", label: "Cena za dati period" },
+            { id: "payment_method", label: "Način plaćanja" },
             { id: "status", label: "Status" },
             { id: "reservation", label: "Rezervacije" },
             { id: "", label: "" },
