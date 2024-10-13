@@ -50,6 +50,10 @@ export function ApartmentRooms({
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [guests, setGuests] = useState<{ adults: number; children: number }>({
+    adults: 1,
+    children: 0,
+  });
 
   useEffect(() => {
     if (searchParams) {
@@ -61,8 +65,15 @@ export function ApartmentRooms({
         ? new Date(params.endDate as string)
         : null;
 
+      const parsedAdults = params.adults ? Number(params.adults) : 1;
+      const parsedChildren = params.children ? Number(params.children) : 0;
+
       setStartDate(parsedStartDate);
       setEndDate(parsedEndDate);
+      setGuests({
+        adults: parsedAdults,
+        children: parsedChildren,
+      });
     }
   }, [searchParams]);
 
@@ -70,7 +81,6 @@ export function ApartmentRooms({
     apartmentId,
   });
   const ids = tableDateRooms?.map((r) => r.id);
-  console.log({ ids });
   return (
     <Card {...other}>
       {/* <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} /> */}
@@ -78,6 +88,7 @@ export function ApartmentRooms({
         dateError={false}
         startDate={startDate}
         endDate={endDate}
+        guests={guests}
         // onResetPage={table.onResetPage}
       />
       <Scrollbar sx={{ minHeight: 462 }}>
@@ -95,6 +106,7 @@ export function ApartmentRooms({
                     row={row}
                     startDate={startDate as Date}
                     endDate={endDate as Date}
+                    guests={guests}
                   />
                 ))}
               {/* {isPending &&
@@ -119,13 +131,18 @@ type RowItemProps = {
   row: RouterOutputs["room"]["list"][number];
   startDate: Date;
   endDate: Date;
+  guests: {
+    adults: number;
+    children: number;
+  };
 };
 
-function RowItem({ row, startDate, endDate }: RowItemProps) {
-  const available = !row.reservations.some(
-    (reservation) =>
-      startDate <= reservation.check_out && endDate >= reservation.check_in
-  );
+function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
+  const available =
+    !row.reservations.some(
+      (reservation) =>
+        startDate <= reservation.check_out && endDate >= reservation.check_in
+    ) && row.bed_count >= guests.adults + guests.children;
 
   const theme = useTheme();
 

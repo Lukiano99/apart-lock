@@ -1,31 +1,21 @@
 import type { IDatePickerControl } from "src/types/common";
 import type { IInvoiceTableFilters } from "src/types/invoice";
-import type { SelectChangeEvent } from "@mui/material/Select";
 import type { UseSetStateReturn } from "src/hooks/use-set-state";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Stack from "@mui/material/Stack";
-import Select from "@mui/material/Select";
-import MenuList from "@mui/material/MenuList";
-import MenuItem from "@mui/material/MenuItem";
-import Checkbox from "@mui/material/Checkbox";
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import IconButton from "@mui/material/IconButton";
-import FormControl from "@mui/material/FormControl";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { formHelperTextClasses } from "@mui/material/FormHelperText";
 
 import { Iconify } from "src/components/iconify";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
 import dayjs from "dayjs";
-import { Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 import qs from "query-string";
 import { useRouter } from "next/navigation";
+import { IncrementerButton } from "../apartmani/components/incrementer-button";
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -34,6 +24,10 @@ type Props = {
   filters?: UseSetStateReturn<IInvoiceTableFilters>;
   startDate: Date | null;
   endDate: Date | null;
+  guests: {
+    adults: number;
+    children: number;
+  };
 };
 
 export function RoomsTableToolbar({
@@ -42,11 +36,15 @@ export function RoomsTableToolbar({
   onResetPage,
   startDate: _startDate,
   endDate: _endDate,
+  guests: _guests,
 }: Props) {
   const popover = usePopover();
 
   const [startDate, setStartDate] = useState<Date | null>(_startDate);
   const [endDate, setEndDate] = useState<Date | null>(_endDate);
+  const [guests, setGuests] = useState<{ adults: number; children: number }>(
+    _guests
+  );
 
   useEffect(() => {
     setStartDate(_startDate);
@@ -54,27 +52,6 @@ export function RoomsTableToolbar({
   }, [_startDate, _endDate]);
 
   const router = useRouter();
-
-  const handleFilterName = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      onResetPage && onResetPage();
-      filters && filters.setState({ name: event.target.value });
-    },
-    [filters, onResetPage]
-  );
-
-  const handleFilterService = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      const newValue =
-        typeof event.target.value === "string"
-          ? event.target.value.split(",")
-          : event.target.value;
-
-      onResetPage && onResetPage();
-      filters && filters.setState({ service: newValue });
-    },
-    [filters, onResetPage]
-  );
 
   const handleFilterStartDate = (newValue: IDatePickerControl) => {
     if (newValue) {
@@ -92,10 +69,25 @@ export function RoomsTableToolbar({
     }
   };
 
+  const handleFilterAdultGuests = (newValue: number) => {
+    setGuests({
+      adults: newValue,
+      children: guests.children,
+    });
+  };
+  const handleFilterChildrenGuests = (newValue: number) => {
+    setGuests({
+      adults: guests.adults,
+      children: newValue,
+    });
+  };
+
   const handleApply = () => {
     const query = {
       startDate: startDate ? startDate.toLocaleDateString("en-CA") : undefined, // Ispravno formatiranje
       endDate: endDate ? endDate.toLocaleDateString("en-CA") : undefined, // Ispravno formatiranje
+      adults: guests.adults > 1 ? guests.adults : undefined,
+      children: guests.children > 0 ? guests.children : undefined,
     };
 
     // Create query string using query-string package
@@ -145,8 +137,94 @@ export function RoomsTableToolbar({
             },
           }}
         />
+        <Button
+          disableRipple
+          color="inherit"
+          onClick={popover.onOpen}
+          endIcon={
+            <Iconify
+              icon={
+                popover.open
+                  ? "eva:arrow-ios-upward-fill"
+                  : "eva:arrow-ios-downward-fill"
+              }
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+              }}
+            />
+          }
+          sx={{ fontWeight: "fontWeightSemiBold" }}
+        >
+          <Iconify icon={"mdi:user"} />
+          <Stack
+            component="span"
+            direction="row"
+            sx={{
+              ml: 0.5,
+              fontWeight: "fontWeightBold",
+              textTransform: "capitalize",
+              alignItems: "center",
+              flex: "flex",
+              alignContent: "center",
+              justifyContent: "center",
+            }}
+          >
+            {`Odrasli ${guests.adults}`}
+            <Iconify icon={"mdi:dot"} />
+            {`Deca ${guests.children}`}
+          </Stack>
+        </Button>
+        <CustomPopover
+          open={popover.open}
+          anchorEl={popover.anchorEl}
+          onClose={popover.onClose}
+        >
+          <Stack
+            direction={"column"}
+            sx={{ width: 250, pr: 5, pl: 2, py: 2, gap: 2 }}
+          >
+            <Stack direction="row" sx={{ alignItems: "center" }}>
+              <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+                Odrasli
+              </Typography>
 
-        <Button variant="text" onClick={handleApply}>
+              <Stack spacing={1}>
+                <IncrementerButton
+                  name="quantity"
+                  quantity={guests.adults}
+                  disabledDecrease={guests.adults <= 1}
+                  onIncrease={() => handleFilterAdultGuests(guests.adults + 1)}
+                  onDecrease={() => handleFilterAdultGuests(guests.adults - 1)}
+                />
+              </Stack>
+            </Stack>
+            <Stack direction="row" sx={{ alignItems: "center" }}>
+              <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+                Deca
+              </Typography>
+
+              <Stack spacing={1}>
+                <IncrementerButton
+                  name="quantity"
+                  quantity={guests.children}
+                  disabledDecrease={guests.children <= 0}
+                  onIncrease={() =>
+                    handleFilterChildrenGuests(guests.children + 1)
+                  }
+                  onDecrease={() =>
+                    handleFilterChildrenGuests(guests.children - 1)
+                  }
+                />
+              </Stack>
+            </Stack>
+          </Stack>
+        </CustomPopover>
+
+        <Button
+          variant="contained"
+          onClick={handleApply}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
+        >
           Primeni
         </Button>
       </Stack>
