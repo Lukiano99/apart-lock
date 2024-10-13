@@ -10,7 +10,6 @@ interface ReservationOverviewProps {
 }
 
 const ReservationOverview = ({ apartment, room }: ReservationOverviewProps) => {
-  console.log("novi deploy");
   return (
     <Card
       sx={{ mb: 3, p: 3, gap: 2, display: "flex", flexDirection: "column" }}

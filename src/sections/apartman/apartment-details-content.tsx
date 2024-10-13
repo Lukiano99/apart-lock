@@ -18,17 +18,15 @@ import { Iconify } from "src/components/iconify";
 import { Markdown } from "src/components/markdown";
 import { Lightbox, useLightBox } from "src/components/lightbox";
 import { api, RouterOutputs } from "@/trpc/react";
+import { APARTMENT_SERVICE_OPTIONS } from "@/_mock/_apartment";
 
 // ----------------------------------------------------------------------
 
-// type Props = {
-//   tour?: ITourItem;
-// };
 type Props = {
   apartment: RouterOutputs["apartment"]["get"];
 };
 
-export function TourDetailsContent({ apartment }: Props) {
+export function ApartmentDetailsContent({ apartment }: Props) {
   const slides =
     apartment?.images.map((slide) => ({ src: slide.imageUrl })) || [];
   const {
@@ -38,7 +36,10 @@ export function TourDetailsContent({ apartment }: Props) {
     onClose: handleCloseLightbox,
   } = useLightBox(slides);
 
-  const { data: services } = api.services.list.useQuery();
+  const services = APARTMENT_SERVICE_OPTIONS.map((service) => ({
+    id: service.value,
+    name: service.label,
+  }));
 
   const renderGallery = (
     <>
@@ -63,9 +64,9 @@ export function TourDetailsContent({ apartment }: Props) {
         />
 
         <Box gap={1} display="grid" gridTemplateColumns="repeat(2, 1fr)">
-          {slides.slice(1, 5).map((slide) => (
+          {slides.slice(1, 5).map((slide, idx) => (
             <Image
-              key={slide.src}
+              key={idx}
               alt={slide.src}
               src={slide.src}
               ratio="1/1"

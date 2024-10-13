@@ -63,9 +63,9 @@ export const reservationRouter = createTRPCRouter({
           paymentMethod: input.paymentMethod,
           createdAt: new Date(),
           status: "PENDING",
-          // TODO
+          // TODO, currently mocked
           check_in: new Date(),
-          check_out: new Date(new Date().getDate() + 1),
+          check_out: new Date(Date.now() + 24 * 60 * 60 * 1000),
         },
       });
       return reservation;

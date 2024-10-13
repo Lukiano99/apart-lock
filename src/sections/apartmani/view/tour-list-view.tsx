@@ -2,7 +2,7 @@
 
 import type { ITourItem, ITourFilters } from "src/types/tour";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 import Stack from "@mui/material/Stack";
 
@@ -24,19 +24,22 @@ import { EmptyContent } from "src/components/empty-content";
 import { ApartmentList } from "../apartments-list";
 import { ApartmentSort } from "../tour-sort";
 import { ApartmentSearch } from "../tour-search";
-import { ApartmentFilters } from "../tour-filters";
 import { ApartmentFiltersResult } from "../tour-filters-result";
 import { ApartmentsContent } from "@/layouts/apartments";
 import { api } from "@/trpc/react";
 import { IApartmentFilters } from "@/schemas/apartment";
 import { APARTMENT_SERVICE_OPTIONS } from "@/_mock/_apartment";
 
+import qs from "query-string";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ApartmentFilters } from "../apartments-filters";
+
 // ----------------------------------------------------------------------
 
 export function ApartmentsListView() {
   const openFilters = useBoolean();
+  const searchParams = useSearchParams();
 
-  // const [sortBy, setSortBy] = useState("latest");
   const [sortBy, setSortBy] = useState("najnoviji");
 
   const search = useSetState<{
@@ -54,6 +57,30 @@ export function ApartmentsListView() {
     },
     services: [],
   });
+
+  useEffect(() => {
+    if (searchParams) {
+      const params = qs.parse(searchParams.toString());
+
+      filters.setState({
+        // location: params.location ?? "",
+        location: (params.location as string) ?? "",
+        startDate: params.startDate
+          ? new Date(params.startDate as string)
+          : null,
+        endDate: params.endDate ? new Date(params.endDate as string) : null,
+        guests: {
+          adults: Number(params.adults) || 1,
+          children: Number(params.children) || 0,
+        },
+        services: Array.isArray(params.services)
+          ? (params.services as string[])
+          : params.services
+            ? [params.services as string]
+            : [],
+      });
+    }
+  }, [searchParams]);
 
   const canReset =
     filters.state.location.length > 0 ||

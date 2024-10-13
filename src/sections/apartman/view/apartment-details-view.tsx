@@ -11,8 +11,8 @@ import { _bookings, TOUR_PUBLISH_OPTIONS } from "src/_mock";
 
 import { Label } from "src/components/label";
 
-import { TourDetailsContent } from "../tour-details-content";
-import { TourDetailsToolbar } from "../tour-details-toolbar";
+import { ApartmentDetailsContent } from "../apartment-details-content";
+import { TourDetailsToolbar } from "../apartment-details-toolbar";
 import { ApartmentsContent } from "@/layouts/apartments";
 import { ApartmentRooms } from "../sobe/apartment-rooms";
 import { RouterOutputs } from "@/trpc/react";
@@ -64,17 +64,20 @@ export function ApartmentDetailsView({ apartment }: Props) {
       />
       {renderTabs}
 
-      {tabs.value === "content" && <TourDetailsContent apartment={apartment} />}
+      {tabs.value === "content" && (
+        <ApartmentDetailsContent apartment={apartment} />
+      )}
 
-      {tabs.value === "rooms" && (
+      {tabs.value === "rooms" && apartment && (
         <ApartmentRooms
           // title="Izaberite sobu koja vam odgovara"
-          tableData={apartment?.rooms!}
+          apartmentId={apartment.id}
           headLabel={[
-            { id: "destination", label: "Tip sobe" },
-            { id: "customer", label: "Broj gostiju" },
-            { id: "checkIn", label: "Cena za X noći" },
-            { id: "checkOut", label: "Način plaćanja" },
+            { id: "bed_count", label: "Tip sobe" },
+            { id: "guests_count", label: "Broj gostiju" },
+            { id: "price_per_night", label: "Cena po noćenju" },
+            { id: "total_price", label: "Cena za dati period" },
+            { id: "payment_method", label: "Način plaćanja" },
             { id: "status", label: "Status" },
             { id: "reservation", label: "Rezervacije" },
             { id: "", label: "" },

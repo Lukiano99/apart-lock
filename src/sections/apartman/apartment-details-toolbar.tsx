@@ -13,6 +13,7 @@ import { RouterLink } from "src/routes/components";
 
 import { Iconify } from "src/components/iconify";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
+import { useRouter } from "next/navigation";
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +40,11 @@ export function TourDetailsToolbar({
   ...other
 }: Props) {
   const popover = usePopover();
+  const router = useRouter();
 
+  const handleBack = () => {
+    router.back();
+  };
   return (
     <>
       <Stack
@@ -51,6 +56,7 @@ export function TourDetailsToolbar({
         <Button
           component={RouterLink}
           href={backLink}
+          // onClick={handleBack}
           startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
         >
           {/* Back  */}

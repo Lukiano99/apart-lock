@@ -32,7 +32,7 @@ import { TourList } from "../tour-list";
 import { TourSort } from "../tour-sort";
 import { TourSearch } from "../tour-search";
 import { TourFilters } from "../tour-filters";
-import { TourFiltersResult } from "../tour-filters-result";
+import { TourFiltersResult } from "../apartment-filters-result";
 
 // ----------------------------------------------------------------------
 

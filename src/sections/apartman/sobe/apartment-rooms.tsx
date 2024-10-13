@@ -14,63 +14,109 @@ import { useTheme } from "@mui/material/styles";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import IconButton from "@mui/material/IconButton";
-import CardHeader from "@mui/material/CardHeader";
-import ListItemText from "@mui/material/ListItemText";
-
-import { fDate, fIsAfter, fTime } from "src/utils/format-time";
 
 import { Label } from "src/components/label";
 import { Iconify } from "src/components/iconify";
 import { Scrollbar } from "src/components/scrollbar";
-import { TableHeadCustom } from "src/components/table";
+import { TableHeadCustom, TableSkeleton } from "src/components/table";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
-import { Room } from "@prisma/client";
 import { fCurrency } from "@/utils/format-number";
-import { Stack } from "@mui/material";
 import { RoomsTableToolbar } from "../rooms-table-toolbar";
-import { useSetState } from "@/hooks/use-set-state";
-import { IInvoiceTableFilters } from "@/types/invoice";
-import { INVOICE_SERVICE_OPTIONS } from "@/_mock";
-import Link from "next/link";
 import { paths } from "@/routes/paths";
+import { api, RouterOutputs } from "@/trpc/react";
+import { RouterLink } from "@/routes/components";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
+import qs from "query-string";
+import { LoadingIcon } from "yet-another-react-lightbox";
+import { fDuration } from "@/utils/format-time";
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
   title?: string;
   subheader?: string;
   headLabel: TableHeadCustomProps["headLabel"];
-  tableData: Room[];
+  apartmentId: string;
 };
 
 export function ApartmentRooms({
   title,
   subheader,
   headLabel,
-  tableData,
+  apartmentId,
   ...other
 }: Props) {
+  const searchParams = useSearchParams();
+
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [guests, setGuests] = useState<{ adults: number; children: number }>({
+    adults: 1,
+    children: 0,
+  });
+
+  useEffect(() => {
+    if (searchParams) {
+      const params = qs.parse(searchParams.toString());
+      const parsedStartDate = params.startDate
+        ? new Date(params.startDate as string)
+        : null;
+      const parsedEndDate = params.endDate
+        ? new Date(params.endDate as string)
+        : null;
+
+      const parsedAdults = params.adults ? Number(params.adults) : 1;
+      const parsedChildren = params.children ? Number(params.children) : 0;
+
+      setStartDate(parsedStartDate);
+      setEndDate(parsedEndDate);
+      setGuests({
+        adults: parsedAdults,
+        children: parsedChildren,
+      });
+    }
+  }, [searchParams]);
+
+  const { data: tableDateRooms, isPending } = api.room.list.useQuery({
+    apartmentId,
+  });
   return (
     <Card {...other}>
       {/* <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} /> */}
       <RoomsTableToolbar
-        // filters={filters}
         dateError={false}
+        startDate={startDate}
+        endDate={endDate}
+        guests={guests}
         // onResetPage={table.onResetPage}
-        options={{
-          services: INVOICE_SERVICE_OPTIONS.map((option) => option.name),
-        }}
       />
       <Scrollbar sx={{ minHeight: 462 }}>
-        <Table sx={{ minWidth: 960 }}>
-          <TableHeadCustom headLabel={headLabel} />
+        {
+          <Table sx={{ minWidth: 960 }}>
+            <TableHeadCustom headLabel={headLabel} orderBy="false" />
 
-          <TableBody>
-            {tableData.map((row) => (
-              <RowItem key={row.id} row={row} />
-            ))}
-          </TableBody>
-        </Table>
+            <TableBody>
+              {!isPending &&
+                tableDateRooms &&
+                tableDateRooms.length > 0 &&
+                tableDateRooms.map((row, idx) => (
+                  <RowItem
+                    key={`${row.id}_${idx}`}
+                    row={row}
+                    startDate={startDate as Date}
+                    endDate={endDate as Date}
+                    guests={guests}
+                  />
+                ))}
+              {isPending &&
+                !tableDateRooms &&
+                Array(10)
+                  .fill(null)
+                  .map((_, idx) => <TableSkeleton key={`${idx}_${idx}`} />)}
+            </TableBody>
+          </Table>
+        }
       </Scrollbar>
 
       <Divider sx={{ borderStyle: "dashed" }} />
@@ -81,10 +127,36 @@ export function ApartmentRooms({
 // ----------------------------------------------------------------------
 
 type RowItemProps = {
-  row: Props["tableData"][number];
+  // row: Props["tableData"][number];
+  row: RouterOutputs["room"]["list"][number];
+  startDate: Date;
+  endDate: Date;
+  guests: {
+    adults: number;
+    children: number;
+  };
 };
 
-function RowItem({ row }: RowItemProps) {
+function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
+  const available =
+    !row.reservations.some(
+      (reservation) =>
+        startDate <= reservation.check_out && endDate >= reservation.check_in
+    ) &&
+    row.bed_count >= guests.adults + guests.children &&
+    startDate &&
+    endDate;
+
+  const nights =
+    startDate && endDate
+      ? fDuration({
+          startDate,
+          endDate,
+        })
+      : 1;
+
+  const totalPrice = row.price * nights;
+
   const theme = useTheme();
 
   const popover = usePopover();
@@ -112,82 +184,70 @@ function RowItem({ row }: RowItemProps) {
   };
 
   return (
-    <>
-      <TableRow>
-        <TableCell>
-          {row.bed_count} {row.bed_count === 1 ? "krevet" : "kreveta"}
-        </TableCell>
+    <TableRow>
+      <TableCell>
+        {row.bed_count} {row.bed_count === 1 ? "krevet" : "kreveta"}
+      </TableCell>
 
-        <TableCell>
-          {[...Array(row.bed_count)].map((_, index) => (
-            <Iconify icon="mdi:account" style={{ marginLeft: 0 }} />
-          ))}
-        </TableCell>
+      <TableCell>
+        {[...Array(row.bed_count)].map((_, index) => (
+          <Iconify
+            key={`${index}/${index}`}
+            icon="mdi:account"
+            style={{ marginLeft: 0 }}
+          />
+        ))}
+      </TableCell>
 
-        <TableCell>{fCurrency(row.price, { currency: "eur" })}</TableCell>
+      <TableCell>{fCurrency(row.price, { currency: "eur" })}</TableCell>
+      <TableCell>{fCurrency(totalPrice, { currency: "eur" })}</TableCell>
 
-        <TableCell>
-          <Label
-            variant={lightMode ? "soft" : "filled"}
-            color={
-              (row.paymentMethod === "CARD" && "warning") ||
-              (row.paymentMethod === "CASH" && "info") ||
-              "error"
-            }
-          >
-            {row.paymentMethod === "CASH" ? "Gotovina po dolasku" : "Karticom"}
-          </Label>
-        </TableCell>
+      <TableCell>
+        <Label
+          variant={lightMode ? "soft" : "filled"}
+          color={
+            (row.paymentMethod === "CARD" && "warning") ||
+            (row.paymentMethod === "CASH" && "info") ||
+            "error"
+          }
+        >
+          {row.paymentMethod === "CASH" ? "Gotovina po dolasku" : "Karticom"}
+        </Label>
+      </TableCell>
 
-        <TableCell>
-          {/* <Label
-            variant={lightMode ? "soft" : "filled"}
-            color={
-              (!row.occupiedFrom && !row.occupiedUntil && "success") ||
-              (row.occupiedFrom &&
-                new Date() < row.occupiedFrom &&
-                "success") ||
-              (row.occupiedUntil &&
-                new Date() > row.occupiedUntil &&
-                "success") ||
-              "error"
-            }
-          >
-            {(!row.occupiedFrom && !row.occupiedUntil && "dostupno") ||
-              (row.occupiedFrom &&
-                new Date() < row.occupiedFrom &&
-                "dostupno") ||
-              (row.occupiedUntil &&
-                new Date() > row.occupiedUntil &&
-                "dostupno") ||
-              "nedostupno"}
-          </Label> */}
-          <Label variant={lightMode ? "soft" : "filled"} color={"success"}>
+      <TableCell>
+        <Label
+          variant={lightMode ? "soft" : "filled"}
+          color={available ? "success" : "error"}
+        >
+          {available ? "Dostupno" : "Nedostupno"}
+        </Label>
+        {/* <Label variant={lightMode ? "soft" : "filled"} color={"success"}>
             dostupno
-          </Label>
-        </TableCell>
+          </Label>*/}
+      </TableCell>
 
-        <TableCell align="left" sx={{ pr: 1 }}>
-          <Link
-            href={paths.apartments.roomReservation(row.apartmentId, row.id)}
-            target="_blank"
-          >
-            <Button color="primary" variant="contained">
-              Rezerviši
-            </Button>
-          </Link>
-        </TableCell>
+      <TableCell>
+        <Button
+          component={RouterLink}
+          href={paths.apartments.roomReservation(row.apartmentId, row.id)}
+          variant="contained"
+          color="primary"
+          disabled={!available}
+          target="_blank"
+        >
+          Rezerviši
+        </Button>
+      </TableCell>
 
-        <TableCell align="right" sx={{ pr: 1 }}>
-          <IconButton
-            color={popover.open ? "inherit" : "default"}
-            onClick={popover.onOpen}
-          >
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-
+      <TableCell align="right" sx={{ pr: 1 }}>
+        <IconButton
+          color={popover.open ? "inherit" : "default"}
+          onClick={popover.onOpen}
+        >
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton>
+      </TableCell>
       <CustomPopover
         open={popover.open}
         anchorEl={popover.anchorEl}
@@ -206,6 +266,6 @@ function RowItem({ row }: RowItemProps) {
           </MenuItem>
         </MenuList>
       </CustomPopover>
-    </>
+    </TableRow>
   );
 }

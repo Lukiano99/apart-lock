@@ -16,7 +16,9 @@ import {
   FiltersResult,
 } from "src/components/filters-result";
 import { IApartmentFilters } from "@/schemas/apartment";
+import { useRouter, useSearchParams } from "next/navigation";
 
+import qs from "query-string";
 // ----------------------------------------------------------------------
 
 type Props = StackProps & {
@@ -26,39 +28,95 @@ type Props = StackProps & {
 };
 
 export function ApartmentFiltersResult({ filters, totalResults, sx }: Props) {
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  // Parse current search params from URL
+  const params = qs.parse(searchParams.toString());
+
   const handleRemoveServices = useCallback(
     (inputValue: string) => {
       const newValue = filters.state.services.filter(
         (item) => item !== inputValue
       );
-
+      removeServiceFromUrl(newValue);
       filters.setState({ services: newValue });
     },
     [filters]
   );
-  const handleRemoveGuests = useCallback(() => {
+  const handleRemoveAdultGuests = useCallback(() => {
+    removeFromUrl("adults");
+
     filters.setState({
       guests: {
         adults: 1,
+        children: filters.state.guests.children,
+      },
+    });
+  }, [filters]);
+
+  const handleRemoveChildrenGuests = useCallback(() => {
+    removeFromUrl("children");
+
+    filters.setState({
+      guests: {
         children: 0,
+        adults: filters.state.guests.adults,
       },
     });
   }, [filters]);
 
   const handleRemoveAvailable = useCallback(() => {
+    removeFromUrl("startDate");
+    removeFromUrl("endDate");
+
     filters.setState({ startDate: null, endDate: null });
   }, [filters]);
 
   const handleRemoveLocation = useCallback(() => {
+    removeFromUrl("location");
+
     const newValue = "";
 
     filters.setState({ location: newValue });
   }, [filters]);
 
+  const handleResetFilters = () => {
+    filters.onResetState;
+    router.replace(window.location.pathname);
+  };
+
+  const removeFromUrl = (filterKey: string, isArray?: boolean) => {
+    delete params[filterKey];
+    const newQueryString = qs.stringify(params, {
+      skipNull: true, // Skip null or undefined values
+      skipEmptyString: true, // Skip empty strings
+    });
+
+    // Update the URL without reloading the page
+    router.push(`?${newQueryString}`);
+  };
+
+  const removeServiceFromUrl = (newValue: string[]) => {
+    const newQueryString = qs.stringify(
+      {
+        ...params,
+        services: newValue.length > 0 ? newValue : undefined, // Remove services key if empty
+      },
+      {
+        skipNull: true,
+        skipEmptyString: true,
+      }
+    );
+
+    router.push(`?${newQueryString}`);
+  };
+
   return (
     <FiltersResult
       totalResults={totalResults}
-      onReset={filters.onResetState}
+      onReset={handleResetFilters}
       sx={sx}
     >
       <FiltersBlock
@@ -91,7 +149,7 @@ export function ApartmentFiltersResult({ filters, totalResults, sx }: Props) {
           <Chip
             {...chipProps}
             label={filters.state.guests.adults}
-            onDelete={handleRemoveGuests}
+            onDelete={handleRemoveAdultGuests}
           />
         )}
       </FiltersBlock>
@@ -100,7 +158,7 @@ export function ApartmentFiltersResult({ filters, totalResults, sx }: Props) {
           <Chip
             {...chipProps}
             label={filters.state.guests.children}
-            onDelete={handleRemoveGuests}
+            onDelete={handleRemoveChildrenGuests}
           />
         )}
       </FiltersBlock>
