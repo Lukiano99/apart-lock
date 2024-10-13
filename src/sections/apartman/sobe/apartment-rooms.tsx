@@ -14,63 +14,97 @@ import { useTheme } from "@mui/material/styles";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import IconButton from "@mui/material/IconButton";
-import CardHeader from "@mui/material/CardHeader";
-import ListItemText from "@mui/material/ListItemText";
-
-import { fDate, fIsAfter, fTime } from "src/utils/format-time";
 
 import { Label } from "src/components/label";
 import { Iconify } from "src/components/iconify";
 import { Scrollbar } from "src/components/scrollbar";
-import { TableHeadCustom } from "src/components/table";
+import { TableHeadCustom, TableSkeleton } from "src/components/table";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
-import { Room } from "@prisma/client";
 import { fCurrency } from "@/utils/format-number";
-import { Stack } from "@mui/material";
 import { RoomsTableToolbar } from "../rooms-table-toolbar";
-import { useSetState } from "@/hooks/use-set-state";
-import { IInvoiceTableFilters } from "@/types/invoice";
-import { INVOICE_SERVICE_OPTIONS } from "@/_mock";
-import Link from "next/link";
 import { paths } from "@/routes/paths";
+import { api, RouterOutputs } from "@/trpc/react";
+import { RouterLink } from "@/routes/components";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
+import qs from "query-string";
+import { LoadingIcon } from "yet-another-react-lightbox";
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
   title?: string;
   subheader?: string;
   headLabel: TableHeadCustomProps["headLabel"];
-  tableData: Room[];
+  apartmentId: string;
 };
 
 export function ApartmentRooms({
   title,
   subheader,
   headLabel,
-  tableData,
+  apartmentId,
   ...other
 }: Props) {
+  const searchParams = useSearchParams();
+
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (searchParams) {
+      const params = qs.parse(searchParams.toString());
+      const parsedStartDate = params.startDate
+        ? new Date(params.startDate as string)
+        : null;
+      const parsedEndDate = params.endDate
+        ? new Date(params.endDate as string)
+        : null;
+
+      setStartDate(parsedStartDate);
+      setEndDate(parsedEndDate);
+    }
+  }, [searchParams]);
+
+  const { data: tableDateRooms, isPending } = api.room.list.useQuery({
+    apartmentId,
+  });
   return (
     <Card {...other}>
       {/* <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} /> */}
       <RoomsTableToolbar
-        // filters={filters}
         dateError={false}
+        startDate={startDate ?? null}
+        endDate={endDate ?? null}
         // onResetPage={table.onResetPage}
-        options={{
-          services: INVOICE_SERVICE_OPTIONS.map((option) => option.name),
-        }}
       />
       <Scrollbar sx={{ minHeight: 462 }}>
-        <Table sx={{ minWidth: 960 }}>
-          <TableHeadCustom headLabel={headLabel} />
-
-          <TableBody>
-            {tableData.map((row) => (
-              <RowItem key={row.id} row={row} />
-            ))}
-          </TableBody>
-        </Table>
+        {
+          <Table sx={{ minWidth: 960 }}>
+            <TableHeadCustom headLabel={headLabel} />
+            {isPending && (
+              <>
+                {Array(5)
+                  .fill(null)
+                  .map((_, idx) => (
+                    <TableSkeleton key={idx} />
+                  ))}
+              </>
+            )}
+            {!isPending && tableDateRooms && (
+              <TableBody>
+                {tableDateRooms.map((row, idx) => (
+                  <RowItem
+                    key={idx}
+                    row={row}
+                    startDate={startDate as Date}
+                    endDate={endDate as Date}
+                  />
+                ))}
+              </TableBody>
+            )}
+          </Table>
+        }
       </Scrollbar>
 
       <Divider sx={{ borderStyle: "dashed" }} />
@@ -81,10 +115,18 @@ export function ApartmentRooms({
 // ----------------------------------------------------------------------
 
 type RowItemProps = {
-  row: Props["tableData"][number];
+  // row: Props["tableData"][number];
+  row: RouterOutputs["room"]["list"][number];
+  startDate: Date;
+  endDate: Date;
 };
 
-function RowItem({ row }: RowItemProps) {
+function RowItem({ row, startDate, endDate }: RowItemProps) {
+  const available = !row.reservations.some(
+    (reservation) =>
+      startDate <= reservation.check_out && endDate >= reservation.check_in
+  );
+
   const theme = useTheme();
 
   const popover = usePopover();
@@ -140,42 +182,28 @@ function RowItem({ row }: RowItemProps) {
         </TableCell>
 
         <TableCell>
-          {/* <Label
+          <Label
             variant={lightMode ? "soft" : "filled"}
-            color={
-              (!row.occupiedFrom && !row.occupiedUntil && "success") ||
-              (row.occupiedFrom &&
-                new Date() < row.occupiedFrom &&
-                "success") ||
-              (row.occupiedUntil &&
-                new Date() > row.occupiedUntil &&
-                "success") ||
-              "error"
-            }
+            color={available ? "success" : "error"}
           >
-            {(!row.occupiedFrom && !row.occupiedUntil && "dostupno") ||
-              (row.occupiedFrom &&
-                new Date() < row.occupiedFrom &&
-                "dostupno") ||
-              (row.occupiedUntil &&
-                new Date() > row.occupiedUntil &&
-                "dostupno") ||
-              "nedostupno"}
-          </Label> */}
-          <Label variant={lightMode ? "soft" : "filled"} color={"success"}>
-            dostupno
+            {available ? "Dostupno" : "Nedostupno"}
           </Label>
+          {/* <Label variant={lightMode ? "soft" : "filled"} color={"success"}>
+            dostupno
+          </Label>*/}
         </TableCell>
 
         <TableCell align="left" sx={{ pr: 1 }}>
-          <Link
+          <Button
+            component={RouterLink}
             href={paths.apartments.roomReservation(row.apartmentId, row.id)}
-            target="_blank"
+            size="large"
+            variant="contained"
+            color="primary"
+            disabled={!available}
           >
-            <Button color="primary" variant="contained">
-              Rezerviši
-            </Button>
-          </Link>
+            Rezerviši
+          </Button>
         </TableCell>
 
         <TableCell align="right" sx={{ pr: 1 }}>

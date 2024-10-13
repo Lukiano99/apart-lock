@@ -21,6 +21,7 @@ import { formHelperTextClasses } from "@mui/material/FormHelperText";
 
 import { Iconify } from "src/components/iconify";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
+import dayjs from "dayjs";
 
 // ----------------------------------------------------------------------
 
@@ -28,16 +29,16 @@ type Props = {
   dateError: boolean;
   onResetPage?: () => void;
   filters?: UseSetStateReturn<IInvoiceTableFilters>;
-  options: {
-    services: string[];
-  };
+  startDate: Date | null;
+  endDate: Date | null;
 };
 
 export function RoomsTableToolbar({
   filters,
-  options,
   dateError,
   onResetPage,
+  startDate,
+  endDate,
 }: Props) {
   const popover = usePopover();
 
@@ -88,6 +89,7 @@ export function RoomsTableToolbar({
       >
         <DatePicker
           label="Dolazak"
+          value={startDate ? dayjs(startDate) : null}
           onChange={handleFilterStartDate}
           slotProps={{ textField: { fullWidth: true } }}
           sx={{ maxWidth: { md: 180 } }}
@@ -95,6 +97,7 @@ export function RoomsTableToolbar({
 
         <DatePicker
           label="Odlazak"
+          value={endDate ? dayjs(endDate) : null}
           onChange={handleFilterEndDate}
           slotProps={{
             textField: {
@@ -127,14 +130,7 @@ export function RoomsTableToolbar({
             }
             inputProps={{ id: "invoice-filter-service-select-label" }}
             sx={{ textTransform: "capitalize" }}
-          >
-            {options.services.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={false} />
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
+          />
         </FormControl>
       </Stack>
     </>

@@ -68,10 +68,10 @@ export function ApartmentDetailsView({ apartment }: Props) {
         <ApartmentDetailsContent apartment={apartment} />
       )}
 
-      {tabs.value === "rooms" && (
+      {tabs.value === "rooms" && apartment && (
         <ApartmentRooms
           // title="Izaberite sobu koja vam odgovara"
-          tableData={apartment?.rooms!}
+          apartmentId={apartment.id}
           headLabel={[
             { id: "destination", label: "Tip sobe" },
             { id: "customer", label: "Broj gostiju" },
