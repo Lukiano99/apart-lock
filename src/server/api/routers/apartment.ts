@@ -44,6 +44,16 @@ export const apartmentRouter = createTRPCRouter({
         },
       });
 
+      const checkIn = input.startDate?.getTime();
+      const checkOut = input.endDate?.getTime();
+      const nightsStays =
+        checkIn && checkOut
+          ? Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24)) // Konverzija milisekundi u dane
+          : 1; // Ako nema datuma, barem jedna noć
+
+      availableApartments.map(
+        (apartment) => (apartment.price = apartment.price * nightsStays)
+      );
       return availableApartments;
     }),
 
