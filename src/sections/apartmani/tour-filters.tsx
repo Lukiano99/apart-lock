@@ -1,4 +1,3 @@
-import type { ITourGuide } from "src/types/tour";
 import { useSetState, type UseSetStateReturn } from "src/hooks/use-set-state";
 
 import { useCallback, useEffect, useState } from "react";
@@ -18,12 +17,15 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
+import qs from "query-string";
+
 import { Iconify } from "src/components/iconify";
 import { Scrollbar } from "src/components/scrollbar";
 import { IApartmentFilters } from "@/schemas/apartment";
 import dayjs, { Dayjs } from "dayjs";
 import { fIsAfter } from "@/utils/format-time";
 import { IncrementerButton } from "./components/incrementer-button";
+import { useRouter } from "next/navigation";
 
 // ----------------------------------------------------------------------
 
@@ -57,6 +59,8 @@ export function ApartmentFilters({
 
   const [dateError, setDateError] = useState(false);
 
+  const router = useRouter(); // Next.js hook for navigation
+
   const handleReset = () => {
     onReset();
     filters.onResetState;
@@ -66,6 +70,8 @@ export function ApartmentFilters({
     filters.state.guests.adults = 1;
     filters.state.guests.children = 0;
     filters.state.services = [];
+
+    router.replace(window.location.pathname);
   };
 
   const handleFilterServices = useCallback(
@@ -131,6 +137,35 @@ export function ApartmentFilters({
 
   const handleApply = () => {
     onApply(filters.state);
+
+    const query = {
+      location: filters.state.location || undefined,
+      startDate: filters.state.startDate
+        ? filters.state.startDate.toISOString().split("T")[0]
+        : undefined,
+      endDate: filters.state.endDate
+        ? filters.state.endDate.toISOString().split("T")[0]
+        : undefined,
+      adults:
+        filters.state.guests.adults !== 1
+          ? filters.state.guests.adults
+          : undefined,
+      children:
+        filters.state.guests.children !== 0
+          ? filters.state.guests.children
+          : undefined,
+      services:
+        filters.state.services.length > 0 ? filters.state.services : undefined,
+    };
+
+    // Create query string using query-string package
+    const queryStringified = qs.stringify(query, {
+      skipNull: true, // Skip null or undefined values
+      skipEmptyString: true, // Skip empty strings
+    });
+
+    // Push new URL with updated query parameters
+    router.push(`?${queryStringified}`);
   };
 
   const renderHead = (

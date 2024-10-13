@@ -1,5 +1,4 @@
 "use client";
-import type { ITourItem } from "src/types/tour";
 
 import { useCallback } from "react";
 
@@ -10,9 +9,8 @@ import { paths } from "src/routes/paths";
 import { useRouter } from "src/routes/hooks";
 
 import { ApartmentItem } from "./tour-item";
-import { api, RouterOutputs } from "@/trpc/react";
+import { RouterOutputs } from "@/trpc/react";
 import ApartmentsSkeleton from "./apartments-skeleton";
-import { Apartment, Image as ApartmentImages } from "@prisma/client";
 
 // ----------------------------------------------------------------------
 
@@ -67,7 +65,7 @@ export function ApartmentList({ apartments, isLoading }: Props) {
         {isLoading && !apartments && <ApartmentsSkeleton />}
       </Box>
 
-      {apartments && apartments.length > 8 && (
+      {apartments && apartments.length > 12 && (
         <Pagination
           count={8}
           sx={{
