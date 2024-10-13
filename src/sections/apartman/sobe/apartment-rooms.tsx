@@ -142,12 +142,18 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
     !row.reservations.some(
       (reservation) =>
         startDate <= reservation.check_out && endDate >= reservation.check_in
-    ) && row.bed_count >= guests.adults + guests.children;
+    ) &&
+    row.bed_count >= guests.adults + guests.children &&
+    startDate &&
+    endDate;
 
-  const nights = fDuration({
-    startDate,
-    endDate,
-  });
+  const nights =
+    startDate && endDate
+      ? fDuration({
+          startDate,
+          endDate,
+        })
+      : 1;
 
   const totalPrice = row.price * nights;
 
