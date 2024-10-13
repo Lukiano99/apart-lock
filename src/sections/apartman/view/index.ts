@@ -1,7 +1,7 @@
-export * from './tour-list-view';
+export * from "./apartment-list-view";
 
-export * from './tour-edit-view';
+export * from "./apartment-edit-view";
 
-export * from './tour-create-view';
+export * from "./apartment-create-view";
 
-export * from './tour-details-view';
+export * from "./apartment-details-view";

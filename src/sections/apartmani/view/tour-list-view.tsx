@@ -24,7 +24,6 @@ import { EmptyContent } from "src/components/empty-content";
 import { ApartmentList } from "../apartments-list";
 import { ApartmentSort } from "../tour-sort";
 import { ApartmentSearch } from "../tour-search";
-import { ApartmentFilters } from "../tour-filters";
 import { ApartmentFiltersResult } from "../tour-filters-result";
 import { ApartmentsContent } from "@/layouts/apartments";
 import { api } from "@/trpc/react";
@@ -33,6 +32,7 @@ import { APARTMENT_SERVICE_OPTIONS } from "@/_mock/_apartment";
 
 import qs from "query-string";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ApartmentFilters } from "../apartments-filters";
 
 // ----------------------------------------------------------------------
 

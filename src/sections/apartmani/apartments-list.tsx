@@ -8,7 +8,7 @@ import Pagination, { paginationClasses } from "@mui/material/Pagination";
 import { paths } from "src/routes/paths";
 import { useRouter } from "src/routes/hooks";
 
-import { ApartmentItem } from "./tour-item";
+import { ApartmentItem } from "./apartments-item";
 import { RouterOutputs } from "@/trpc/react";
 import ApartmentsSkeleton from "./apartments-skeleton";
 

@@ -11,8 +11,8 @@ import { _bookings, TOUR_PUBLISH_OPTIONS } from "src/_mock";
 
 import { Label } from "src/components/label";
 
-import { TourDetailsContent } from "../tour-details-content";
-import { TourDetailsToolbar } from "../tour-details-toolbar";
+import { ApartmentDetailsContent } from "../apartment-details-content";
+import { TourDetailsToolbar } from "../apartment-details-toolbar";
 import { ApartmentsContent } from "@/layouts/apartments";
 import { ApartmentRooms } from "../sobe/apartment-rooms";
 import { RouterOutputs } from "@/trpc/react";
@@ -64,7 +64,9 @@ export function ApartmentDetailsView({ apartment }: Props) {
       />
       {renderTabs}
 
-      {tabs.value === "content" && <TourDetailsContent apartment={apartment} />}
+      {tabs.value === "content" && (
+        <ApartmentDetailsContent apartment={apartment} />
+      )}
 
       {tabs.value === "rooms" && (
         <ApartmentRooms

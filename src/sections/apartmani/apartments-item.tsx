@@ -6,19 +6,21 @@ import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
-import IconButton from "@mui/material/IconButton";
 import ListItemText from "@mui/material/ListItemText";
 
 import { paths } from "src/routes/paths";
 import { RouterLink } from "src/routes/components";
 
 import { fCurrency } from "src/utils/format-number";
-import { fDateTime, fDateRangeShortLabel } from "src/utils/format-time";
+import { fDateTime } from "src/utils/format-time";
 
 import { Image } from "src/components/image";
 import { Iconify } from "src/components/iconify";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
 import { Apartment, Image as ApartmentImage } from "@prisma/client";
+import { useEffect, useState } from "react";
+import qs from "query-string";
+import { useRouter } from "next/navigation";
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +34,23 @@ type Props = {
 
 export function ApartmentItem({ apartment, onView, onEdit, onDelete }: Props) {
   const popover = usePopover();
+
+  const router = useRouter();
+  const [queryParams, setQueryParams] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Pročitaj filtere iz URL-a
+    const query = qs.parse(window.location.search);
+
+    // Kreiraj query string
+    const queryStringified = qs.stringify(query, {
+      skipNull: true,
+      skipEmptyString: true,
+    });
+
+    // Setuj query string za korišćenje u href
+    setQueryParams(queryStringified);
+  }, [router]); // Ažuriraj kada se URL promeni
 
   const renderRating = (
     <Stack
@@ -118,7 +137,7 @@ export function ApartmentItem({ apartment, onView, onEdit, onDelete }: Props) {
       secondary={
         <Link
           component={RouterLink}
-          href={paths.apartments.details(apartment.id)}
+          href={`${paths.apartments.details(apartment.id)}${queryParams ? `?${queryParams}` : ""}`}
           color="inherit"
         >
           {apartment.name}
