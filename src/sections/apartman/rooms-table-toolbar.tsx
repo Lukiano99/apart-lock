@@ -3,7 +3,7 @@ import type { IInvoiceTableFilters } from "src/types/invoice";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import type { UseSetStateReturn } from "src/hooks/use-set-state";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Stack from "@mui/material/Stack";
 import Select from "@mui/material/Select";
@@ -22,7 +22,10 @@ import { formHelperTextClasses } from "@mui/material/FormHelperText";
 import { Iconify } from "src/components/iconify";
 import { usePopover, CustomPopover } from "src/components/custom-popover";
 import dayjs from "dayjs";
+import { Button } from "@mui/material";
 
+import qs from "query-string";
+import { useRouter } from "next/navigation";
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -37,10 +40,20 @@ export function RoomsTableToolbar({
   filters,
   dateError,
   onResetPage,
-  startDate,
-  endDate,
+  startDate: _startDate,
+  endDate: _endDate,
 }: Props) {
   const popover = usePopover();
+
+  const [startDate, setStartDate] = useState<Date | null>(_startDate);
+  const [endDate, setEndDate] = useState<Date | null>(_endDate);
+
+  useEffect(() => {
+    setStartDate(_startDate);
+    setEndDate(_endDate);
+  }, [_startDate, _endDate]);
+
+  const router = useRouter();
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,21 +76,37 @@ export function RoomsTableToolbar({
     [filters, onResetPage]
   );
 
-  const handleFilterStartDate = useCallback(
-    (newValue: IDatePickerControl) => {
-      onResetPage && onResetPage();
-      filters && filters.setState({ startDate: newValue });
-    },
-    [filters, onResetPage]
-  );
+  const handleFilterStartDate = (newValue: IDatePickerControl) => {
+    if (newValue) {
+      setStartDate(newValue.toDate()); // Konverzija Dayjs u Date
+    } else {
+      setStartDate(null); // Ako nema vrednosti, postavi na null
+    }
+  };
 
-  const handleFilterEndDate = useCallback(
-    (newValue: IDatePickerControl) => {
-      onResetPage && onResetPage();
-      filters && filters.setState({ endDate: newValue });
-    },
-    [filters, onResetPage]
-  );
+  const handleFilterEndDate = (newValue: IDatePickerControl) => {
+    if (newValue) {
+      setEndDate(newValue.toDate()); // Konverzija Dayjs u Date
+    } else {
+      setEndDate(null); // Ako nema vrednosti, postavi na null
+    }
+  };
+
+  const handleApply = () => {
+    const query = {
+      startDate: startDate ? startDate.toLocaleDateString("en-CA") : undefined, // Ispravno formatiranje
+      endDate: endDate ? endDate.toLocaleDateString("en-CA") : undefined, // Ispravno formatiranje
+    };
+
+    // Create query string using query-string package
+    const queryStringified = qs.stringify(query, {
+      skipNull: true, // Skip null or undefined values
+      skipEmptyString: true, // Skip empty strings
+    });
+
+    // Push new URL with updated query parameters
+    router.push(`?${queryStringified}`);
+  };
 
   return (
     <>
@@ -116,22 +145,10 @@ export function RoomsTableToolbar({
             },
           }}
         />
-        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 180 } }}>
-          <InputLabel htmlFor="invoice-filter-service-select-label">
-            Gosti
-          </InputLabel>
 
-          <Select
-            disabled
-            onChange={handleFilterService}
-            input={<OutlinedInput label="Service" />}
-            renderValue={(selected) =>
-              selected.map((value) => value).join(", ")
-            }
-            inputProps={{ id: "invoice-filter-service-select-label" }}
-            sx={{ textTransform: "capitalize" }}
-          />
-        </FormControl>
+        <Button variant="text" onClick={handleApply}>
+          Primeni
+        </Button>
       </Stack>
     </>
   );

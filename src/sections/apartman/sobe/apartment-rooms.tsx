@@ -69,40 +69,40 @@ export function ApartmentRooms({
   const { data: tableDateRooms, isPending } = api.room.list.useQuery({
     apartmentId,
   });
+  const ids = tableDateRooms?.map((r) => r.id);
+  console.log({ ids });
   return (
     <Card {...other}>
       {/* <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} /> */}
       <RoomsTableToolbar
         dateError={false}
-        startDate={startDate ?? null}
-        endDate={endDate ?? null}
+        startDate={startDate}
+        endDate={endDate}
         // onResetPage={table.onResetPage}
       />
       <Scrollbar sx={{ minHeight: 462 }}>
         {
           <Table sx={{ minWidth: 960 }}>
             <TableHeadCustom headLabel={headLabel} />
-            {isPending && (
-              <>
-                {Array(5)
-                  .fill(null)
-                  .map((_, idx) => (
-                    <TableSkeleton key={idx} />
-                  ))}
-              </>
-            )}
-            {!isPending && tableDateRooms && (
-              <TableBody>
-                {tableDateRooms.map((row, idx) => (
+
+            <TableBody>
+              {!isPending &&
+                tableDateRooms &&
+                tableDateRooms.length > 0 &&
+                tableDateRooms.map((row, idx) => (
                   <RowItem
-                    key={idx}
+                    key={row.id}
                     row={row}
                     startDate={startDate as Date}
                     endDate={endDate as Date}
                   />
                 ))}
-              </TableBody>
-            )}
+              {/* {isPending &&
+                !tableDateRooms &&
+                Array(10)
+                  .fill(null)
+                  .map((_, idx) => <TableSkeleton key={idx} />)} */}
+            </TableBody>
           </Table>
         }
       </Scrollbar>
@@ -154,68 +154,65 @@ function RowItem({ row, startDate, endDate }: RowItemProps) {
   };
 
   return (
-    <>
-      <TableRow>
-        <TableCell>
-          {row.bed_count} {row.bed_count === 1 ? "krevet" : "kreveta"}
-        </TableCell>
+    <TableRow>
+      <TableCell>
+        {row.bed_count} {row.bed_count === 1 ? "krevet" : "kreveta"}
+      </TableCell>
 
-        <TableCell>
-          {[...Array(row.bed_count)].map((_, index) => (
-            <Iconify icon="mdi:account" style={{ marginLeft: 0 }} />
-          ))}
-        </TableCell>
+      <TableCell>
+        {[...Array(row.bed_count)].map((_, index) => (
+          <Iconify key={index} icon="mdi:account" style={{ marginLeft: 0 }} />
+        ))}
+      </TableCell>
 
-        <TableCell>{fCurrency(row.price, { currency: "eur" })}</TableCell>
+      <TableCell>{fCurrency(row.price, { currency: "eur" })}</TableCell>
 
-        <TableCell>
-          <Label
-            variant={lightMode ? "soft" : "filled"}
-            color={
-              (row.paymentMethod === "CARD" && "warning") ||
-              (row.paymentMethod === "CASH" && "info") ||
-              "error"
-            }
-          >
-            {row.paymentMethod === "CASH" ? "Gotovina po dolasku" : "Karticom"}
-          </Label>
-        </TableCell>
+      <TableCell>
+        <Label
+          variant={lightMode ? "soft" : "filled"}
+          color={
+            (row.paymentMethod === "CARD" && "warning") ||
+            (row.paymentMethod === "CASH" && "info") ||
+            "error"
+          }
+        >
+          {row.paymentMethod === "CASH" ? "Gotovina po dolasku" : "Karticom"}
+        </Label>
+      </TableCell>
 
-        <TableCell>
-          <Label
-            variant={lightMode ? "soft" : "filled"}
-            color={available ? "success" : "error"}
-          >
-            {available ? "Dostupno" : "Nedostupno"}
-          </Label>
-          {/* <Label variant={lightMode ? "soft" : "filled"} color={"success"}>
+      <TableCell>
+        <Label
+          variant={lightMode ? "soft" : "filled"}
+          color={available ? "success" : "error"}
+        >
+          {available ? "Dostupno" : "Nedostupno"}
+        </Label>
+        {/* <Label variant={lightMode ? "soft" : "filled"} color={"success"}>
             dostupno
           </Label>*/}
-        </TableCell>
+      </TableCell>
 
-        <TableCell align="left" sx={{ pr: 1 }}>
-          <Button
-            component={RouterLink}
-            href={paths.apartments.roomReservation(row.apartmentId, row.id)}
-            size="large"
-            variant="contained"
-            color="primary"
-            disabled={!available}
-          >
-            Rezerviši
-          </Button>
-        </TableCell>
+      <TableCell align="left" sx={{ pr: 1 }}>
+        <Button
+          component={RouterLink}
+          href={paths.apartments.roomReservation(row.apartmentId, row.id)}
+          size="large"
+          variant="contained"
+          color="primary"
+          disabled={!available}
+        >
+          Rezerviši
+        </Button>
+      </TableCell>
 
-        <TableCell align="right" sx={{ pr: 1 }}>
-          <IconButton
-            color={popover.open ? "inherit" : "default"}
-            onClick={popover.onOpen}
-          >
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-
+      <TableCell align="right" sx={{ pr: 1 }}>
+        <IconButton
+          color={popover.open ? "inherit" : "default"}
+          onClick={popover.onOpen}
+        >
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton>
+      </TableCell>
       <CustomPopover
         open={popover.open}
         anchorEl={popover.anchorEl}
@@ -234,6 +231,6 @@ function RowItem({ row, startDate, endDate }: RowItemProps) {
           </MenuItem>
         </MenuList>
       </CustomPopover>
-    </>
+    </TableRow>
   );
 }
