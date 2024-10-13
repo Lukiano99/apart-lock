@@ -231,10 +231,10 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
         <Button
           component={RouterLink}
           href={paths.apartments.roomReservation(row.apartmentId, row.id)}
-          size="large"
           variant="contained"
           color="primary"
           disabled={!available}
+          target="_blank"
         >
           Rezerviši
         </Button>
