@@ -34,6 +34,7 @@ type PaymentNewCardFormProps = BoxProps & {
   dateField?: TextFieldProps & { name: string };
   cvvField?: TextFieldProps & { name: string };
   openForm: UseBooleanReturn;
+  onCardAdd: () => void;
 };
 
 export function PaymentNewCardForm({
@@ -44,6 +45,7 @@ export function PaymentNewCardForm({
   numberField,
   holderField,
   openForm,
+  onCardAdd,
   ...other
 }: PaymentNewCardFormProps) {
   const FormField = isRHF ? Field.Text : TextField;
@@ -67,7 +69,6 @@ export function PaymentNewCardForm({
     api.creditCard.create.useMutation();
 
   const { handleSubmit, reset } = methods;
-  const router = useRouter();
 
   const onSubmit = handleSubmit((data: CreditCardSchemaType) => {
     createCreditCard(
@@ -82,8 +83,7 @@ export function PaymentNewCardForm({
         onSuccess: (data) => {
           toast.success(data.message);
           openForm.onFalse();
-          router.refresh();
-          reset();
+          onCardAdd();
         },
         onError: (e) => {
           toast.error("Nešto je iskrslo", { description: `${e.message}` });

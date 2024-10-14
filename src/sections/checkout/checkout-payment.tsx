@@ -21,6 +21,9 @@ import { CheckoutBillingInfo } from "./checkout-billing-info";
 import { checkout } from "@/_mock";
 import { Customer, PaymentMethod } from "@prisma/client";
 import { PaymentSchema, PaymentSchemaType } from "@/schemas/payment";
+import { useState } from "react";
+import { useParams } from "next/navigation";
+import { api } from "@/trpc/react";
 
 // ----------------------------------------------------------------------
 
@@ -49,11 +52,23 @@ interface CheckoutPaymentProps {
   customer: Customer;
 }
 export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
-  const defaultValues = { payment: PaymentMethod.CASH };
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH");
 
+  const handleMethodChange = () => {
+    if (paymentMethod === "CARD") {
+      setPaymentMethod("CASH");
+      return;
+    } else if (paymentMethod === "CASH") {
+      setPaymentMethod("CARD");
+      return;
+    }
+  };
   const methods = useForm<PaymentSchemaType>({
     resolver: zodResolver(PaymentSchema),
-    defaultValues,
+    defaultValues: {
+      payment: "",
+      cardId: "",
+    },
   });
 
   const {
@@ -61,8 +76,9 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(() => {
-    alert("Radi submit");
+  const onSubmit = handleSubmit((data: PaymentSchemaType) => {
+    console.log(data.payment);
+    console.log(data.cardId);
   });
 
   return (

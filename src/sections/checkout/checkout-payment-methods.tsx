@@ -5,7 +5,12 @@ import type {
   ICheckoutPaymentOption,
 } from "src/types/checkout";
 
-import { Controller, useFormContext } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldValues,
+  useFormContext,
+} from "react-hook-form";
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -26,8 +31,9 @@ import { Iconify } from "src/components/iconify";
 
 import { PaymentNewCardForm } from "../payment/payment-new-card-form";
 import { PaymentMethod } from "@prisma/client";
-import { useParams } from "next/navigation";
-import { api } from "@/trpc/react";
+import { useParams, useRouter } from "next/navigation";
+import { api, RouterOutputs } from "@/trpc/react";
+import { useEffect, useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +49,12 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
   const { control } = useFormContext();
 
   const openForm = useBoolean();
+
+  const { reservationId } = useParams();
+  const { data: creditCards, refetch } =
+    api.creditCard.getByReservationId.useQuery({
+      reservationId: reservationId.toString(),
+    });
 
   return (
     <>
@@ -66,6 +78,8 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
                     cardOptions={options.cards}
                     isCredit={isSelected && option.value === PaymentMethod.CARD}
                     onClick={() => onChange(option.value)}
+                    creditCards={creditCards ?? []}
+                    control={control}
                   />
                 );
               })}
@@ -80,7 +94,7 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
         />
       </Card>
 
-      <PaymentNewCardForm openForm={openForm} />
+      <PaymentNewCardForm openForm={openForm} onCardAdd={refetch} />
     </>
   );
 }
@@ -93,6 +107,8 @@ type OptionItemProps = BoxProps & {
   onOpen: () => void;
   option: ICheckoutPaymentOption;
   cardOptions: ICheckoutCardOption[];
+  creditCards: RouterOutputs["creditCard"]["getByReservationId"];
+  control: Control<FieldValues, any>;
 };
 
 function OptionItem({
@@ -102,14 +118,10 @@ function OptionItem({
   selected,
   isCredit,
   cardOptions,
+  creditCards,
+  control,
   ...other
 }: OptionItemProps) {
-  const { reservationId } = useParams();
-
-  const { data: creditCards } = api.creditCard.getByReservationId.useQuery({
-    reservationId: reservationId.toString(),
-  });
-
   return (
     <Box
       sx={{
@@ -168,19 +180,36 @@ function OptionItem({
       {isCredit && (
         <Box sx={{ px: 3, mb: 1 }}>
           {creditCards && (
-            <TextField
-              select
-              fullWidth
-              label="Card"
-              SelectProps={{ native: true }}
-            >
-              {creditCards.map((card) => (
-                <option key={card.id} value={card.cardNumber}>
-                  {card.cardHolder},{" "}
-                  {`**** **** **** ${card.cardNumber.slice(12)}`}
-                </option>
-              ))}
-            </TextField>
+            <Controller
+              name="cardId"
+              control={control}
+              defaultValue={creditCards[0]?.id || ""} // Postavi default vrednost na prvu karticu ako postoji
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <TextField
+                    select
+                    fullWidth
+                    label="Card"
+                    disabled={creditCards.length === 0}
+                    SelectProps={{ native: true }}
+                    {...field} // Vežeš vrednost i onChange na `TextField`
+                  >
+                    <option value={""} />
+                    {creditCards.map((card) => (
+                      <option key={card.id} value={card.id}>
+                        {card.cardHolder},{" "}
+                        {`**** **** **** ${card.cardNumber.slice(12)}`}
+                      </option>
+                    ))}
+                  </TextField>
+                  {!!error && (
+                    <FormHelperText error sx={{ mt: 0, px: 2 }}>
+                      {error.message}
+                    </FormHelperText>
+                  )}
+                </>
+              )}
+            />
           )}
           <Button
             size="small"
