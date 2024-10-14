@@ -99,7 +99,7 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
             variant="contained"
             loading={isSubmitting}
           >
-            Kreiraj rezervaciju
+            Završi rezervaciju
           </LoadingButton>
         </Grid>
       </Grid>

@@ -19,10 +19,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Stack,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 
 import { toast } from "src/components/snackbar";
@@ -67,7 +66,8 @@ export function PaymentNewCardForm({
   const { mutate: createCreditCard, isPending } =
     api.creditCard.create.useMutation();
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, reset } = methods;
+  const router = useRouter();
 
   const onSubmit = handleSubmit((data: CreditCardSchemaType) => {
     createCreditCard(
@@ -81,9 +81,13 @@ export function PaymentNewCardForm({
       {
         onSuccess: (data) => {
           toast.success(data.message);
+          openForm.onFalse();
+          router.refresh();
+          reset();
         },
         onError: (e) => {
           toast.error("Nešto je iskrslo", { description: `${e.message}` });
+          reset();
         },
       }
     );
@@ -169,7 +173,7 @@ export function PaymentNewCardForm({
               variant="outlined"
               onClick={openForm.onFalse}
             >
-              Cancel
+              Nazad
             </Button>
             <LoadingButton
               type="submit"

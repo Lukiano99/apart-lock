@@ -26,6 +26,8 @@ import { Iconify } from "src/components/iconify";
 
 import { PaymentNewCardForm } from "../payment/payment-new-card-form";
 import { PaymentMethod } from "@prisma/client";
+import { useParams } from "next/navigation";
+import { api } from "@/trpc/react";
 
 // ----------------------------------------------------------------------
 
@@ -62,7 +64,7 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
                     selected={isSelected}
                     onOpen={openForm.onTrue}
                     cardOptions={options.cards}
-                    isCredit={option.value === PaymentMethod.CARD}
+                    isCredit={isSelected && option.value === PaymentMethod.CARD}
                     onClick={() => onChange(option.value)}
                   />
                 );
@@ -102,6 +104,12 @@ function OptionItem({
   cardOptions,
   ...other
 }: OptionItemProps) {
+  const { reservationId } = useParams();
+
+  const { data: creditCards } = api.creditCard.getByReservationId.useQuery({
+    reservationId: reservationId.toString(),
+  });
+
   return (
     <Box
       sx={{
@@ -159,11 +167,27 @@ function OptionItem({
 
       {isCredit && (
         <Box sx={{ px: 3, mb: 1 }}>
+          {creditCards && (
+            <TextField
+              select
+              fullWidth
+              label="Card"
+              SelectProps={{ native: true }}
+            >
+              {creditCards.map((card) => (
+                <option key={card.id} value={card.cardNumber}>
+                  {card.cardHolder},{" "}
+                  {`**** **** **** ${card.cardNumber.slice(12)}`}
+                </option>
+              ))}
+            </TextField>
+          )}
           <Button
             size="small"
             color="primary"
             startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
             onClick={onOpen}
+            sx={{ mt: 2 }}
           >
             Unesite karticu
           </Button>

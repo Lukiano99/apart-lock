@@ -47,11 +47,38 @@ export const creditCardRouter = createTRPCRouter({
         creditCard,
       };
     }),
-  get: publicProcedure
+  getByReservationId: publicProcedure
     .input(
       z.object({
-        reservationId: z.string(),
+        reservationId: z.string().uuid(),
       })
     )
-    .query(async ({ ctx, input }) => {}),
+    .query(async ({ input, ctx }) => {
+      const { reservationId } = input;
+
+      // Pronalaženje rezervacije sa povezanim korisnikom i njegovim kreditnim karticama
+      const reservation = await ctx.db.reservation.findUnique({
+        where: {
+          id: reservationId,
+        },
+        include: {
+          customer: {
+            include: {
+              CreditCard: true, // Uključujemo sve kreditne kartice korisnika
+            },
+          },
+        },
+      });
+
+      // Ako rezervacija nije pronađena, bacamo grešku
+      if (!reservation) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Rezervacija nije pronađena.",
+        });
+      }
+
+      // Vraćamo sve kreditne kartice korisnika
+      return reservation.customer.CreditCard;
+    }),
 });
