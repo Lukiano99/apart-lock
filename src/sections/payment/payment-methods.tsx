@@ -1,43 +1,43 @@
-import type { BoxProps } from '@mui/material/Box';
+import type { BoxProps } from "@mui/material/Box";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
 
-import { useBoolean } from 'src/hooks/use-boolean';
+import { useBoolean } from "src/hooks/use-boolean";
 
-import { varAlpha } from 'src/theme/styles';
+import { varAlpha } from "src/theme/styles";
 
-import { Iconify } from 'src/components/iconify';
+import { Iconify } from "src/components/iconify";
 
-import { PaymentNewCardForm } from './payment-new-card-form';
+import { PaymentNewCardForm } from "./payment-new-card-form";
 
 // ----------------------------------------------------------------------
 
 const PAYMENT_OPTIONS = [
-  { label: 'Paypal', value: 'paypal' },
-  { label: 'Credit / debit', value: 'creditcard' },
+  { label: "Paypal", value: "paypal" },
+  { label: "Credit / debit", value: "creditcard" },
 ];
 
 const CARD_OPTIONS = [
   {
-    value: 'visa1',
-    label: '**** **** **** 1212 - Jimmy Holland',
+    value: "visa1",
+    label: "**** **** **** 1212 - Jimmy Holland",
   },
   {
-    value: 'visa2',
-    label: '**** **** **** 2424 - Shawn Stokes',
+    value: "visa2",
+    label: "**** **** **** 2424 - Shawn Stokes",
   },
   {
-    value: 'mastercard',
-    label: '**** **** **** 4545 - Cole Armstrong',
+    value: "mastercard",
+    label: "**** **** **** 4545 - Cole Armstrong",
   },
 ];
 
@@ -46,7 +46,7 @@ const CARD_OPTIONS = [
 export function PaymentMethods({ sx, ...other }: BoxProps) {
   const openForm = useBoolean();
 
-  const [method, setMethod] = useState('paypal');
+  const [method, setMethod] = useState("paypal");
 
   const handleChangeMethod = useCallback((newValue: string) => {
     setMethod(newValue);
@@ -69,7 +69,7 @@ export function PaymentMethods({ sx, ...other }: BoxProps) {
                 option={option}
                 selected={isSelected}
                 onOpen={openForm.onTrue}
-                isCredit={isSelected && option.value === 'creditcard'}
+                isCredit={isSelected && option.value === "creditcard"}
                 onClick={() => handleChangeMethod(option.value)}
               />
             );
@@ -77,11 +77,16 @@ export function PaymentMethods({ sx, ...other }: BoxProps) {
         </Box>
       </Box>
 
-      <Dialog fullWidth maxWidth="xs" open={openForm.value} onClose={openForm.onFalse}>
+      <Dialog
+        fullWidth
+        maxWidth="xs"
+        open={openForm.value}
+        onClose={openForm.onFalse}
+      >
         <DialogTitle> Add new card </DialogTitle>
 
-        <DialogContent sx={{ overflow: 'unset' }}>
-          <PaymentNewCardForm />
+        <DialogContent sx={{ overflow: "unset" }}>
+          {/* <PaymentNewCardForm /> */}
         </DialogContent>
 
         <DialogActions>
@@ -89,7 +94,11 @@ export function PaymentMethods({ sx, ...other }: BoxProps) {
             Cancel
           </Button>
 
-          <Button color="inherit" variant="contained" onClick={openForm.onFalse}>
+          <Button
+            color="inherit"
+            variant="contained"
+            onClick={openForm.onFalse}
+          >
             Add
           </Button>
         </DialogActions>
@@ -107,14 +116,22 @@ type OptionItemProps = BoxProps & {
   option: (typeof PAYMENT_OPTIONS)[number];
 };
 
-function OptionItem({ option, onOpen, selected, isCredit, sx, ...other }: OptionItemProps) {
+function OptionItem({
+  option,
+  onOpen,
+  selected,
+  isCredit,
+  sx,
+  ...other
+}: OptionItemProps) {
   return (
     <Box
       sx={{
         borderRadius: 1.5,
-        border: (theme) => `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.24)}`,
+        border: (theme) =>
+          `solid 1px ${varAlpha(theme.vars.palette.grey["500Channel"], 0.24)}`,
         transition: (theme) =>
-          theme.transitions.create(['box-shadow'], {
+          theme.transitions.create(["box-shadow"], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.shortest,
           }),
@@ -125,22 +142,26 @@ function OptionItem({ option, onOpen, selected, isCredit, sx, ...other }: Option
       }}
       {...other}
     >
-      <Box display="flex" alignItems="center" sx={{ px: 2, gap: 2, height: 80, cursor: 'pointer' }}>
+      <Box
+        display="flex"
+        alignItems="center"
+        sx={{ px: 2, gap: 2, height: 80, cursor: "pointer" }}
+      >
         <Iconify
           width={24}
-          icon={selected ? 'solar:check-circle-bold' : 'carbon:radio-button'}
+          icon={selected ? "solar:check-circle-bold" : "carbon:radio-button"}
           sx={{
-            color: 'text.disabled',
-            ...(selected && { color: 'primary.main' }),
+            color: "text.disabled",
+            ...(selected && { color: "primary.main" }),
           }}
         />
 
-        <Box component="span" sx={{ typography: 'subtitle1', flexGrow: 1 }}>
+        <Box component="span" sx={{ typography: "subtitle1", flexGrow: 1 }}>
           {option.label}
         </Box>
 
         <Box gap={1} display="flex" alignItems="center">
-          {option.value === 'creditcard' ? (
+          {option.value === "creditcard" ? (
             <>
               <Iconify width={24} icon="logos:mastercard" />
               <Iconify width={24} icon="logos:visa" />
@@ -153,7 +174,12 @@ function OptionItem({ option, onOpen, selected, isCredit, sx, ...other }: Option
 
       {isCredit && (
         <Box sx={{ px: 3 }}>
-          <TextField select fullWidth label="Card" SelectProps={{ native: true }}>
+          <TextField
+            select
+            fullWidth
+            label="Card"
+            SelectProps={{ native: true }}
+          >
             {CARD_OPTIONS.map((card) => (
               <option key={card.value} value={card.value}>
                 {card.label}

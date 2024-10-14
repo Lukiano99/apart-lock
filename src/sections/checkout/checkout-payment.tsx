@@ -19,24 +19,19 @@ import { CheckoutPaymentMethods } from "./checkout-payment-methods";
 import { CheckoutSummary } from "./checkout-summary";
 import { CheckoutBillingInfo } from "./checkout-billing-info";
 import { checkout } from "@/_mock";
-import { Customer } from "@prisma/client";
+import { Customer, PaymentMethod } from "@prisma/client";
+import { PaymentSchema, PaymentSchemaType } from "@/schemas/payment";
 
 // ----------------------------------------------------------------------
 
-const DELIVERY_OPTIONS: ICheckoutDeliveryOption[] = [
-  { value: 0, label: "Free", description: "5-7 days delivery" },
-  { value: 10, label: "Standard", description: "3-5 days delivery" },
-  { value: 20, label: "Express", description: "2-3 days delivery" },
-];
-
 const PAYMENT_OPTIONS: ICheckoutPaymentOption[] = [
   {
-    value: "creditcard",
+    value: PaymentMethod.CARD,
     label: "Visa / Master kartica",
     description: "Podržavamo plaćanje Visa i Matercard karticama.",
   },
   {
-    value: "cash",
+    value: PaymentMethod.CASH,
     label: "Gotovina",
     description: "Platite po dolasku u smeštaj.",
   },
@@ -50,24 +45,15 @@ const CARD_OPTIONS: ICheckoutCardOption[] = [
 
 // ----------------------------------------------------------------------
 
-export type PaymentSchemaType = zod.infer<typeof PaymentSchema>;
-
-export const PaymentSchema = zod.object({
-  payment: zod.string().min(1, { message: "Payment is required!" }),
-  // Not required
-  delivery: zod.number(),
-});
-
-// ----------------------------------------------------------------------
 interface CheckoutPaymentProps {
   customer: Customer;
 }
 export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
-  const defaultValues = { delivery: "free", payment: "card" };
+  const defaultValues = { payment: PaymentMethod.CASH };
 
   const methods = useForm<PaymentSchemaType>({
     resolver: zodResolver(PaymentSchema),
-    // defaultValues,
+    defaultValues,
   });
 
   const {
@@ -75,7 +61,7 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(() => {
     alert("Radi submit");
   });
 
@@ -89,7 +75,6 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
               cards: CARD_OPTIONS,
               payments: PAYMENT_OPTIONS,
             }}
-            sx={{ my: 3 }}
           />
         </Grid>
 

@@ -1,16 +1,31 @@
-import type { BoxProps } from '@mui/material/Box';
-import type { TextFieldProps } from '@mui/material/TextField';
+import type { BoxProps } from "@mui/material/Box";
+import type { TextFieldProps } from "@mui/material/TextField";
 
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 
-import { useBoolean } from 'src/hooks/use-boolean';
+import { useBoolean, UseBooleanReturn } from "src/hooks/use-boolean";
 
-import { Field } from 'src/components/hook-form';
-import { Iconify } from 'src/components/iconify';
+import { Field, Form } from "src/components/hook-form";
+import { Iconify } from "src/components/iconify";
+import { CreditCardSchema, CreditCardSchemaType } from "@/schemas/credit-card";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useParams } from "next/navigation";
+import { api } from "@/trpc/react";
 
+import { toast } from "src/components/snackbar";
 // ----------------------------------------------------------------------
 
 type PaymentNewCardFormProps = BoxProps & {
@@ -19,6 +34,7 @@ type PaymentNewCardFormProps = BoxProps & {
   holderField?: TextFieldProps & { name: string };
   dateField?: TextFieldProps & { name: string };
   cvvField?: TextFieldProps & { name: string };
+  openForm: UseBooleanReturn;
 };
 
 export function PaymentNewCardForm({
@@ -28,68 +44,150 @@ export function PaymentNewCardForm({
   dateField,
   numberField,
   holderField,
+  openForm,
   ...other
 }: PaymentNewCardFormProps) {
   const FormField = isRHF ? Field.Text : TextField;
 
   const showPassword = useBoolean();
 
+  const { reservationId } = useParams();
+
+  const methods = useForm<CreditCardSchemaType>({
+    mode: "onSubmit",
+    resolver: zodResolver(CreditCardSchema),
+    defaultValues: {
+      cardHolder: "",
+      cardNumber: "",
+      cvv: "",
+      expirationDate: "",
+    },
+  });
+
+  const { mutate: createCreditCard, isPending } =
+    api.creditCard.create.useMutation();
+
+  const { handleSubmit } = methods;
+
+  const onSubmit = handleSubmit((data: CreditCardSchemaType) => {
+    createCreditCard(
+      {
+        cardHolder: data.cardHolder,
+        cardNumber: data.cardNumber,
+        cvv: data.cvv,
+        expirationDate: data.expirationDate,
+        reservationId: reservationId as string,
+      },
+      {
+        onSuccess: (data) => {
+          toast.success(data.message);
+        },
+        onError: (e) => {
+          toast.error("Nešto je iskrslo", { description: `${e.message}` });
+        },
+      }
+    );
+  });
   return (
-    <Box gap={2.5} display="flex" flexDirection="column" sx={{ width: 1, ...sx }} {...other}>
-      <FormField
-        label="Card number"
-        placeholder="xxxx xxxx xxxx xxxx"
-        InputLabelProps={{ shrink: true }}
-        {...numberField}
-        name={numberField?.name ?? ''}
-      />
+    <Dialog
+      fullWidth
+      maxWidth="xs"
+      open={openForm.value}
+      onClose={openForm.onFalse}
+    >
+      <DialogTitle> Add new card </DialogTitle>
 
-      <FormField
-        label="Card holder"
-        placeholder="John Doe"
-        InputLabelProps={{ shrink: true }}
-        {...holderField}
-        name={holderField?.name ?? ''}
-      />
+      <DialogContent sx={{ overflow: "unset" }}>
+        <Form methods={methods} onSubmit={onSubmit}>
+          <Box
+            gap={2.5}
+            display="flex"
+            flexDirection="column"
+            sx={{ width: 1, ...sx }}
+            {...other}
+          >
+            <Field.Text
+              label="Card number"
+              placeholder="xxxx xxxx xxxx xxxx"
+              InputLabelProps={{ shrink: true }}
+              name={"cardNumber"}
+            />
 
-      <Box gap={2} display="flex">
-        <FormField
-          fullWidth
-          label="Expiration date"
-          placeholder="MM/YY"
-          InputLabelProps={{ shrink: true }}
-          {...dateField}
-          name={dateField?.name ?? ''}
-        />
-        <FormField
-          fullWidth
-          label="Cvv/Cvc"
-          placeholder="***"
-          InputLabelProps={{ shrink: true }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={showPassword.onToggle} edge="end">
-                  <Iconify icon={showPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          type={showPassword.value ? 'text' : 'password'}
-          {...cvvField}
-          name={cvvField?.name ?? ''}
-        />
-      </Box>
+            <Field.Text
+              label="Card holder"
+              placeholder="John Doe"
+              InputLabelProps={{ shrink: true }}
+              name={"cardHolder"}
+            />
 
-      <Box
-        gap={1}
-        display="flex"
-        alignItems="center"
-        sx={{ typography: 'caption', color: 'text.disabled' }}
-      >
-        <Iconify icon="solar:lock-password-outline" />
-        Your transaction is secured with SSL encryption
-      </Box>
-    </Box>
+            <Box gap={2} display="flex">
+              <Field.Text
+                fullWidth
+                label="Expiration date"
+                placeholder="MM/YY"
+                InputLabelProps={{ shrink: true }}
+                name={"expirationDate"}
+              />
+              <Field.Text
+                fullWidth
+                label="Cvv/Cvc"
+                placeholder="***"
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={showPassword.onToggle} edge="end">
+                        <Iconify
+                          icon={
+                            showPassword.value
+                              ? "solar:eye-bold"
+                              : "solar:eye-closed-bold"
+                          }
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                type={showPassword.value ? "text" : "password"}
+                name={"cvv"}
+              />
+            </Box>
+
+            <Box
+              gap={1}
+              display="flex"
+              alignItems="center"
+              sx={{ typography: "caption", color: "text.disabled" }}
+            >
+              <Iconify icon="solar:lock-password-outline" />
+              Your transaction is secured with SSL encryption
+            </Box>
+          </Box>
+          <DialogActions sx={{ width: "100%", px: 0 }}>
+            <Button
+              color="inherit"
+              variant="outlined"
+              onClick={openForm.onFalse}
+            >
+              Cancel
+            </Button>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              loading={isPending}
+              endIcon={
+                <Iconify
+                  icon="eva:arrow-ios-forward-fill"
+                  width={18}
+                  sx={{ ml: -0.5 }}
+                />
+              }
+            >
+              Dodaj karticu
+            </LoadingButton>
+          </DialogActions>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }

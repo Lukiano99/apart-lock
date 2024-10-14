@@ -25,6 +25,7 @@ import { varAlpha } from "src/theme/styles";
 import { Iconify } from "src/components/iconify";
 
 import { PaymentNewCardForm } from "../payment/payment-new-card-form";
+import { PaymentMethod } from "@prisma/client";
 
 // ----------------------------------------------------------------------
 
@@ -61,7 +62,7 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
                     selected={isSelected}
                     onOpen={openForm.onTrue}
                     cardOptions={options.cards}
-                    isCredit={isSelected && option.value === "creditcard"}
+                    isCredit={option.value === PaymentMethod.CARD}
                     onClick={() => onChange(option.value)}
                   />
                 );
@@ -77,32 +78,7 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
         />
       </Card>
 
-      <Dialog
-        fullWidth
-        maxWidth="xs"
-        open={openForm.value}
-        onClose={openForm.onFalse}
-      >
-        <DialogTitle> Add new card </DialogTitle>
-
-        <DialogContent sx={{ overflow: "unset" }}>
-          <PaymentNewCardForm />
-        </DialogContent>
-
-        <DialogActions>
-          <Button color="inherit" variant="outlined" onClick={openForm.onFalse}>
-            Cancel
-          </Button>
-
-          <Button
-            color="inherit"
-            variant="contained"
-            onClick={openForm.onFalse}
-          >
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <PaymentNewCardForm openForm={openForm} />
     </>
   );
 }
@@ -166,7 +142,7 @@ function OptionItem({
         </Box>
 
         <Box gap={1} display="flex" alignItems="center">
-          {option.value === "creditcard" && (
+          {option.value === PaymentMethod.CARD && (
             <>
               <Iconify icon="logos:mastercard" width={24} />
               <Iconify icon="logos:visa" width={24} />
@@ -175,35 +151,21 @@ function OptionItem({
           {option.value === "paypal" && (
             <Iconify icon="logos:paypal" width={24} />
           )}
-          {option.value === "cash" && (
+          {option.value === PaymentMethod.CASH && (
             <Iconify icon="solar:wad-of-money-bold" width={32} />
           )}
         </Box>
       </Box>
 
       {isCredit && (
-        <Box sx={{ px: 3 }}>
-          <TextField
-            select
-            fullWidth
-            label="Card"
-            SelectProps={{ native: true }}
-          >
-            {cardOptions.map((card) => (
-              <option key={card.value} value={card.value}>
-                {card.label}
-              </option>
-            ))}
-          </TextField>
-
+        <Box sx={{ px: 3, mb: 1 }}>
           <Button
             size="small"
             color="primary"
             startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
             onClick={onOpen}
-            sx={{ my: 3 }}
           >
-            Add new card
+            Unesite karticu
           </Button>
         </Box>
       )}

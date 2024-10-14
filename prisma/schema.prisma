@@ -87,6 +87,19 @@ model Customer {
   updatedAt DateTime? @updatedAt
 
   Reservation Reservation[]
+  CreditCard  CreditCard[]
+}
+
+model CreditCard {
+  id             String @id @default(uuid())
+  cardNumber     String
+  cardHolder     String
+  expirationDate String
+  cvv            String
+
+  // Veza sa korisnikom
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
 }
 
 model ConfirmationKey {
