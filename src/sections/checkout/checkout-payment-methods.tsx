@@ -5,7 +5,12 @@ import type {
   ICheckoutPaymentOption,
 } from "src/types/checkout";
 
-import { Controller, useFormContext } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldValues,
+  useFormContext,
+} from "react-hook-form";
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -25,6 +30,10 @@ import { varAlpha } from "src/theme/styles";
 import { Iconify } from "src/components/iconify";
 
 import { PaymentNewCardForm } from "../payment/payment-new-card-form";
+import { PaymentMethod } from "@prisma/client";
+import { useParams, useRouter } from "next/navigation";
+import { api, RouterOutputs } from "@/trpc/react";
+import { useEffect, useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +49,12 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
   const { control } = useFormContext();
 
   const openForm = useBoolean();
+
+  const { reservationId } = useParams();
+  const { data: creditCards, refetch } =
+    api.creditCard.getByReservationId.useQuery({
+      reservationId: reservationId.toString(),
+    });
 
   return (
     <>
@@ -61,8 +76,10 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
                     selected={isSelected}
                     onOpen={openForm.onTrue}
                     cardOptions={options.cards}
-                    isCredit={isSelected && option.value === "creditcard"}
+                    isCredit={isSelected && option.value === PaymentMethod.CARD}
                     onClick={() => onChange(option.value)}
+                    creditCards={creditCards ?? []}
+                    control={control}
                   />
                 );
               })}
@@ -77,32 +94,7 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
         />
       </Card>
 
-      <Dialog
-        fullWidth
-        maxWidth="xs"
-        open={openForm.value}
-        onClose={openForm.onFalse}
-      >
-        <DialogTitle> Add new card </DialogTitle>
-
-        <DialogContent sx={{ overflow: "unset" }}>
-          <PaymentNewCardForm />
-        </DialogContent>
-
-        <DialogActions>
-          <Button color="inherit" variant="outlined" onClick={openForm.onFalse}>
-            Cancel
-          </Button>
-
-          <Button
-            color="inherit"
-            variant="contained"
-            onClick={openForm.onFalse}
-          >
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <PaymentNewCardForm openForm={openForm} onCardAdd={refetch} />
     </>
   );
 }
@@ -115,6 +107,8 @@ type OptionItemProps = BoxProps & {
   onOpen: () => void;
   option: ICheckoutPaymentOption;
   cardOptions: ICheckoutCardOption[];
+  creditCards: RouterOutputs["creditCard"]["getByReservationId"];
+  control: Control<FieldValues, any>;
 };
 
 function OptionItem({
@@ -124,6 +118,8 @@ function OptionItem({
   selected,
   isCredit,
   cardOptions,
+  creditCards,
+  control,
   ...other
 }: OptionItemProps) {
   return (
@@ -166,7 +162,7 @@ function OptionItem({
         </Box>
 
         <Box gap={1} display="flex" alignItems="center">
-          {option.value === "creditcard" && (
+          {option.value === PaymentMethod.CARD && (
             <>
               <Iconify icon="logos:mastercard" width={24} />
               <Iconify icon="logos:visa" width={24} />
@@ -175,35 +171,54 @@ function OptionItem({
           {option.value === "paypal" && (
             <Iconify icon="logos:paypal" width={24} />
           )}
-          {option.value === "cash" && (
+          {option.value === PaymentMethod.CASH && (
             <Iconify icon="solar:wad-of-money-bold" width={32} />
           )}
         </Box>
       </Box>
 
       {isCredit && (
-        <Box sx={{ px: 3 }}>
-          <TextField
-            select
-            fullWidth
-            label="Card"
-            SelectProps={{ native: true }}
-          >
-            {cardOptions.map((card) => (
-              <option key={card.value} value={card.value}>
-                {card.label}
-              </option>
-            ))}
-          </TextField>
-
+        <Box sx={{ px: 3, mb: 1 }}>
+          {creditCards && (
+            <Controller
+              name="cardId"
+              control={control}
+              defaultValue={creditCards[0]?.id || ""} // Postavi default vrednost na prvu karticu ako postoji
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <TextField
+                    select
+                    fullWidth
+                    label="Card"
+                    disabled={creditCards.length === 0}
+                    SelectProps={{ native: true }}
+                    {...field} // Vežeš vrednost i onChange na `TextField`
+                  >
+                    <option value={""} />
+                    {creditCards.map((card) => (
+                      <option key={card.id} value={card.id}>
+                        {card.cardHolder},{" "}
+                        {`**** **** **** ${card.cardNumber.slice(12)}`}
+                      </option>
+                    ))}
+                  </TextField>
+                  {!!error && (
+                    <FormHelperText error sx={{ mt: 0, px: 2 }}>
+                      {error.message}
+                    </FormHelperText>
+                  )}
+                </>
+              )}
+            />
+          )}
           <Button
             size="small"
             color="primary"
             startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
             onClick={onOpen}
-            sx={{ my: 3 }}
+            sx={{ mt: 2 }}
           >
-            Add new card
+            Unesite karticu
           </Button>
         </Box>
       )}

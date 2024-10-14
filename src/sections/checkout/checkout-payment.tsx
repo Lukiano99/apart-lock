@@ -1,42 +1,36 @@
 import type {
   ICheckoutCardOption,
   ICheckoutPaymentOption,
-  ICheckoutDeliveryOption,
 } from "src/types/checkout";
 
-import { z as zod } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Unstable_Grid2";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 import { Form } from "src/components/hook-form";
-import { Iconify } from "src/components/iconify";
 
 import { CheckoutPaymentMethods } from "./checkout-payment-methods";
 import { CheckoutSummary } from "./checkout-summary";
 import { CheckoutBillingInfo } from "./checkout-billing-info";
 import { checkout } from "@/_mock";
-import { Customer } from "@prisma/client";
+import { Customer, PaymentMethod } from "@prisma/client";
+import { PaymentSchema, PaymentSchemaType } from "@/schemas/payment";
+import { useState } from "react";
+import { toast } from "@/components/snackbar";
+import { CheckoutOrderComplete } from "./checkout-order-complete";
 
 // ----------------------------------------------------------------------
 
-const DELIVERY_OPTIONS: ICheckoutDeliveryOption[] = [
-  { value: 0, label: "Free", description: "5-7 days delivery" },
-  { value: 10, label: "Standard", description: "3-5 days delivery" },
-  { value: 20, label: "Express", description: "2-3 days delivery" },
-];
-
 const PAYMENT_OPTIONS: ICheckoutPaymentOption[] = [
   {
-    value: "creditcard",
+    value: PaymentMethod.CARD,
     label: "Visa / Master kartica",
     description: "Podržavamo plaćanje Visa i Matercard karticama.",
   },
   {
-    value: "cash",
+    value: PaymentMethod.CASH,
     label: "Gotovina",
     description: "Platite po dolasku u smeštaj.",
   },
@@ -50,24 +44,29 @@ const CARD_OPTIONS: ICheckoutCardOption[] = [
 
 // ----------------------------------------------------------------------
 
-export type PaymentSchemaType = zod.infer<typeof PaymentSchema>;
-
-export const PaymentSchema = zod.object({
-  payment: zod.string().min(1, { message: "Payment is required!" }),
-  // Not required
-  delivery: zod.number(),
-});
-
-// ----------------------------------------------------------------------
 interface CheckoutPaymentProps {
   customer: Customer;
 }
 export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
-  const defaultValues = { delivery: "free", payment: "card" };
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH");
 
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const handleMethodChange = () => {
+    if (paymentMethod === "CARD") {
+      setPaymentMethod("CASH");
+      return;
+    } else if (paymentMethod === "CASH") {
+      setPaymentMethod("CARD");
+      return;
+    }
+  };
   const methods = useForm<PaymentSchemaType>({
     resolver: zodResolver(PaymentSchema),
-    // defaultValues,
+    defaultValues: {
+      payment: "",
+      cardId: "",
+    },
   });
 
   const {
@@ -75,49 +74,60 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
-    alert("Radi submit");
+  const onSubmit = handleSubmit((data: PaymentSchemaType) => {
+    toast.success("Uspesno!");
+    setIsCompleted(true);
   });
 
   return (
-    <Form methods={methods} onSubmit={onSubmit}>
-      <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
-          <CheckoutPaymentMethods
-            name="payment"
-            options={{
-              cards: CARD_OPTIONS,
-              payments: PAYMENT_OPTIONS,
-            }}
-            sx={{ my: 3 }}
-          />
-        </Grid>
+    <>
+      {!isCompleted && (
+        <Form methods={methods} onSubmit={onSubmit}>
+          <Grid container spacing={3}>
+            <Grid xs={12} md={8}>
+              <CheckoutPaymentMethods
+                name="payment"
+                options={{
+                  cards: CARD_OPTIONS,
+                  payments: PAYMENT_OPTIONS,
+                }}
+              />
+            </Grid>
 
-        <Grid xs={12} md={4}>
-          <CheckoutBillingInfo
-            customer={customer}
-            onBackStep={checkout.onBackStep}
-          />
+            <Grid xs={12} md={4}>
+              <CheckoutBillingInfo
+                customer={customer}
+                onBackStep={checkout.onBackStep}
+              />
 
-          <CheckoutSummary
-            total={checkout.total}
-            subtotal={checkout.subtotal}
-            discount={checkout.discount}
-            shipping={checkout.shipping}
-            onEdit={() => checkout.onGotoStep("nazad")}
-          />
+              <CheckoutSummary
+                total={checkout.total}
+                subtotal={checkout.subtotal}
+                discount={checkout.discount}
+                shipping={checkout.shipping}
+                onEdit={() => checkout.onGotoStep("nazad")}
+              />
 
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitting}
-          >
-            Kreiraj rezervaciju
-          </LoadingButton>
-        </Grid>
-      </Grid>
-    </Form>
+              <LoadingButton
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+              >
+                Završi rezervaciju
+              </LoadingButton>
+            </Grid>
+          </Grid>
+        </Form>
+      )}
+      {isCompleted && (
+        <CheckoutOrderComplete
+          open
+          onReset={() => {}}
+          onDownloadPDF={() => {}}
+        />
+      )}
+    </>
   );
 }

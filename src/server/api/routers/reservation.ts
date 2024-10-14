@@ -60,7 +60,6 @@ export const reservationRouter = createTRPCRouter({
         data: {
           customerId: customer.id,
           roomId: input.roomId,
-          paymentMethod: input.paymentMethod,
           createdAt: new Date(),
           status: "PENDING",
           // TODO, currently mocked

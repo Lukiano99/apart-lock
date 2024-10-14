@@ -21,9 +21,9 @@ export function ReservationView({ apartment, room }: ReservationViewProps) {
     <ApartmentsContent>
       <Grid container spacing={3}>
         <Grid xs={12} md={4} item>
-          <ReservationApartmentOverview room={room} apartment={apartment} />
-
           <ReservationOverview room={room} apartment={apartment} />
+
+          <ReservationApartmentOverview room={room} apartment={apartment} />
         </Grid>
 
         <Grid xs={12} md={8} item>
