@@ -74,17 +74,17 @@ const ReservationOverview = ({ apartment, room }: ReservationOverviewProps) => {
           {
             label: "Dolazak - odlazak",
             value: `${fDate(startDate, "ddd D MMM YYYY")} - ${fDate(endDate, "ddd D MMM YYYY")}`,
-            icon: <Iconify icon="solar:calendar-date-bold" />,
+            icon: <Iconify icon="solar:calendar-bold-duotone" />,
           },
           {
             label: "Trajanje boravka",
             value: `${duration} ${duration === 1 ? "noć" : "noći"}`,
-            icon: <Iconify icon="mdi:moon-and-stars" />,
+            icon: <Iconify icon="solar:moon-stars-bold-duotone" />,
           },
           {
             label: "Izabrali ste sobu za",
             value: `${guests.adults} ${guests.adults === 1 ? "osobu" : guests.adults < 5 ? "osobe" : "osoba"} ${guests.children > 0 ? `i ${guests.children} ${guests.children === 1 ? "dete" : "deteta"}` : ""}`,
-            icon: <Iconify icon="solar:bed-linear" />,
+            icon: <Iconify icon="solar:bed-bold-duotone" />,
           },
         ].map((item) => (
           <Stack key={item.label} spacing={1.5} direction="row">
@@ -116,7 +116,7 @@ const ReservationOverview = ({ apartment, room }: ReservationOverviewProps) => {
           .map((_) => <Skeleton sx={{ height: 50 }} />)}
       {!isLoading && (
         <Stack spacing={1.5} direction="row">
-          <Iconify icon="mdi:hand-coin" />
+          <Iconify icon="solar:hand-money-bold-duotone" />
           <ListItemText
             primary={"Ukupno za plaćanje"}
             secondary={fCurrency(totalPrice)}

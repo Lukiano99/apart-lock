@@ -24,22 +24,23 @@ const ReservationApartmentOverview = ({
         {
           label: "Naziv",
           value: `${apartment.name}`,
-          icon: <Iconify icon="mdi:office-building" />,
+          icon: <Iconify icon="solar:home-bold-duotone" />,
         },
         {
           label: "Ocena",
           value: "4.5",
-          icon: <Iconify icon="mdi:star" />,
+          icon: <Iconify icon="solar:star-bold-duotone" />,
         },
         {
           label: "Lokacija",
           value: `${apartment.location}`,
-          icon: <Iconify icon="mdi:location" />,
+          icon: <Iconify icon="solar:map-point-bold-duotone" />,
         },
         {
           label: "Dodaci",
-          value: `${apartment.services.map((service) => `${service.name}, `)}`,
-          icon: <Iconify icon="mdi:puzzle" />,
+          value: `${apartment.services.map((service) => service.name).join(", ")}`,
+
+          icon: <Iconify icon="solar:smile-circle-bold-duotone" />,
         },
       ].map((item) => (
         <Stack key={item.label} spacing={1.5} direction="row">
