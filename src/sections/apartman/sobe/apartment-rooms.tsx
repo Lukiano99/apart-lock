@@ -157,6 +157,8 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
 
   const totalPrice = row.price * nights;
 
+  const queryString = `?startDate=${startDate.toLocaleDateString("en-CA")}&endDate=${endDate.toLocaleDateString("en-CA")}&adults=${guests.adults}&children=${guests.children}`;
+
   const theme = useTheme();
 
   const popover = usePopover();
@@ -230,7 +232,7 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
       <TableCell>
         <Button
           component={RouterLink}
-          href={paths.apartments.roomReservation(row.apartmentId, row.id)}
+          href={`${paths.apartments.roomReservation(row.apartmentId, row.id)}${queryString}`}
           variant="contained"
           color="primary"
           disabled={!available}
