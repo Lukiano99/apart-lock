@@ -65,7 +65,6 @@ export function CustomerReservationForm({
       email: "",
       phone: "",
       roomId: roomId,
-      paymentMethod: "CASH",
     },
   });
 
@@ -73,7 +72,7 @@ export function CustomerReservationForm({
 
   const onSubmit = handleSubmit(async (data) => {
     createReservation(
-      { ...data, paymentMethod: "CASH", roomId },
+      { ...data, roomId },
       {
         onSuccess: (reservation) => {
           toast.success("Rezervacija je kreirana", {

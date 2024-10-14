@@ -4,7 +4,7 @@ export type PaymentSchemaType = z.infer<typeof PaymentSchema>;
 
 export const PaymentSchema = z
   .object({
-    payment: z.string().min(1, { message: "Payment is required!" }),
+    payment: z.string().min(1, { message: "Način plaćanja je obavezan!" }),
     cardId: z.string().optional(),
   })
   .refine(

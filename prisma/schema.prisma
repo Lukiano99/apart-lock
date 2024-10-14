@@ -67,7 +67,7 @@ model Reservation {
   adults   Int  @default(1)
   children Int?
 
-  paymentMethod   PaymentMethod
+  paymentMethod   PaymentMethod?
   confirmationKey ConfirmationKey[]
   Room            Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId          String

@@ -22,5 +22,5 @@ export const CustomerReservationSchema = zod.object({
     },
   }),
   roomId: zod.string(),
-  paymentMethod: zod.nativeEnum(PaymentMethod),
+  paymentMethod: zod.nativeEnum(PaymentMethod).optional(),
 });
