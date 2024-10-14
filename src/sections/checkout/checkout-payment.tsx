@@ -1,19 +1,15 @@
 import type {
   ICheckoutCardOption,
   ICheckoutPaymentOption,
-  ICheckoutDeliveryOption,
 } from "src/types/checkout";
 
-import { z as zod } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Unstable_Grid2";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 import { Form } from "src/components/hook-form";
-import { Iconify } from "src/components/iconify";
 
 import { CheckoutPaymentMethods } from "./checkout-payment-methods";
 import { CheckoutSummary } from "./checkout-summary";
@@ -22,8 +18,8 @@ import { checkout } from "@/_mock";
 import { Customer, PaymentMethod } from "@prisma/client";
 import { PaymentSchema, PaymentSchemaType } from "@/schemas/payment";
 import { useState } from "react";
-import { useParams } from "next/navigation";
-import { api } from "@/trpc/react";
+import { toast } from "@/components/snackbar";
+import { CheckoutOrderComplete } from "./checkout-order-complete";
 
 // ----------------------------------------------------------------------
 
@@ -54,6 +50,8 @@ interface CheckoutPaymentProps {
 export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH");
 
+  const [isCompleted, setIsCompleted] = useState(false);
+
   const handleMethodChange = () => {
     if (paymentMethod === "CARD") {
       setPaymentMethod("CASH");
@@ -77,48 +75,59 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
   } = methods;
 
   const onSubmit = handleSubmit((data: PaymentSchemaType) => {
-    console.log(data.payment);
-    console.log(data.cardId);
+    toast.success("Uspesno!");
+    setIsCompleted(true);
   });
 
   return (
-    <Form methods={methods} onSubmit={onSubmit}>
-      <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
-          <CheckoutPaymentMethods
-            name="payment"
-            options={{
-              cards: CARD_OPTIONS,
-              payments: PAYMENT_OPTIONS,
-            }}
-          />
-        </Grid>
+    <>
+      {!isCompleted && (
+        <Form methods={methods} onSubmit={onSubmit}>
+          <Grid container spacing={3}>
+            <Grid xs={12} md={8}>
+              <CheckoutPaymentMethods
+                name="payment"
+                options={{
+                  cards: CARD_OPTIONS,
+                  payments: PAYMENT_OPTIONS,
+                }}
+              />
+            </Grid>
 
-        <Grid xs={12} md={4}>
-          <CheckoutBillingInfo
-            customer={customer}
-            onBackStep={checkout.onBackStep}
-          />
+            <Grid xs={12} md={4}>
+              <CheckoutBillingInfo
+                customer={customer}
+                onBackStep={checkout.onBackStep}
+              />
 
-          <CheckoutSummary
-            total={checkout.total}
-            subtotal={checkout.subtotal}
-            discount={checkout.discount}
-            shipping={checkout.shipping}
-            onEdit={() => checkout.onGotoStep("nazad")}
-          />
+              <CheckoutSummary
+                total={checkout.total}
+                subtotal={checkout.subtotal}
+                discount={checkout.discount}
+                shipping={checkout.shipping}
+                onEdit={() => checkout.onGotoStep("nazad")}
+              />
 
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitting}
-          >
-            Završi rezervaciju
-          </LoadingButton>
-        </Grid>
-      </Grid>
-    </Form>
+              <LoadingButton
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+              >
+                Završi rezervaciju
+              </LoadingButton>
+            </Grid>
+          </Grid>
+        </Form>
+      )}
+      {isCompleted && (
+        <CheckoutOrderComplete
+          open
+          onReset={() => {}}
+          onDownloadPDF={() => {}}
+        />
+      )}
+    </>
   );
 }
