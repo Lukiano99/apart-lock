@@ -17,8 +17,10 @@ import { Iconify } from "src/components/iconify";
 type Props = {
   total: number;
   subtotal: number;
+  quantity: number;
   discount?: number;
   shipping?: number;
+  serviceFee?: number;
   onEdit?: () => void;
   onApplyDiscount?: (discount: number) => void;
 };
@@ -28,10 +30,13 @@ export function CheckoutSummary({
   onEdit,
   discount,
   subtotal,
+  quantity,
   shipping,
+  serviceFee,
   onApplyDiscount,
 }: Props) {
-  const displayShipping = shipping !== null ? "Free" : "-";
+  const displayShipping = shipping !== null ? "Besplatno" : "-";
+  const displayServiceFee = serviceFee !== null ? "Besplatno" : "-";
 
   return (
     <Card sx={{ mb: 3 }}>
@@ -44,23 +49,22 @@ export function CheckoutSummary({
             variant="body2"
             sx={{ flexGrow: 1, color: "text.secondary" }}
           >
-            Glavnica
+            Cena noćenja
           </Typography>
           <Typography component="span" variant="subtitle2">
-            {fCurrency(subtotal)}
+            {fCurrency(subtotal, { currency: "eur" })}
           </Typography>
         </Box>
-
         <Box display="flex">
           <Typography
             component="span"
             variant="body2"
             sx={{ flexGrow: 1, color: "text.secondary" }}
           >
-            Popust
+            Broj noćenja
           </Typography>
           <Typography component="span" variant="subtitle2">
-            {discount ? fCurrency(-discount) : "-"}
+            {quantity}
           </Typography>
         </Box>
 
@@ -73,7 +77,9 @@ export function CheckoutSummary({
             Usluga čišćenja
           </Typography>
           <Typography component="span" variant="subtitle2">
-            {shipping ? fCurrency(shipping) : displayShipping}
+            {serviceFee
+              ? fCurrency(serviceFee, { currency: "eur" })
+              : displayServiceFee}
           </Typography>
         </Box>
 
@@ -90,10 +96,7 @@ export function CheckoutSummary({
               variant="subtitle1"
               sx={{ display: "block", color: "error.main" }}
             >
-              {fCurrency(total)}
-            </Typography>
-            <Typography variant="caption" sx={{ fontStyle: "italic" }}>
-              (VAT included if applicable)
+              {fCurrency(total, { currency: "eur" })}
             </Typography>
           </Box>
         </Box>

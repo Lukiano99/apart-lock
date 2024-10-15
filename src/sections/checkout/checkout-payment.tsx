@@ -20,6 +20,11 @@ import { PaymentSchema, PaymentSchemaType } from "@/schemas/payment";
 import { useState } from "react";
 import { toast } from "@/components/snackbar";
 import { CheckoutOrderComplete } from "./checkout-order-complete";
+import { api } from "@/trpc/react";
+import { useParams } from "next/navigation";
+import { EmptyContent } from "@/components/empty-content";
+import { fDuration } from "@/utils/format-time";
+import { SplashScreen } from "@/components/loading-screen";
 
 // ----------------------------------------------------------------------
 
@@ -48,25 +53,32 @@ interface CheckoutPaymentProps {
   customer: Customer;
 }
 export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH");
-
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const handleMethodChange = () => {
-    if (paymentMethod === "CARD") {
-      setPaymentMethod("CASH");
-      return;
-    } else if (paymentMethod === "CASH") {
-      setPaymentMethod("CARD");
-      return;
-    }
-  };
+  const { reservationId } = useParams();
+
   const methods = useForm<PaymentSchemaType>({
     resolver: zodResolver(PaymentSchema),
     defaultValues: {
       payment: "",
       cardId: "",
     },
+  });
+
+  const { data: room, isPending } = api.room.get.useQuery({
+    reservationId: reservationId ? reservationId.toString() : "",
+  });
+
+  if (isPending) {
+    return <SplashScreen />;
+  }
+  if (!room) {
+    return <EmptyContent title="Rezervacija za ovu sobu nije pronadjena" />;
+  }
+
+  const durationNights = fDuration({
+    startDate: room.reservations[0].check_in,
+    endDate: room.reservations[0].check_out,
   });
 
   const {
@@ -101,10 +113,9 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
               />
 
               <CheckoutSummary
-                total={checkout.total}
-                subtotal={checkout.subtotal}
-                discount={checkout.discount}
-                shipping={checkout.shipping}
+                total={room.price * durationNights}
+                subtotal={room.price}
+                quantity={durationNights}
                 onEdit={() => checkout.onGotoStep("nazad")}
               />
 
