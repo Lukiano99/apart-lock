@@ -19,7 +19,6 @@ import {
   SettingsProvider,
 } from "src/components/settings";
 
-import { AuthProvider } from "src/auth/context/jwt";
 import { I18nProvider, LocalizationProvider } from "@/locales";
 import { detectLanguage } from "@/locales/server";
 import { TRPCReactProvider } from "@/trpc/react";
