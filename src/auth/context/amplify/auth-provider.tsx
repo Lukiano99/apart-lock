@@ -1,14 +1,16 @@
 'use client';
 
+import { Amplify } from 'aws-amplify';
 import { useMemo, useEffect, useCallback } from 'react';
+import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
 
 import { useSetState } from 'src/hooks/use-set-state';
 
-import axios, { endpoints } from 'src/utils/axios';
+import axios from 'src/utils/axios';
 
-import { STORAGE_KEY } from './constant';
+import { CONFIG } from 'src/config-global';
+
 import { AuthContext } from '../auth-context';
-import { setSession, isValidToken } from './utils';
 
 import type { AuthState } from '../../types';
 
@@ -19,6 +21,22 @@ import type { AuthState } from '../../types';
  * We only build demo at basic level.
  * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
  */
+
+/**
+ * Docs:
+ * https://docs.amplify.aws/react/build-a-backend/auth/manage-user-session/
+ */
+
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolId: CONFIG.amplify.userPoolId,
+      userPoolClientId: CONFIG.amplify.userPoolWebClientId,
+    },
+  },
+});
+
+// ----------------------------------------------------------------------
 
 type Props = {
   children: React.ReactNode;
@@ -32,18 +50,18 @@ export function AuthProvider({ children }: Props) {
 
   const checkUserSession = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+      const authSession = (await fetchAuthSession()).tokens;
 
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
+      if (authSession) {
+        const userAttributes = await fetchUserAttributes();
 
-        const res = await axios.get(endpoints.auth.me);
+        const accessToken = authSession.accessToken.toString();
 
-        const { user } = res.data;
-
-        setState({ user: { ...user, accessToken }, loading: false });
+        setState({ user: { ...authSession, ...userAttributes }, loading: false });
+        axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
       } else {
         setState({ user: null, loading: false });
+        delete axios.defaults.headers.common.Authorization;
       }
     } catch (error) {
       console.error(error);
@@ -67,6 +85,9 @@ export function AuthProvider({ children }: Props) {
       user: state.user
         ? {
             ...state.user,
+            id: state.user?.sub,
+            accessToken: state.user?.accessToken?.toString(),
+            displayName: `${state.user?.given_name} ${state.user?.family_name}`,
             role: state.user?.role ?? 'admin',
           }
         : null,

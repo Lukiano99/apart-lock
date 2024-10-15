@@ -19,14 +19,13 @@ import {
   SettingsProvider,
 } from "src/components/settings";
 
-import { AuthProvider } from "src/auth/context/jwt";
 import { I18nProvider, LocalizationProvider } from "@/locales";
 import { detectLanguage } from "@/locales/server";
 import { TRPCReactProvider } from "@/trpc/react";
 import { HydrateClient } from "@/trpc/server";
 import { Toaster } from "sonner";
 import { Snackbar } from "@/components/snackbar";
-
+import { AuthProvider as SupabaseAuthProvider } from "src/auth/context/supabase";
 // ----------------------------------------------------------------------
 
 export const viewport: Viewport = {
@@ -50,6 +49,7 @@ type Props = {
 
 export default async function RootLayout({ children }: Props) {
   const lang = CONFIG.isStaticExport ? "en" : await detectLanguage();
+  const AuthProvider = SupabaseAuthProvider;
 
   return (
     <html lang={lang ?? "en"} suppressHydrationWarning>
