@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
+import type { Theme, SxProps, Breakpoint } from "@mui/material/styles";
 
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Alert from '@mui/material/Alert';
+import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
+import Alert from "@mui/material/Alert";
 
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
+import { paths } from "src/routes/paths";
+import { RouterLink } from "src/routes/components";
 
-import { Logo } from 'src/components/logo';
+import { Logo } from "src/components/logo";
 
-import { Main, CompactContent } from './main';
-import { LayoutSection } from '../core/layout-section';
-import { HeaderSection } from '../core/header-section';
-import { SettingsButton } from '../components/settings-button';
+import { Main, CompactContent } from "./main";
+import { LayoutSection } from "../core/layout-section";
+import { HeaderSection } from "../core/header-section";
+import { SettingsButton } from "../components/settings-button";
 
 // ----------------------------------------------------------------------
 
@@ -29,8 +29,13 @@ export type SimpleLayoutProps = {
   };
 };
 
-export function SimpleLayout({ sx, children, header, content }: SimpleLayoutProps) {
-  const layoutQuery: Breakpoint = 'md';
+export function SimpleLayout({
+  sx,
+  children,
+  header,
+  content,
+}: SimpleLayoutProps) {
+  const layoutQuery: Breakpoint = "md";
 
   return (
     <LayoutSection
@@ -44,7 +49,7 @@ export function SimpleLayout({ sx, children, header, content }: SimpleLayoutProp
           sx={header?.sx}
           slots={{
             topArea: (
-              <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
+              <Alert severity="info" sx={{ display: "none", borderRadius: 0 }}>
                 This is an info Alert.
               </Alert>
             ),
@@ -56,7 +61,7 @@ export function SimpleLayout({ sx, children, header, content }: SimpleLayoutProp
                   href={paths.faqs}
                   component={RouterLink}
                   color="inherit"
-                  sx={{ typography: 'subtitle2' }}
+                  sx={{ typography: "subtitle2" }}
                 >
                   Need help?
                 </Link>
@@ -75,7 +80,7 @@ export function SimpleLayout({ sx, children, header, content }: SimpleLayoutProp
        * Style
        *************************************** */
       cssVars={{
-        '--layout-simple-content-compact-width': '448px',
+        "--layout-simple-content-compact-width": "448px",
       }}
       sx={sx}
     >
