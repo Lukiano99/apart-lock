@@ -157,7 +157,16 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
 
   const totalPrice = row.price * nights;
 
-  const queryString = `?startDate=${startDate.toLocaleDateString("en-CA")}&endDate=${endDate.toLocaleDateString("en-CA")}&adults=${guests.adults}&children=${guests.children}`;
+  const queryString = [
+    startDate ? `startDate=${startDate.toLocaleDateString("en-CA")}` : "",
+    endDate ? `endDate=${endDate.toLocaleDateString("en-CA")}` : "",
+    guests.adults ? `adults=${guests.adults}` : "",
+    guests.children ? `children=${guests.children}` : "",
+  ]
+    .filter(Boolean)
+    .join("&");
+
+  const finalQueryString = queryString ? `?${queryString}` : "";
 
   const theme = useTheme();
 
@@ -232,7 +241,7 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
       <TableCell>
         <Button
           component={RouterLink}
-          href={`${paths.apartments.roomReservation(row.apartmentId, row.id)}${queryString}`}
+          href={`${paths.apartments.roomReservation(row.apartmentId, row.id)}${finalQueryString}`}
           variant="contained"
           color="primary"
           disabled={!available}
