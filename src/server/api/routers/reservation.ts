@@ -60,11 +60,11 @@ export const reservationRouter = createTRPCRouter({
         data: {
           customerId: customer.id,
           roomId: input.roomId,
-          createdAt: new Date(),
           status: "PENDING",
-          // TODO, currently mocked
-          check_in: new Date(),
-          check_out: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          check_in: input.check_in,
+          check_out: input.check_out,
+          adults: input.guests.adults,
+          children: input.guests.children,
         },
       });
       return reservation;

@@ -7,9 +7,6 @@ export const roomRouter = createTRPCRouter({
     .input(
       z.object({
         apartmentId: z.string(),
-        // TODO with dates
-        // dateFrom: z.date(),
-        // dateTo: z.date(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -23,6 +20,28 @@ export const roomRouter = createTRPCRouter({
       });
 
       return rooms;
+    }),
+  get: publicProcedure
+    .input(
+      z.object({
+        reservationId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const room = ctx.db.room.findFirst({
+        where: {
+          reservations: {
+            some: {
+              id: input.reservationId,
+            },
+          },
+        },
+        include: {
+          reservations: true,
+        },
+      });
+
+      return room;
     }),
 
   // create: publicProcedure
