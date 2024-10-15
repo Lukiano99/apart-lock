@@ -40,7 +40,7 @@ export function AuthSplitLayout({
   children,
   header,
 }: AuthSplitLayoutProps) {
-  const layoutQuery: Breakpoint = "3xl";
+  const layoutQuery: Breakpoint = "xl";
 
   return (
     <LayoutSection
