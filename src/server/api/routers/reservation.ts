@@ -61,7 +61,6 @@ export const reservationRouter = createTRPCRouter({
           customerId: customer.id,
           roomId: input.roomId,
           status: "PENDING",
-          // TODO, currently mocked
           check_in: input.check_in,
           check_out: input.check_out,
         },
