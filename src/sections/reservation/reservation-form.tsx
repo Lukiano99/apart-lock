@@ -22,35 +22,15 @@ import { useRouter } from "next/navigation";
 
 // ----------------------------------------------------------------------
 
-// export type CustomerReservationSchemaType = zod.infer<
-//   typeof CustomerReservationSchema
-// >;
-
-// export const CustomerReservationSchema = zod.object({
-//   firstName: zod.string().min(1, { message: "Ime je obavezno!" }),
-//   lastName: zod.string().min(1, { message: "Prezime je obavezno!" }),
-//   email: zod
-//     .string()
-//     .min(1, { message: "Email is required!" })
-//     .email({ message: "Email nije validan!" }),
-//   phone: schemaHelper.phoneNumber({
-//     isValidPhoneNumber,
-//     message: {
-//       required_error: "Broj telefona je obavezan!",
-//       invalid_type_error: "Broj telefona nije validan!",
-//     },
-//   }),
-//   roomId: zod.string(),
-//   paymentMethod: zod.nativeEnum(PaymentMethod),
-// });
-
-// ----------------------------------------------------------------------
-
 interface CustomerReservationFormProps {
   roomId: string;
+  startDate: Date;
+  endDate: Date;
 }
 export function CustomerReservationForm({
   roomId,
+  startDate,
+  endDate,
 }: CustomerReservationFormProps) {
   const router = useRouter();
 
@@ -65,6 +45,8 @@ export function CustomerReservationForm({
       email: "",
       phone: "",
       roomId: roomId,
+      check_in: startDate,
+      check_out: endDate,
     },
   });
 
