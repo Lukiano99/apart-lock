@@ -63,6 +63,8 @@ export const reservationRouter = createTRPCRouter({
           status: "PENDING",
           check_in: input.check_in,
           check_out: input.check_out,
+          adults: input.guests.adults,
+          children: input.guests.children,
         },
       });
       return reservation;

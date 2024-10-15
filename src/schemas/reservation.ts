@@ -25,4 +25,8 @@ export const CustomerReservationSchema = z.object({
   paymentMethod: z.nativeEnum(PaymentMethod).optional(),
   check_in: z.date(),
   check_out: z.date(),
+  guests: z.object({
+    adults: z.number().min(1),
+    children: z.number(),
+  }),
 });

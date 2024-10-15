@@ -26,11 +26,16 @@ interface CustomerReservationFormProps {
   roomId: string;
   startDate: Date;
   endDate: Date;
+  guests: {
+    adults: number;
+    children: number;
+  };
 }
 export function CustomerReservationForm({
   roomId,
   startDate,
   endDate,
+  guests,
 }: CustomerReservationFormProps) {
   const router = useRouter();
 
@@ -47,6 +52,10 @@ export function CustomerReservationForm({
       roomId: roomId,
       check_in: startDate,
       check_out: endDate,
+      guests: {
+        adults: guests.adults,
+        children: guests.children,
+      },
     },
   });
 

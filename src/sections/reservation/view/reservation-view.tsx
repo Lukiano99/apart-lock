@@ -70,6 +70,7 @@ export function ReservationView({ apartment, room }: ReservationViewProps) {
               roomId={room.id}
               startDate={startDate}
               endDate={endDate}
+              guests={guests}
             />
           )}
           {isLoading && <Skeleton />}
