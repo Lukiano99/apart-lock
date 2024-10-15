@@ -119,10 +119,12 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
           toast.success("Uspesno!", {
             description: `Status: ${
               data.updatedReservation.status === "CONFIRMED"
-                ? "Potvrdjena"
-                : data.updatedReservation.status === "PENDING"
-                  ? "Na obradi"
-                  : ""
+                ? "Potvrđena"
+                : data.updatedReservation.status === "AWAITING_CONFIRMATION"
+                  ? "Čeka se potvrda"
+                  : data.updatedReservation.status === "PENDING"
+                    ? "Na obradi"
+                    : ""
             }`,
           });
           setDisplayConfirmKey(

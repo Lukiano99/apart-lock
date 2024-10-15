@@ -84,7 +84,12 @@ export const reservationRouter = createTRPCRouter({
         where: { id: input.reservationId },
         data: {
           paymentMethod: input.payment,
-          status: input.payment === "CARD" ? "CONFIRMED" : "PENDING",
+          status:
+            input.payment === "CARD"
+              ? "CONFIRMED"
+              : input.payment === "CASH"
+                ? "AWAITING_CONFIRMATION"
+                : "PENDING",
         },
       });
 

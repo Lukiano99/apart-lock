@@ -16,7 +16,7 @@ import {
   CustomerReservationSchemaType,
 } from "@/schemas/reservation";
 import { api } from "@/trpc/react";
-import { Snackbar, toast } from "src/components/snackbar";
+import { toast } from "src/components/snackbar";
 import { paths } from "@/routes/paths";
 import { useRouter } from "next/navigation";
 
