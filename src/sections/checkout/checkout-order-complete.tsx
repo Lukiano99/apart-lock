@@ -12,15 +12,22 @@ import { OrderCompleteIllustration } from "src/assets/illustrations";
 import { Iconify } from "src/components/iconify";
 import { RouterLink } from "@/routes/components";
 import { paths } from "@/routes/paths";
+import { CopyToClipboard } from "../_examples/extra/utilites-view/copy-to-clipboard";
 
 // ----------------------------------------------------------------------
 
 type Props = DialogProps & {
   onReset: () => void;
   onDownloadPDF: () => void;
+  link?: string;
 };
 
-export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }: Props) {
+export function CheckoutOrderComplete({
+  open,
+  onReset,
+  onDownloadPDF,
+  link,
+}: Props) {
   return (
     <Dialog
       fullWidth
@@ -39,7 +46,7 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }: Props) {
         alignItems="center"
         flexDirection="column"
         sx={{
-          py: 5,
+          py: 2,
           m: "auto",
           maxWidth: 600,
           textAlign: "center",
@@ -59,15 +66,17 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }: Props) {
         <Typography>
           Hvala vam na uspešnom kreiranju i plaćanju rezervacije!
           <br />
+          {link && link !== "" && (
+            <>
+              <br />
+              <CopyToClipboard link={link} />
+            </>
+          )}
           <br />
-          <Link>01dc1370-3df6-11eb-b378-0242ac130002</Link>
-          <br />
-          <br />
-          U najkraćem roku, poslaćemo vam obaveštenje putem email-a kada vaša
-          rezervacija bude potvrđena kao i ConfirmationKey za bravu apartmana.
-          <br /> Ako imate bilo kakvih pitanja ili nedoumica, slobodno nas
-          kontaktirajte. <br />
-          Sve najbolje,
+          Ako ste plaćanje izvršili karticom, šifra se nalazi iznad, u suprotnom
+          ćete je dobiti putem email-a kada vaša rezervacija bude potvrđena. Za
+          sva pitanja ili nedoumice, slobodno nas kontaktirajte <br />
+          Sve najbolje!
         </Typography>
 
         <Divider sx={{ width: 1, borderStyle: "dashed" }} />

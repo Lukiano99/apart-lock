@@ -2,6 +2,8 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { CustomerReservationSchema } from "@/schemas/reservation";
 import { z } from "zod";
+import { PaymentSchema } from "@/schemas/payment";
+import { generateCode } from "@/utils/confirmation-key";
 
 export const reservationRouter = createTRPCRouter({
   get: publicProcedure
@@ -20,7 +22,11 @@ export const reservationRouter = createTRPCRouter({
       return reservation;
     }),
   create: publicProcedure
-    .input(CustomerReservationSchema)
+    .input(
+      CustomerReservationSchema.extend({
+        test: z.string(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       let customer = await ctx.db.customer.findUnique({
         where: { email: input.email },
@@ -68,5 +74,50 @@ export const reservationRouter = createTRPCRouter({
         },
       });
       return reservation;
+    }),
+
+  updatePaymentMethod: publicProcedure
+    .input(
+      PaymentSchema.extend({
+        reservationId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Ažuriraj status na "PENDING" u bazi podataka za rezervaciju
+      const updatedReservation = await ctx.db.reservation.update({
+        where: { id: input.reservationId },
+        data: {
+          paymentMethod: input.payment,
+          status: input.payment === "CARD" ? "CONFIRMED" : "PENDING",
+        },
+      });
+
+      let confirmationKey;
+
+      if (input.payment === "CARD") {
+        const expiresAt = new Date(updatedReservation.check_out as Date);
+        expiresAt.setHours(10, 0, 0, 0); // Postavlja vreme na 10:00h
+
+        confirmationKey = await ctx.db.confirmationKey.create({
+          data: {
+            reservationId: input.reservationId,
+            key: generateCode(),
+            expiresAt: expiresAt,
+            createdAt: new Date(),
+          },
+        });
+      }
+      if (input.payment === "CARD" && !confirmationKey) {
+        throw new TRPCError({
+          message: "Greska u kreiranju ConfirmationKey",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+
+      return {
+        updatedReservation,
+        confirmationKey:
+          input.payment === "CARD" && confirmationKey && confirmationKey.key,
+      };
     }),
 });

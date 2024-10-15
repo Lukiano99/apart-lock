@@ -66,7 +66,7 @@ export function CustomerReservationForm({
       { ...data, roomId },
       {
         onSuccess: (reservation) => {
-          toast.success("Rezervacija je kreirana", {
+          toast.success("Rezervacija je u fazi kreiranja", {
             description: "Bićete preusmereni na stranicu sa detaljima",
           });
           router.replace(paths.apartments.reservation(reservation.id));
