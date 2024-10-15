@@ -22,11 +22,7 @@ export const reservationRouter = createTRPCRouter({
       return reservation;
     }),
   create: publicProcedure
-    .input(
-      CustomerReservationSchema.extend({
-        test: z.string(),
-      })
-    )
+    .input(CustomerReservationSchema)
     .mutation(async ({ ctx, input }) => {
       let customer = await ctx.db.customer.findUnique({
         where: { email: input.email },
