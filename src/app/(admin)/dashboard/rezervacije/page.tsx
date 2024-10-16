@@ -1,6 +1,5 @@
 import { CONFIG } from "@/config-global";
-
-import { BlankView } from "src/sections/blank/view";
+import { AdminReservationsView } from "@/sections/dashboard/rezervacije/view";
 
 // ----------------------------------------------------------------------
 
@@ -9,5 +8,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <BlankView title="Rezervacije" />;
+  return <AdminReservationsView />;
 }

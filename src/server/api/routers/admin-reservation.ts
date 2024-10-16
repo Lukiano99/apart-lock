@@ -3,6 +3,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
+import { ReservationStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -46,8 +47,10 @@ export const adminReservationRouter = createTRPCRouter({
         include: {
           Room: {
             include: {
+              images: true,
               apartment: {
                 include: {
+                  images: true,
                   owner: {
                     select: {
                       id: true,
@@ -78,5 +81,35 @@ export const adminReservationRouter = createTRPCRouter({
       }, 0);
 
       return { reservations, totalIncome };
+    }),
+  updateStatus: publicProcedure
+    .input(
+      z.object({
+        reservationId: z.string(),
+        reservationStatus: z.nativeEnum(ReservationStatus),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { reservationId, reservationStatus } = input;
+
+      // Proveri da li rezervacija postoji
+      const reservation = await ctx.db.reservation.findUnique({
+        where: { id: reservationId },
+      });
+
+      if (!reservation) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Rezervacija nije pronađena.",
+        });
+      }
+
+      // Ažuriraj status rezervacije
+      const updatedReservation = await ctx.db.reservation.update({
+        where: { id: reservationId },
+        data: { status: reservationStatus },
+      });
+
+      return updatedReservation; // Vraća ažuriranu rezervaciju
     }),
 });

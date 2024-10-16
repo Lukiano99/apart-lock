@@ -26,6 +26,7 @@ import { useAuthContext } from "@/auth/hooks";
 import { api } from "@/trpc/react";
 import DashboardSkeleton from "../booking-dashboard-skeleton";
 import { ReservationStatus } from "@prisma/client";
+import { EmptyContent } from "@/components/empty-content";
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ export function OverviewBookingView() {
   const { data, isPending } = api.adminReservation.list.useQuery({
     adminId: user?.id ?? "",
     // adminId: "f811e9b5-f284-4310-aca5-0033e2a47d06",
+    // adminId: "",
   });
   console.log({ res: data?.reservations });
   const reservationStatuses: ReservationStatus[] = [
@@ -42,6 +44,21 @@ export function OverviewBookingView() {
     "CONFIRMED",
     "CANCELLED",
   ];
+
+  if (data && data.reservations.length === 0) {
+    return (
+      <DashboardContent maxWidth="xl">
+        <Typography variant="h3" sx={{ mb: 5 }}>
+          Dobrodošli nazad, {user?.displayName} 👋
+        </Typography>
+        <EmptyContent
+          title="Jos uvek nemate kreiranih rezervacija"
+          description="Nakon prve kreirane rezervacije prikazaćemo Vaš dashboard"
+        />
+        ;
+      </DashboardContent>
+    );
+  }
 
   const allApartments =
     data && data.reservations.map((res) => res.Room.apartmentId);
@@ -72,7 +89,7 @@ export function OverviewBookingView() {
           <Grid xs={12} md={4}>
             <BookingWidgetSummary
               title="Ukupno rezervacija"
-              percent={2.6}
+              percent={0}
               total={data.reservations.length}
               icon={<BookingIllustration />}
             />
@@ -81,7 +98,7 @@ export function OverviewBookingView() {
           <Grid xs={12} md={4}>
             <BookingWidgetSummary
               title="Prodatih"
-              percent={0.2}
+              percent={0}
               total={
                 data.reservations.filter((res) => res.paymentMethod === "CARD")
                   .length
@@ -93,7 +110,7 @@ export function OverviewBookingView() {
           <Grid xs={12} md={4}>
             <BookingWidgetSummary
               title="Nedovršene rezervacije"
-              percent={-0.1}
+              percent={0}
               total={
                 data.reservations.filter((res) => res.status === "PENDING")
                   .length
