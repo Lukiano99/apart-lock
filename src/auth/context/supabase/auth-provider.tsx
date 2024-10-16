@@ -1,24 +1,10 @@
 "use client";
-
 import { useMemo, useEffect, useCallback } from "react";
-
 import { useSetState } from "src/hooks/use-set-state";
-
 import axios from "src/utils/axios";
-
 import { supabase } from "@/lib/supabase";
-
 import { AuthContext } from "../auth-context";
-
 import type { AuthState } from "../../types";
-
-// ----------------------------------------------------------------------
-
-/**
- * NOTE:
- * We only build demo at basic level.
- * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
- */
 
 type Props = {
   children: React.ReactNode;
@@ -56,17 +42,51 @@ export function AuthProvider({ children }: Props) {
       console.error(error);
       setState({ user: null, loading: false });
     }
+    // ... (tvoja postojeća logika za proveru sesije)
   }, [setState]);
 
   useEffect(() => {
     checkUserSession();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [checkUserSession]);
 
-  // ----------------------------------------------------------------------
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    await checkUserSession(); // Osvježavanje sesije nakon logovanja
+  };
+
+  const register = async (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ) => {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+    // Možda želiš dodati korisnika u svoju bazu podataka
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setState({ user: null }); // Resetuj korisnika
+  };
+
+  // Dodaj funkcije za resetovanje lozinke i ažuriranje lozinke ako je potrebno
+  const forgotPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) throw error;
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password: password });
+
+    if (error) throw error;
+  };
 
   const checkAuthenticated = state.user ? "authenticated" : "unauthenticated";
-
   const status = state.loading ? "loading" : checkAuthenticated;
 
   const memoizedValue = useMemo(
@@ -81,9 +101,15 @@ export function AuthProvider({ children }: Props) {
           }
         : null,
       checkUserSession,
+      method: "supabase", // Postavi vrednost ili dodaj logiku
       loading: status === "loading",
       authenticated: status === "authenticated",
       unauthenticated: status === "unauthenticated",
+      login,
+      register,
+      logout,
+      forgotPassword,
+      updatePassword,
     }),
     [checkUserSession, state.user, status]
   );

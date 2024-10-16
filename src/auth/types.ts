@@ -1,24 +1,23 @@
-export type ActionMapType<M extends Record<string, unknown>> = {
-  [Key in keyof M]: M[Key] extends undefined
-    ? {
-        type: Key;
-      }
-    : {
-        type: Key;
-        payload: M[Key];
-      };
+export type UserType = Record<string, any> | null;
+
+export type AuthState = {
+  user: UserType;
+  loading: boolean;
+};
+
+export type AuthContextValue = {
+  user: UserType;
+  loading: boolean;
+  authenticated: boolean;
+  unauthenticated: boolean;
+  checkUserSession?: () => Promise<void>;
 };
 
 export type AuthUserType = null | {
   displayName?: string;
+  id: string;
   email?: string;
   [x: string]: unknown;
-};
-
-export type AuthStateType = {
-  status?: string;
-  loading: boolean;
-  user: AuthUserType;
 };
 
 export type SupabaseContextType = {

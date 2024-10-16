@@ -8,7 +8,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const adminReservationRouter = createTRPCRouter({
-  list: publicProcedure
+  list: protectedProcedure
     .input(
       z.object({
         adminId: z.string(),
