@@ -10,7 +10,7 @@ export const CONFIG = {
   auth: {
     method: "supabase",
     skip: false,
-    redirectPath: paths.apartments.root,
+    redirectPath: paths.dashboard.root,
   },
   supabase: {
     url: env.NEXT_PUBLIC_SUPABASE_URL,

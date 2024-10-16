@@ -35,6 +35,11 @@ import { WorkspacesPopover } from "../components/workspaces-popover";
 import { navData as apartmentsNavData } from "../config-nav-apartments";
 import { NotificationsDrawer } from "../components/notifications-drawer";
 import { LanguagePopover } from "../components/language-popover";
+import { useAuthContext } from "@/auth/hooks";
+import { Button } from "@mui/material";
+import { RouterLink } from "@/routes/components";
+import { paths } from "@/routes/paths";
+import { Iconify } from "@/components/iconify";
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +65,8 @@ export function ApartmentsLayout({
   const mobileNavOpen = useBoolean();
 
   const settings = useSettingsContext();
+
+  const { authenticated } = useAuthContext();
 
   const navColorVars = useNavColorVars(theme, settings);
 
@@ -162,6 +169,29 @@ export function ApartmentsLayout({
             ),
             rightArea: (
               <Box display="flex" alignItems="center" gap={{ xs: 0, sm: 0.75 }}>
+                {/* -- Dashboard button -- */}
+                {authenticated && (
+                  <Button
+                    LinkComponent={RouterLink}
+                    variant="contained"
+                    href={paths.dashboard.root}
+                    color="primary"
+                    startIcon={<Iconify icon={"ic:round-dashboard"} />}
+                  >
+                    Dashboard
+                  </Button>
+                )}
+                {/* -- Login button -- */}
+                {!authenticated && (
+                  <Button
+                    LinkComponent={RouterLink}
+                    variant="text"
+                    href={paths.auth.supabase.signIn}
+                    color="primary"
+                  >
+                    Prijavi se
+                  </Button>
+                )}
                 {/* -- Searchbar -- */}
                 <Searchbar data={navData} />
                 {/* -- Language popover -- */}
@@ -171,6 +201,7 @@ export function ApartmentsLayout({
                     { value: "rs", label: "Serbian", countryCode: "RS" },
                   ]}
                 />
+
                 {/* -- Notifications popover -- */}
                 {/* <NotificationsDrawer data={_notifications} /> */}
                 {/* -- Contacts popover -- */}

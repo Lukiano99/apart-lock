@@ -1,17 +1,15 @@
-import type { NavSectionProps } from 'src/components/nav-section';
+import type { NavSectionProps } from "src/components/nav-section";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import Box from '@mui/material/Box';
-import Drawer, { drawerClasses } from '@mui/material/Drawer';
+import Box from "@mui/material/Box";
+import Drawer, { drawerClasses } from "@mui/material/Drawer";
 
-import { usePathname } from 'src/routes/hooks';
+import { usePathname } from "src/routes/hooks";
 
-import { Logo } from 'src/components/logo';
-import { Scrollbar } from 'src/components/scrollbar';
-import { NavSectionVertical } from 'src/components/nav-section';
-
-import { NavUpgrade } from '../components/nav-upgrade';
+import { Logo } from "src/components/logo";
+import { Scrollbar } from "src/components/scrollbar";
+import { NavSectionVertical } from "src/components/nav-section";
 
 // ----------------------------------------------------------------------
 
@@ -24,7 +22,14 @@ type NavMobileProps = NavSectionProps & {
   };
 };
 
-export function NavMobile({ data, open, onClose, slots, sx, ...other }: NavMobileProps) {
+export function NavMobile({
+  data,
+  open,
+  onClose,
+  slots,
+  sx,
+  ...other
+}: NavMobileProps) {
   const pathname = usePathname();
 
   useEffect(() => {
@@ -40,9 +45,9 @@ export function NavMobile({ data, open, onClose, slots, sx, ...other }: NavMobil
       onClose={onClose}
       sx={{
         [`& .${drawerClasses.paper}`]: {
-          overflow: 'unset',
-          bgcolor: 'var(--layout-nav-bg)',
-          width: 'var(--layout-nav-mobile-width)',
+          overflow: "unset",
+          bgcolor: "var(--layout-nav-bg)",
+          width: "var(--layout-nav-mobile-width)",
           ...sx,
         },
       }}
@@ -54,8 +59,12 @@ export function NavMobile({ data, open, onClose, slots, sx, ...other }: NavMobil
       )}
 
       <Scrollbar fillContent>
-        <NavSectionVertical data={data} sx={{ px: 2, flex: '1 1 auto' }} {...other} />
-        <NavUpgrade />
+        <NavSectionVertical
+          data={data}
+          sx={{ px: 2, flex: "1 1 auto" }}
+          {...other}
+        />
+        {/* <NavUpgrade /> */}
       </Scrollbar>
 
       {slots?.bottomArea}

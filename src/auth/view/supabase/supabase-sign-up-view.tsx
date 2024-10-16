@@ -137,7 +137,7 @@ export function SupabaseSignUpView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Create account..."
+        loadingIndicator="Kreiranje naloga..."
       >
         Kreirajte nalog
       </LoadingButton>

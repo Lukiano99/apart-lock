@@ -34,6 +34,11 @@ import { ContactsPopover } from "../components/contacts-popover";
 import { WorkspacesPopover } from "../components/workspaces-popover";
 import { navData as dashboardNavData } from "../config-nav-dashboard";
 import { NotificationsDrawer } from "../components/notifications-drawer";
+import { Button } from "@mui/material";
+import { RouterLink } from "@/routes/components";
+import { paths } from "@/routes/paths";
+import { useAuthContext } from "@/auth/hooks";
+import { Iconify } from "@/components/iconify";
 
 // ----------------------------------------------------------------------
 
@@ -59,6 +64,8 @@ export function DashboardLayout({
   const mobileNavOpen = useBoolean();
 
   const settings = useSettingsContext();
+
+  const { authenticated } = useAuthContext();
 
   const navColorVars = useNavColorVars(theme, settings);
 
@@ -159,6 +166,18 @@ export function DashboardLayout({
             ),
             rightArea: (
               <Box display="flex" alignItems="center" gap={{ xs: 0, sm: 0.75 }}>
+                {/* -- Apartments -- */}
+                {authenticated && (
+                  <Button
+                    LinkComponent={RouterLink}
+                    variant="contained"
+                    href={paths.apartments.root}
+                    color="primary"
+                    startIcon={<Iconify icon={"solar:home-bold-duotone"} />}
+                  >
+                    Apartmani
+                  </Button>
+                )}
                 {/* -- Searchbar -- */}
                 <Searchbar data={navData} />
                 {/* -- Language popover -- */}
@@ -176,9 +195,9 @@ export function DashboardLayout({
                 {/* -- Contacts popover -- */}
                 {/* <ContactsPopover data={_contacts} /> */}
                 {/* -- Settings button -- */}
-                <SettingsButton />
+                {/* <SettingsButton /> */}
                 {/* -- Account drawer -- */}
-                <AccountDrawer data={_account} />
+                <AccountDrawer />
               </Box>
             ),
           }}

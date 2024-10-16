@@ -1,23 +1,25 @@
-'use client';
+"use client";
 
-import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
+import type { Theme, SxProps, Breakpoint } from "@mui/material/styles";
 
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Alert from '@mui/material/Alert';
+import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
+import Alert from "@mui/material/Alert";
 
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
+import { paths } from "src/routes/paths";
+import { RouterLink } from "src/routes/components";
 
-import { CONFIG } from 'src/config-global';
-import { stylesMode } from 'src/theme/styles';
+import { CONFIG } from "src/config-global";
+import { stylesMode } from "src/theme/styles";
 
-import { Logo } from 'src/components/logo';
+import { Logo } from "src/components/logo";
 
-import { Main } from './main';
-import { HeaderSection } from '../core/header-section';
-import { LayoutSection } from '../core/layout-section';
-import { SettingsButton } from '../components/settings-button';
+import { Main } from "./main";
+import { HeaderSection } from "../core/header-section";
+import { LayoutSection } from "../core/layout-section";
+import { SettingsButton } from "../components/settings-button";
+import { Button } from "@mui/material";
+import { Iconify } from "@/components/iconify";
 
 // ----------------------------------------------------------------------
 
@@ -29,8 +31,12 @@ export type AuthCenteredLayoutProps = {
   };
 };
 
-export function AuthCenteredLayout({ sx, children, header }: AuthCenteredLayoutProps) {
-  const layoutQuery: Breakpoint = 'md';
+export function AuthCenteredLayout({
+  sx,
+  children,
+  header,
+}: AuthCenteredLayoutProps) {
+  const layoutQuery: Breakpoint = "md";
 
   return (
     <LayoutSection
@@ -42,10 +48,10 @@ export function AuthCenteredLayout({ sx, children, header }: AuthCenteredLayoutP
           disableElevation
           layoutQuery={layoutQuery}
           slotProps={{ container: { maxWidth: false } }}
-          sx={{ position: { [layoutQuery]: 'fixed' }, ...header?.sx }}
+          sx={{ position: { [layoutQuery]: "fixed" }, ...header?.sx }}
           slots={{
             topArea: (
-              <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
+              <Alert severity="info" sx={{ display: "none", borderRadius: 0 }}>
                 This is an info Alert.
               </Alert>
             ),
@@ -57,17 +63,27 @@ export function AuthCenteredLayout({ sx, children, header }: AuthCenteredLayoutP
             ),
             rightArea: (
               <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 1.5 }}>
+                {/* -- Apartments -- */}
+                <Button
+                  LinkComponent={RouterLink}
+                  variant="text"
+                  href={paths.apartments.root}
+                  color="primary"
+                  startIcon={<Iconify icon={"solar:home-bold-duotone"} />}
+                >
+                  Apartmani
+                </Button>
                 {/* -- Help link -- */}
                 <Link
                   href={paths.faqs}
                   component={RouterLink}
                   color="inherit"
-                  sx={{ typography: 'subtitle2' }}
+                  sx={{ typography: "subtitle2" }}
                 >
                   Need help?
                 </Link>
                 {/* -- Settings button -- */}
-                <SettingsButton />
+                {/* <SettingsButton /> */}
               </Box>
             ),
           }}
@@ -80,18 +96,18 @@ export function AuthCenteredLayout({ sx, children, header }: AuthCenteredLayoutP
       /** **************************************
        * Style
        *************************************** */
-      cssVars={{ '--layout-auth-content-width': '420px' }}
+      cssVars={{ "--layout-auth-content-width": "420px" }}
       sx={{
-        '&::before': {
+        "&::before": {
           width: 1,
           height: 1,
           zIndex: -1,
           content: "''",
           opacity: 0.24,
-          position: 'fixed',
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center center',
+          position: "fixed",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center center",
           backgroundImage: `url(${CONFIG.assetsDir}/assets/background/background-3-blur.webp)`,
           [stylesMode.dark]: { opacity: 0.08 },
         },
