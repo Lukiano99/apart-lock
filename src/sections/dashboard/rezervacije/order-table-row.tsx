@@ -27,6 +27,7 @@ import { LoadingButton } from "@mui/lab";
 import { api } from "@/trpc/react";
 import { Snackbar, toast } from "@/components/snackbar";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/auth/hooks";
 
 // ----------------------------------------------------------------------
 
@@ -53,8 +54,13 @@ export function OrderTableRow({
 
   const popover = usePopover();
 
+  const { user } = useAuthContext();
+
   const { mutate: mutateReservationStatus, isPending } =
     api.adminReservation.updateStatus.useMutation();
+  const { refetch } = api.adminReservation.list.useQuery({
+    adminId: user?.id ?? "",
+  });
 
   const handleAcceptReservation = (reservationId: string) => {
     mutateReservationStatus(
@@ -65,6 +71,7 @@ export function OrderTableRow({
             description: reservationId,
           });
           router.refresh();
+          refetch();
         },
         onError: (data) => {
           toast.error("Došlo je do greške", { description: data.message });
@@ -82,6 +89,7 @@ export function OrderTableRow({
             description: reservationId,
           });
           router.refresh();
+          refetch();
         },
         onError: (data) => {
           toast.error("Došlo je do greške", { description: data.message });
