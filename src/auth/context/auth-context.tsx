@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
-import { createContext } from 'react';
-
-import type { AuthContextValue } from '../types';
+import { createContext } from "react";
+import { SupabaseContextType } from "../types";
 
 // ----------------------------------------------------------------------
 
-export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext = createContext({} as SupabaseContextType);
 
 export const AuthConsumer = AuthContext.Consumer;
