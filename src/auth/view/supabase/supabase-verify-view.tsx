@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { paths } from 'src/routes/paths';
+import { paths } from "src/routes/paths";
 
-import { EmailInboxIcon } from 'src/assets/icons';
+import { EmailInboxIcon } from "src/assets/icons";
 
-import { FormHead } from '../../components/form-head';
-import { FormReturnLink } from '../../components/form-return-link';
+import { FormHead } from "../../components/form-head";
+import { FormReturnLink } from "../../components/form-return-link";
 
 // ----------------------------------------------------------------------
 
@@ -14,8 +14,8 @@ export function SupabaseVerifyView() {
     <>
       <FormHead
         icon={<EmailInboxIcon />}
-        title="Please check your email!"
-        description={`We've emailed a 6-digit confirmation code. \nPlease enter the code in the box below to verify your email.`}
+        title="Proverite svoj email!"
+        description={`Poslali smo vam 6-cifreni potvrdni kod putem emaila.\nUnesite kod u polje ispod kako biste verifikovali svoju email adresu.`}
       />
 
       <FormReturnLink href={paths.auth.supabase.signIn} sx={{ mt: 0 }} />

@@ -12,12 +12,7 @@ import { useSetState } from "src/hooks/use-set-state";
 import { orderBy } from "src/utils/helper";
 import { fIsBetween } from "src/utils/format-time";
 
-import {
-  _tours,
-  _tourGuides,
-  TOUR_SORT_OPTIONS,
-  TOUR_SERVICE_OPTIONS,
-} from "src/_mock";
+import { _tours, _tourGuides } from "src/_mock";
 
 import { EmptyContent } from "src/components/empty-content";
 
@@ -28,7 +23,10 @@ import { ApartmentFiltersResult } from "../tour-filters-result";
 import { ApartmentsContent } from "@/layouts/apartments";
 import { api } from "@/trpc/react";
 import { IApartmentFilters } from "@/schemas/apartment";
-import { APARTMENT_SERVICE_OPTIONS } from "@/_mock/_apartment";
+import {
+  APARTMENT_SERVICE_OPTIONS,
+  APARTMENT_SORT_OPTIONS,
+} from "@/_mock/_apartment";
 
 import qs from "query-string";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -93,23 +91,23 @@ export function ApartmentsListView() {
     setSortBy(newValue);
   }, []);
 
-  const handleSearch = useCallback(
-    (inputValue: string) => {
-      search.setState({ query: inputValue });
+  // const handleSearch = useCallback(
+  //   (inputValue: string) => {
+  //     search.setState({ query: inputValue });
 
-      if (inputValue) {
-        const results = _tours.filter(
-          (tour) =>
-            tour.name
-              .toLowerCase()
-              .indexOf(search.state.query.toLowerCase()) !== -1
-        );
+  //     if (inputValue) {
+  //       const results = _tours.filter(
+  //         (tour) =>
+  //           tour.name
+  //             .toLowerCase()
+  //             .indexOf(search.state.query.toLowerCase()) !== -1
+  //       );
 
-        search.setState({ results });
-      }
-    },
-    [search]
-  );
+  //       search.setState({ results });
+  //     }
+  //   },
+  //   [search]
+  // );
   const { data: apartments, isPending } = api.apartment.list.useQuery(
     filters.state
   );
@@ -122,7 +120,7 @@ export function ApartmentsListView() {
       alignItems={{ xs: "flex-end", sm: "center" }}
       direction={{ xs: "column", sm: "row" }}
     >
-      <ApartmentSearch search={search} onSearch={handleSearch} />
+      {/* <ApartmentSearch search={search} onSearch={handleSearch} /> */}
 
       <Stack direction="row" spacing={1} flexShrink={0}>
         <ApartmentFilters
@@ -135,12 +133,12 @@ export function ApartmentsListView() {
           services={APARTMENT_SERVICE_OPTIONS.map((option) => option)}
           onApply={(_filters) => filters.setState(_filters)}
         />
-
+        {/* 
         <ApartmentSort
           sort={sortBy}
           onSort={handleSortBy}
-          sortOptions={TOUR_SORT_OPTIONS}
-        />
+          sortOptions={APARTMENT_SORT_OPTIONS}
+        /> */}
       </Stack>
     </Stack>
   );
