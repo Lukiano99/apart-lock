@@ -23,9 +23,9 @@ import { I18nProvider, LocalizationProvider } from "@/locales";
 import { detectLanguage } from "@/locales/server";
 import { TRPCReactProvider } from "@/trpc/react";
 import { HydrateClient } from "@/trpc/server";
-import { Toaster } from "sonner";
 import { Snackbar } from "@/components/snackbar";
-import { AuthProvider as SupabaseAuthProvider } from "src/auth/context/supabase";
+import { AuthProvider as SupabaseAuthProvider } from "@/auth/context/supabase";
+
 // ----------------------------------------------------------------------
 
 export const viewport: Viewport = {

@@ -21,9 +21,9 @@ import { useBoolean } from "src/hooks/use-boolean";
 import { Iconify } from "src/components/iconify";
 import { Form, Field } from "src/components/hook-form";
 
-import { useAuthContext } from "../../hooks";
 import { FormHead } from "../../components/form-head";
-import { signInWithPassword } from "../../context/supabase";
+import { signInWithPassword } from "@/auth/context/supabase";
+import { useAuthContext } from "@/auth/hooks";
 
 // ----------------------------------------------------------------------
 

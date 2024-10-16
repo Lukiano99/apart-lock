@@ -1,14 +1,18 @@
-import type { IOrderTableFilters } from 'src/types/order';
-import type { Theme, SxProps } from '@mui/material/styles';
-import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+import type { Theme, SxProps } from "@mui/material/styles";
+import type { UseSetStateReturn } from "src/hooks/use-set-state";
 
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import Chip from '@mui/material/Chip';
+import Chip from "@mui/material/Chip";
 
-import { fDateRangeShortLabel } from 'src/utils/format-time';
+import { fDateRangeShortLabel } from "src/utils/format-time";
 
-import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
+import {
+  chipProps,
+  FiltersBlock,
+  FiltersResult,
+} from "src/components/filters-result";
+import { IReservationFilters } from "@/schemas/reservations-table";
 
 // ----------------------------------------------------------------------
 
@@ -16,18 +20,23 @@ type Props = {
   totalResults: number;
   sx?: SxProps<Theme>;
   onResetPage: () => void;
-  filters: UseSetStateReturn<IOrderTableFilters>;
+  filters: UseSetStateReturn<IReservationFilters>;
 };
 
-export function OrderTableFiltersResult({ filters, totalResults, onResetPage, sx }: Props) {
+export function OrderTableFiltersResult({
+  filters,
+  totalResults,
+  onResetPage,
+  sx,
+}: Props) {
   const handleRemoveKeyword = useCallback(() => {
     onResetPage();
-    filters.setState({ name: '' });
+    filters.setState({ name: "" });
   }, [filters, onResetPage]);
 
   const handleRemoveStatus = useCallback(() => {
     onResetPage();
-    filters.setState({ status: 'all' });
+    filters.setState({ status: "all" });
   }, [filters, onResetPage]);
 
   const handleRemoveDate = useCallback(() => {
@@ -42,12 +51,12 @@ export function OrderTableFiltersResult({ filters, totalResults, onResetPage, sx
 
   return (
     <FiltersResult totalResults={totalResults} onReset={handleReset} sx={sx}>
-      <FiltersBlock label="Status:" isShow={filters.state.status !== 'all'}>
+      <FiltersBlock label="Status:" isShow={filters.state.status !== "all"}>
         <Chip
           {...chipProps}
           label={filters.state.status}
           onDelete={handleRemoveStatus}
-          sx={{ textTransform: 'capitalize' }}
+          sx={{ textTransform: "capitalize" }}
         />
       </FiltersBlock>
 
@@ -57,13 +66,20 @@ export function OrderTableFiltersResult({ filters, totalResults, onResetPage, sx
       >
         <Chip
           {...chipProps}
-          label={fDateRangeShortLabel(filters.state.startDate, filters.state.endDate)}
+          label={fDateRangeShortLabel(
+            filters.state.startDate,
+            filters.state.endDate
+          )}
           onDelete={handleRemoveDate}
         />
       </FiltersBlock>
 
       <FiltersBlock label="Keyword:" isShow={!!filters.state.name}>
-        <Chip {...chipProps} label={filters.state.name} onDelete={handleRemoveKeyword} />
+        <Chip
+          {...chipProps}
+          label={filters.state.name}
+          onDelete={handleRemoveKeyword}
+        />
       </FiltersBlock>
     </FiltersResult>
   );

@@ -36,4 +36,5 @@ export type SupabaseContextType = {
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
+  checkUserSession?: () => Promise<void>;
 };

@@ -1,14 +1,10 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { ReservationStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const adminReservationRouter = createTRPCRouter({
-  list: protectedProcedure
+  list: publicProcedure
     .input(
       z.object({
         adminId: z.string(),
