@@ -18,6 +18,8 @@ import { Main } from "./main";
 import { HeaderSection } from "../core/header-section";
 import { LayoutSection } from "../core/layout-section";
 import { SettingsButton } from "../components/settings-button";
+import { Button } from "@mui/material";
+import { Iconify } from "@/components/iconify";
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +63,16 @@ export function AuthCenteredLayout({
             ),
             rightArea: (
               <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 1.5 }}>
+                {/* -- Apartments -- */}
+                <Button
+                  LinkComponent={RouterLink}
+                  variant="text"
+                  href={paths.apartments.root}
+                  color="primary"
+                  startIcon={<Iconify icon={"solar:home-bold-duotone"} />}
+                >
+                  Apartmani
+                </Button>
                 {/* -- Help link -- */}
                 <Link
                   href={paths.faqs}
