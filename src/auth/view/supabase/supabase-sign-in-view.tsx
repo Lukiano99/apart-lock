@@ -128,7 +128,7 @@ export function SupabaseSignInView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Sign in..."
+        loadingIndicator="Prijavljivanje..."
       >
         Prijavi se
       </LoadingButton>
