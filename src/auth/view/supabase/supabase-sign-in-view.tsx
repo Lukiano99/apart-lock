@@ -21,9 +21,9 @@ import { useBoolean } from "src/hooks/use-boolean";
 import { Iconify } from "src/components/iconify";
 import { Form, Field } from "src/components/hook-form";
 
-import { useAuthContext } from "../../hooks";
 import { FormHead } from "../../components/form-head";
-import { signInWithPassword } from "../../context/supabase";
+import { signInWithPassword } from "@/auth/context/supabase";
+import { useAuthContext } from "@/auth/hooks";
 
 // ----------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ export function SupabaseSignInView() {
     <Box gap={3} display="flex" flexDirection="column">
       <Field.Text
         name="email"
-        label="Email address"
+        label="Email adresa"
         InputLabelProps={{ shrink: true }}
       />
 
@@ -94,13 +94,13 @@ export function SupabaseSignInView() {
           color="inherit"
           sx={{ alignSelf: "flex-end" }}
         >
-          Forgot password?
+          Zaboravili ste lozinku?
         </Link>
 
         <Field.Text
           name="password"
-          label="Password"
-          placeholder="6+ characters"
+          label="Lozinka"
+          placeholder="6+ karaktera"
           type={password.value ? "text" : "password"}
           InputLabelProps={{ shrink: true }}
           InputProps={{
@@ -130,7 +130,7 @@ export function SupabaseSignInView() {
         loading={isSubmitting}
         loadingIndicator="Sign in..."
       >
-        Sign in
+        Prijavi se
       </LoadingButton>
     </Box>
   );
@@ -138,16 +138,16 @@ export function SupabaseSignInView() {
   return (
     <>
       <FormHead
-        title="Sign in to your account"
+        title="Prijavite se na svoj nalog"
         description={
           <>
-            {`Don’t have an account? `}
+            {`Nemate nalog? `}
             <Link
               component={RouterLink}
               href={paths.auth.supabase.signUp}
               variant="subtitle2"
             >
-              Get started
+              Kreirajte ovde
             </Link>
           </>
         }

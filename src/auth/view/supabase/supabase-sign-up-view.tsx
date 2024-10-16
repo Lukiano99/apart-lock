@@ -93,25 +93,25 @@ export function SupabaseSignUpView() {
       >
         <Field.Text
           name="firstName"
-          label="First name"
+          label="Ime"
           InputLabelProps={{ shrink: true }}
         />
         <Field.Text
           name="lastName"
-          label="Last name"
+          label="Prezime"
           InputLabelProps={{ shrink: true }}
         />
       </Box>
 
       <Field.Text
         name="email"
-        label="Email address"
+        label="Email adresa"
         InputLabelProps={{ shrink: true }}
       />
 
       <Field.Text
         name="password"
-        label="Password"
+        label="Lozinka"
         placeholder="6+ characters"
         type={password.value ? "text" : "password"}
         InputLabelProps={{ shrink: true }}
@@ -139,7 +139,7 @@ export function SupabaseSignUpView() {
         loading={isSubmitting}
         loadingIndicator="Create account..."
       >
-        Create account
+        Kreirajte nalog
       </LoadingButton>
     </Box>
   );
@@ -147,16 +147,16 @@ export function SupabaseSignUpView() {
   return (
     <>
       <FormHead
-        title="Get started absolutely free"
+        title="Započnite potpuno besplatno"
         description={
           <>
-            {`Already have an account? `}
+            {`Već imate nalog? `}
             <Link
               component={RouterLink}
               href={paths.auth.supabase.signIn}
               variant="subtitle2"
             >
-              Get started
+              Prijavite se
             </Link>
           </>
         }

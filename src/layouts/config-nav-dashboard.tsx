@@ -46,28 +46,27 @@ export const navData = [
    * Overview
    */
   {
-    subheader: "Overview 6.0.0",
-    items: [
-      { title: "One", path: paths.dashboard.root, icon: ICONS.dashboard },
-      { title: "Two", path: paths.dashboard.two, icon: ICONS.ecommerce },
-      { title: "Three", path: paths.dashboard.three, icon: ICONS.analytics },
-    ],
-  },
-  /**
-   * Management
-   */
-  {
-    subheader: "Management",
+    subheader: "Osnovno",
     items: [
       {
-        title: "Group",
-        path: paths.dashboard.group.root,
-        icon: ICONS.user,
-        children: [
-          { title: "Four", path: paths.dashboard.group.root },
-          { title: "Five", path: paths.dashboard.group.five },
-          { title: "Six", path: paths.dashboard.group.six },
-        ],
+        title: "Pregled",
+        path: paths.dashboard.root,
+        icon: ICONS.dashboard,
+      },
+      {
+        title: "Rezervacije",
+        path: paths.dashboard.reservations,
+        icon: ICONS.file,
+      },
+    ],
+  },
+  {
+    subheader: "Apartmani",
+    items: [
+      {
+        title: "Unesi apartman",
+        path: paths.dashboard.apartments,
+        icon: ICONS.blog,
       },
     ],
   },
