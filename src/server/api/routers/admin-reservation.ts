@@ -72,7 +72,9 @@ export const adminReservationRouter = createTRPCRouter({
           (1000 * 60 * 60 * 24); // broj dana
 
         // Pomnoži cenu sobe sa dužinom boravka i dodaj u sumu
-        return sum + reservation.Room.price * stayDuration;
+        if (reservation.status === "CONFIRMED") {
+          return sum + reservation.Room.price * stayDuration;
+        } else return sum;
       }, 0);
 
       return { reservations, totalIncome };

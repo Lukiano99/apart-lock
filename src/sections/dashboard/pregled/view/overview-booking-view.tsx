@@ -33,14 +33,34 @@ export function OverviewBookingView() {
   const { user } = useAuthContext();
   const { data, isPending } = api.adminReservation.list.useQuery({
     adminId: user?.id ?? "",
+    // adminId: "f811e9b5-f284-4310-aca5-0033e2a47d06",
   });
-
+  console.log({ res: data?.reservations });
   const reservationStatuses: ReservationStatus[] = [
     "PENDING",
     "AWAITING_CONFIRMATION",
     "CONFIRMED",
     "CANCELLED",
   ];
+
+  const allApartments =
+    data && data.reservations.map((res) => res.Room.apartmentId);
+
+  const apartmentIdsWithReservations =
+    data && data.reservations
+      ? data.reservations
+          .map((reservation) => reservation.Room.apartment.id)
+          .filter((id, index, self) => self.indexOf(id) === index) // Uklanja duplikate
+      : [];
+
+  // Pronađi apartmane koji nemaju nijednu rezervaciju
+  const apartmentsWithoutReservations =
+    allApartments &&
+    allApartments.filter(
+      (apartmentId) =>
+        apartmentIdsWithReservations &&
+        !apartmentIdsWithReservations.includes(apartmentId)
+    );
 
   return (
     <DashboardContent maxWidth="xl">
@@ -152,11 +172,35 @@ export function OverviewBookingView() {
                 <BookingCheckInWidgets
                   chart={{
                     series: [
-                      { label: "Naplaćeno", percent: 73.9, total: 38566 },
                       {
-                        label: "Čeka se na uplatu",
-                        percent: 45.6,
-                        total: 18472,
+                        label: "Naplaćeno",
+                        percent: Number(
+                          (
+                            (data.reservations.filter(
+                              (res) => res.status === "CONFIRMED"
+                            ).length /
+                              data.reservations.length) *
+                            100
+                          ).toFixed(0)
+                        ),
+                        total: data.reservations.filter(
+                          (res) => res.status === "CONFIRMED"
+                        ).length,
+                      },
+                      {
+                        label: "Čeka na naplatu",
+                        percent: Number(
+                          (
+                            (data.reservations.filter(
+                              (res) => res.status === "AWAITING_CONFIRMATION"
+                            ).length /
+                              data.reservations.length) *
+                            100
+                          ).toFixed(0)
+                        ),
+                        total: data.reservations.filter(
+                          (res) => res.status === "AWAITING_CONFIRMATION"
+                        ).length,
                       },
                     ],
                   }}
@@ -168,11 +212,17 @@ export function OverviewBookingView() {
             <Grid xs={12} md={5} lg={4}>
               <Box sx={{ gap: 3, display: "flex", flexDirection: "column" }}>
                 <BookingAvailable
-                  title="Dostupni apartmani"
+                  title="Iskorišćenost apartmana"
                   chart={{
                     series: [
-                      { label: "Sa rezervacijom", value: 120 },
-                      { label: "Bez rezervacije", value: 66 },
+                      {
+                        label: "Sa rezervacijom",
+                        value: apartmentIdsWithReservations?.length ?? 0,
+                      },
+                      {
+                        label: "Bez rezervacije",
+                        value: apartmentsWithoutReservations?.length ?? 0,
+                      },
                     ],
                   }}
                 />

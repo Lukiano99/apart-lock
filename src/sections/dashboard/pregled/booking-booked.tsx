@@ -36,7 +36,15 @@ export function BookingBooked({ title, subheader, data, ...other }: Props) {
           <li key={progress.status}>
             <Box sx={{ mb: 1, display: "flex", alignItems: "center" }}>
               <Box sx={{ typography: "overline", flexGrow: 1 }}>
-                {progress.status}
+                {progress.status === "PENDING"
+                  ? "U procesu kreiranja"
+                  : progress.status === "AWAITING_CONFIRMATION"
+                    ? "Čeka se potvrda"
+                    : progress.status === "CONFIRMED"
+                      ? "Potvrđeno"
+                      : progress.status === "CANCELLED"
+                        ? "Otkazano"
+                        : "Nepoznat status"}
               </Box>
               <Box sx={{ typography: "subtitle1" }}>
                 {fShortenNumber(progress.quantity)}

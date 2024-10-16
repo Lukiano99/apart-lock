@@ -65,7 +65,7 @@ export function BookingAvailable({ title, subheader, chart, ...other }: Props) {
         dataLabels: {
           name: { offsetY: -12 },
           value: { offsetY: 6 },
-          total: { label: "Tours", formatter: () => fNumber(total) },
+          total: { label: "Apartmani", formatter: () => fNumber(total) },
         },
       },
     },
@@ -117,7 +117,7 @@ export function BookingAvailable({ title, subheader, chart, ...other }: Props) {
             <Box sx={{ color: "text.secondary", flexGrow: 1 }}>
               {item.label}
             </Box>
-            {item.value} tours
+            {item.value} {item.value === 1 ? "apartman" : "apartmana"}
           </Box>
         ))}
       </Box>
