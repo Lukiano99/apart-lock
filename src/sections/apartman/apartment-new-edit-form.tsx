@@ -174,7 +174,7 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
           }
         );
         router.refresh();
-        router.push(paths.apartments.details(data.id));
+        !currentApartment && router.push(paths.apartments.details(data.id));
       },
       onError: (data) => {
         toast.error("Došlo je do greške", {

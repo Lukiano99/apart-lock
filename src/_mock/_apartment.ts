@@ -1,3 +1,4 @@
+// ------------------------------------------
 export const APARTMENT_SERVICE_OPTIONS = [
   { label: "Wifi", value: "1" },
   { label: "Balkon", value: "2" },

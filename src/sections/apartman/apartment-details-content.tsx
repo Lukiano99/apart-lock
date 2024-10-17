@@ -9,10 +9,6 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ListItemText from "@mui/material/ListItemText";
 
-import { fDate } from "src/utils/format-time";
-
-import { TOUR_SERVICE_OPTIONS } from "src/_mock";
-
 import { Image } from "src/components/image";
 import { Iconify } from "src/components/iconify";
 import { Markdown } from "src/components/markdown";
@@ -213,8 +209,8 @@ export function ApartmentDetailsContent({ apartment }: Props) {
               alignItems="center"
               sx={{
                 ...(!apartment?.services
-                  .map((service) => service.name)
-                  .includes(service.name) && {
+                  .map((service) => service.id)
+                  .includes(Number(service.id)) && {
                   color: "text.disabled",
                 }),
               }}
@@ -224,9 +220,8 @@ export function ApartmentDetailsContent({ apartment }: Props) {
                 sx={{
                   color: "primary.main",
                   ...(!apartment?.services
-                    .map((service) => service.name)
-                    .includes(service.name) && {
-                    // .includes(service.name) && {
+                    .map((service) => service.id)
+                    .includes(Number(service.id)) && {
                     color: "text.disabled",
                   }),
                 }}
