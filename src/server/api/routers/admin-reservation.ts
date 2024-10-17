@@ -111,6 +111,29 @@ export const adminReservationRouter = createTRPCRouter({
         data: { status: reservationStatus },
       });
 
+      // Ako je status promenjen na CONFIRMED, kreiraj confirmationKey
+      if (reservationStatus === "CONFIRMED") {
+        // Generiši jedinstveni ključ (može biti nasumičan string ili prema nekoj logici)
+        const confirmationKey = `#${Math.floor(1000 + Math.random() * 9000)}`; // Na primer, generišemo četvorocifreni broj
+
+        // Proveri da li već postoji confirmationKey za ovu rezervaciju (u slučaju ponovnog update-a)
+        const existingKey = await ctx.db.confirmationKey.findUnique({
+          where: { id: reservationId },
+        });
+
+        // Ako ključ već postoji, ne kreiramo novi
+        if (!existingKey) {
+          // Kreiraj novi ConfirmationKey zapis
+          await ctx.db.confirmationKey.create({
+            data: {
+              key: confirmationKey,
+              reservationId: reservationId,
+              expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // Ključ važi 7 dana
+            },
+          });
+        }
+      }
+
       return updatedReservation; // Vraća ažuriranu rezervaciju
     }),
 });

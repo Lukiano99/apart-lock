@@ -58,6 +58,7 @@ export function OrderTableRow({
 
   const { mutate: mutateReservationStatus, isPending } =
     api.adminReservation.updateStatus.useMutation();
+
   const { refetch } = api.adminReservation.list.useQuery({
     adminId: user?.id ?? "",
   });
@@ -236,7 +237,7 @@ export function OrderTableRow({
               onClick={() => handleDeclineReservation(row.id)}
               disabled={isPending}
             >
-              Otkazi
+              Otkaži
             </LoadingButton>
           </Stack>
         ) : (
