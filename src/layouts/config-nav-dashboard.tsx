@@ -40,6 +40,7 @@ const ICONS = {
   apartments: icon("ic-apartments"),
   plus: icon("ic-plus"),
   edit: icon("ic-edit"),
+  ticket: icon("ic-ticket"),
 };
 
 // ----------------------------------------------------------------------
@@ -59,7 +60,7 @@ export const navData = [
       {
         title: "Rezervacije",
         path: paths.dashboard.reservations,
-        icon: ICONS.file,
+        icon: ICONS.ticket,
       },
       {
         title: "Apartmani",
