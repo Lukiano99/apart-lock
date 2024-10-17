@@ -37,6 +37,12 @@ const EditapartmentPage = async ({ params }: Props) => {
     description: apartment.description ?? "",
     images: apartment.images.map((img) => img.imageUrl),
     services: apartment.services.map((service) => service.id.toString()),
+    rooms: apartment.rooms.map((room) => ({
+      roomNumber: room.number.toString(),
+      bed_count: room.bed_count,
+      paymentMethod: room.paymentMethod,
+      price: room.price,
+    })),
   };
 
   return <ApartmentEditView apartment={parsedApartment} />;

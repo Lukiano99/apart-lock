@@ -3,6 +3,7 @@ import * as z from "zod";
 import { isValidPhoneNumber } from "react-phone-number-input/input";
 import { IDatePickerControl } from "@/types/common";
 import { fIsAfter } from "@/utils/format-time";
+import { PaymentMethod } from "@prisma/client";
 
 export type IApartmentFilters = z.infer<typeof ApartmentsFiltersSchema>;
 
@@ -40,6 +41,21 @@ export const NewApartmentSchema = z.object({
     message: "Morate izabrati minimum 3 slike",
   }),
   adminId: z.string().uuid(),
+
+  rooms: z.array(
+    z.object({
+      roomNumber: z.string().min(1, { message: "Broj sobe je obavezan" }),
+      paymentMethod: z.nativeEnum(PaymentMethod, {
+        message: "Način plaćanja je obavezan",
+      }),
+      bed_count: z
+        .number()
+        .min(1, { message: "Broj kreveta mora biti veći od 0" }),
+      price: z
+        .number()
+        .min(10, { message: "Cena noćenja ne može biti manja od €10" }),
+    })
+  ),
   // images: schemaHelper
   //   .files({
   //     message: { required_error: "Slike su obavezne" },

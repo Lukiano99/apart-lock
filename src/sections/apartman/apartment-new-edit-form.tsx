@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useEffect, useCallback } from "react";
 
@@ -25,11 +25,13 @@ import {
 import {
   APARTMENT_IMAGES,
   APARTMENT_SERVICE_OPTIONS,
+  APARTMENT_SORT_OPTIONS,
 } from "@/_mock/_apartment";
-import { Box, InputAdornment } from "@mui/material";
+import { Box, Button, InputAdornment, MenuItem } from "@mui/material";
 import { useAuthContext } from "@/auth/hooks";
 import { api } from "@/trpc/react";
 import { Iconify } from "@/components/iconify";
+import { PaymentMethod } from "@prisma/client";
 
 // ----------------------------------------------------------------------
 
@@ -106,9 +108,9 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
       description: currentApartment?.description || "",
       price: currentApartment?.price || 10,
       paymentRequired: currentApartment?.paymentRequired || false,
-
       images: currentApartment?.images || [],
       services: currentApartment?.services || [],
+      rooms: currentApartment?.rooms || [],
     }),
     [currentApartment]
   );
@@ -122,17 +124,36 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
     watch,
     reset,
     setValue,
+    control,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
   const values = watch();
 
+  const {
+    fields: rooms,
+    append,
+    remove,
+  } = useFieldArray({ control, name: "rooms" });
+
   useEffect(() => {
     if (currentApartment) {
       reset(defaultValues);
     }
   }, [currentApartment, defaultValues, reset]);
+
+  const handleAddRoom = () => {
+    append({
+      roomNumber: "",
+      bed_count: 1,
+      paymentMethod: "CASH",
+      price: 10,
+    });
+  };
+  const handleRemoveRoom = (index: number) => {
+    remove(index);
+  };
 
   const { mutate: deleteApartment, isPending: isDeleting } =
     api.apartment.delete.useMutation();
@@ -162,9 +183,6 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
     : api.apartment.create.useMutation();
 
   const onSubmit = handleSubmit((data) => {
-    console.log({ data });
-    console.log({ userId: user?.id });
-
     createOrUpdateApartment(data, {
       onSuccess: (data) => {
         toast.success(
@@ -183,19 +201,6 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
       },
     });
   });
-
-  // const handleRemoveFile = useCallback(
-  //   (inputFile: File | string) => {
-  //     const filtered =
-  //       values.images && values.images?.filter((file) => file !== inputFile);
-  //     setValue("images", filtered, { shouldValidate: true });
-  //   },
-  //   [setValue, values.images]
-  // );
-
-  // const handleRemoveAllFiles = useCallback(() => {
-  //   setValue("images", [], { shouldValidate: true });
-  // }, [setValue]);
 
   const renderDetails = (
     <Card>
@@ -247,19 +252,6 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
             }
           />
         </Stack>
-
-        {/* <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Slike</Typography>
-          <Field.Upload
-            multiple
-            thumbnail
-            name="images"
-            maxSize={3145728}
-            onRemove={handleRemoveFile}
-            onRemoveAll={handleRemoveAllFiles}
-            onUpload={() => console.info("ON UPLOAD")}
-          />
-        </Stack> */}
       </Stack>
     </Card>
   );
@@ -333,6 +325,121 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
     </Card>
   );
 
+  const renderRooms = (
+    <Card>
+      <CardHeader title="Sobe" subheader="Unesite sobe" sx={{ mb: 3 }} />
+      <Stack
+        divider={<Divider flexItem sx={{ borderStyle: "dashed" }} />}
+        spacing={3}
+        sx={{ p: 3 }}
+      >
+        {currentApartment &&
+          rooms.map((room, index) => (
+            <Stack key={index} alignItems="flex-end" spacing={1.5}>
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                spacing={2}
+                sx={{ width: 1 }}
+              >
+                <Field.Text
+                  size="small"
+                  name={`rooms[${index}].roomNumber`}
+                  label="Broj sobe"
+                  placeholder={`Inndex: ${index}`}
+                  InputLabelProps={{ shrink: true }}
+                />
+                <Field.Text
+                  size="small"
+                  type="number"
+                  name={`rooms[${index}].bed_count`}
+                  label="Broj kreveta"
+                  placeholder="1"
+                  // onChange={(event) => handleChangeQuantity(event, index)}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ maxWidth: { md: 96 } }}
+                />
+
+                <Field.Select
+                  name={`rooms[${index}].paymentMethod`}
+                  size="small"
+                  label="Način plaćanja"
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ maxWidth: { md: 160 } }}
+                >
+                  <Divider sx={{ borderStyle: "dashed" }} />
+
+                  {[PaymentMethod.CARD, PaymentMethod.CASH].map(
+                    (paymentMethod, idx) => (
+                      <MenuItem
+                        key={idx}
+                        value={paymentMethod}
+                        // onClick={() => handleSelectService(index, service.name)}
+                      >
+                        {paymentMethod}
+                      </MenuItem>
+                    )
+                  )}
+                </Field.Select>
+
+                <Field.Text
+                  size="small"
+                  type="number"
+                  name={`rooms[${index}].price`}
+                  label="Cena noćenja"
+                  placeholder="0.00"
+                  // onChange={(event) => handleChangePrice(event, index)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box
+                          sx={{
+                            typography: "subtitle2",
+                            color: "text.disabled",
+                          }}
+                        >
+                          €
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ maxWidth: { md: 150 } }}
+                />
+              </Stack>
+              <Divider sx={{ my: 0, borderStyle: "dashed", inset: 0 }} />
+
+              <Button
+                size="small"
+                color="error"
+                startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
+                onClick={() => handleRemoveRoom(index)}
+              >
+                Ukloni sobu
+              </Button>
+            </Stack>
+          ))}
+      </Stack>
+      <Divider sx={{ my: 3, borderStyle: "dashed" }} />
+      <Stack
+        spacing={3}
+        direction={{ xs: "column", md: "row" }}
+        alignItems={{ xs: "flex-end", md: "center" }}
+        p={3}
+        pt={0}
+      >
+        <Button
+          size="small"
+          color="primary"
+          startIcon={<Iconify icon="mingcute:add-line" />}
+          onClick={handleAddRoom}
+          sx={{ flexShrink: 0 }}
+        >
+          Dodaj sobu
+        </Button>
+      </Stack>
+      <Divider />
+    </Card>
+  );
+
   const renderActions = (
     <Stack
       direction="row"
@@ -386,6 +493,8 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
         {renderProperties}
 
         {renderPricing}
+
+        {currentApartment && renderRooms}
 
         {renderActions}
       </Stack>
