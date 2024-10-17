@@ -41,6 +41,11 @@ export const adminReservationRouter = createTRPCRouter({
           },
         },
         include: {
+          confirmationKey: {
+            select: {
+              key: true,
+            },
+          },
           Room: {
             include: {
               images: true,

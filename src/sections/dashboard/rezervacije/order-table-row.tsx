@@ -121,6 +121,24 @@ export function OrderTableRow({
       </TableCell>
       <TableCell>
         <Stack spacing={2} direction="row" alignItems="center">
+          <Box component="span" sx={{ color: "text.disabled" }}>
+            <Label
+              variant="inverted"
+              color={
+                (row.confirmationKey && "success") ||
+                (row.confirmationKey === "" && "warning") ||
+                "default"
+              }
+            >
+              {row.confirmationKey !== ""
+                ? row.confirmationKey
+                : "Nije postavljen"}
+            </Label>
+          </Box>
+        </Stack>
+      </TableCell>
+      <TableCell>
+        <Stack spacing={2} direction="row" alignItems="center">
           <Avatar alt={row.customer.name} src={""} />
 
           <Stack

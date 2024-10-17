@@ -61,6 +61,7 @@ const RESERVATION_STATUSES: {
 
 const TABLE_HEAD = [
   { id: "apartment", label: "Apartment" },
+  { id: "confirmationKey", label: "Lock Key" },
   { id: "name", label: "Customer" },
   { id: "createdAt", label: "Created" },
   { id: "checkIn", label: "Check in" },
@@ -304,6 +305,10 @@ export function AdminReservationsView() {
                         created_at: row.createdAt,
                         id: row.id,
                         status: row.status,
+                        confirmationKey:
+                          row.confirmationKey.length > 0
+                            ? row.confirmationKey[0].key
+                            : "",
                       }}
                       selected={table.selected.includes(row.id)}
                       onSelectRow={() => table.onSelectRow(row.id)}

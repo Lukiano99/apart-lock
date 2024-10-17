@@ -52,7 +52,7 @@ export function CheckoutSummary({
             Cena noćenja
           </Typography>
           <Typography component="span" variant="subtitle2">
-            {fCurrency(subtotal, { currency: "eur" })}
+            {fCurrency(subtotal)}
           </Typography>
         </Box>
         <Box display="flex">
@@ -77,9 +77,7 @@ export function CheckoutSummary({
             Usluga čišćenja
           </Typography>
           <Typography component="span" variant="subtitle2">
-            {serviceFee
-              ? fCurrency(serviceFee, { currency: "eur" })
-              : displayServiceFee}
+            {serviceFee ? fCurrency(serviceFee) : displayServiceFee}
           </Typography>
         </Box>
 
@@ -96,7 +94,7 @@ export function CheckoutSummary({
               variant="subtitle1"
               sx={{ display: "block", color: "error.main" }}
             >
-              {fCurrency(total, { currency: "eur" })}
+              {fCurrency(total)}
             </Typography>
           </Box>
         </Box>

@@ -24,4 +24,5 @@ export const ReservationssItemSchema = z.object({
   check_in: z.date().nullable(),
   check_out: z.date().nullable(),
   status: z.string(),
+  confirmationKey: z.string(),
 });

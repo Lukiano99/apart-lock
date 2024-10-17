@@ -210,8 +210,8 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
         ))}
       </TableCell>
 
-      <TableCell>{fCurrency(row.price, { currency: "eur" })}</TableCell>
-      <TableCell>{fCurrency(totalPrice, { currency: "eur" })}</TableCell>
+      <TableCell>{fCurrency(row.price)}</TableCell>
+      <TableCell>{fCurrency(totalPrice)}</TableCell>
 
       <TableCell>
         <Label

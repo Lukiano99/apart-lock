@@ -1,4 +1,4 @@
-import { formatNumberLocale } from 'src/locales';
+import { formatNumberLocale } from "src/locales";
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ export type InputNumberValue = string | number | null | undefined;
 
 type Options = Intl.NumberFormatOptions | undefined;
 
-const DEFAULT_LOCALE = { code: 'en-US', currency: 'USD' };
+const DEFAULT_LOCALE = { code: "en-US", currency: "EUR" };
 
 function processInput(inputValue: InputNumberValue): number | null {
   if (inputValue == null || Number.isNaN(inputValue)) return null;
@@ -24,7 +24,7 @@ export function fNumber(inputValue: InputNumberValue, options?: Options) {
   const locale = formatNumberLocale() || DEFAULT_LOCALE;
 
   const number = processInput(inputValue);
-  if (number === null) return '';
+  if (number === null) return "";
 
   const fm = new Intl.NumberFormat(locale.code, {
     minimumFractionDigits: 0,
@@ -38,13 +38,14 @@ export function fNumber(inputValue: InputNumberValue, options?: Options) {
 // ----------------------------------------------------------------------
 
 export function fCurrency(inputValue: InputNumberValue, options?: Options) {
-  const locale = formatNumberLocale() || DEFAULT_LOCALE;
+  // const locale = formatNumberLocale() || DEFAULT_LOCALE;
+  const locale = DEFAULT_LOCALE;
 
   const number = processInput(inputValue);
-  if (number === null) return '';
+  if (number === null) return "";
 
   const fm = new Intl.NumberFormat(locale.code, {
-    style: 'currency',
+    style: "currency",
     currency: locale.currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
@@ -60,10 +61,10 @@ export function fPercent(inputValue: InputNumberValue, options?: Options) {
   const locale = formatNumberLocale() || DEFAULT_LOCALE;
 
   const number = processInput(inputValue);
-  if (number === null) return '';
+  if (number === null) return "";
 
   const fm = new Intl.NumberFormat(locale.code, {
-    style: 'percent',
+    style: "percent",
     minimumFractionDigits: 0,
     maximumFractionDigits: 1,
     ...options,
@@ -74,14 +75,17 @@ export function fPercent(inputValue: InputNumberValue, options?: Options) {
 
 // ----------------------------------------------------------------------
 
-export function fShortenNumber(inputValue: InputNumberValue, options?: Options) {
+export function fShortenNumber(
+  inputValue: InputNumberValue,
+  options?: Options
+) {
   const locale = formatNumberLocale() || DEFAULT_LOCALE;
 
   const number = processInput(inputValue);
-  if (number === null) return '';
+  if (number === null) return "";
 
   const fm = new Intl.NumberFormat(locale.code, {
-    notation: 'compact',
+    notation: "compact",
     maximumFractionDigits: 2,
     ...options,
   }).format(number);
@@ -93,9 +97,9 @@ export function fShortenNumber(inputValue: InputNumberValue, options?: Options) 
 
 export function fData(inputValue: InputNumberValue) {
   const number = processInput(inputValue);
-  if (number === null || number === 0) return '0 bytes';
+  if (number === null || number === 0) return "0 bytes";
 
-  const units = ['bytes', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'];
+  const units = ["bytes", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "Zb", "Yb"];
   const decimal = 2;
   const baseValue = 1024;
 
