@@ -134,6 +134,64 @@ export const apartmentRouter = createTRPCRouter({
         });
       }
 
+      console.log({ rooms: input.rooms });
+      // Azuriranje soba
+
+      // Upsert sobe
+      if (input.rooms && input.rooms.length > 0) {
+        // Dobij sve postojeće sobe za apartman
+        const existingRooms = await ctx.db.room.findMany({
+          where: {
+            apartmentId: input.id,
+          },
+        });
+
+        // Kreiraj mapu za brze provere brojeva soba iz inputa
+        const inputRoomNumbers = new Set(
+          input.rooms.map((room) => parseInt(room.roomNumber))
+        );
+
+        // Obriši sobe koje više nisu prisutne u inputu
+        await Promise.all(
+          existingRooms.map(async (room) => {
+            if (!inputRoomNumbers.has(room.number)) {
+              await ctx.db.room.delete({
+                where: {
+                  id: room.id,
+                },
+              });
+            }
+          })
+        );
+
+        // Kreiraj ili ažuriraj nove sobe
+        await Promise.all(
+          input.rooms.map(async (room) => {
+            await ctx.db.room.upsert({
+              where: {
+                // Assuming `number` is unique within the same apartment
+                number_apartmentId: {
+                  number: parseInt(room.roomNumber),
+                  apartmentId: input.id ?? "",
+                },
+              },
+              create: {
+                number: parseInt(room.roomNumber), // Convert to number
+                bed_count: room.bed_count,
+                price: room.price,
+                paymentMethod: room.paymentMethod,
+                apartmentId: input.id ?? "", // Link to the apartment
+              },
+              update: {
+                bed_count: room.bed_count,
+                price: room.price,
+                paymentMethod: room.paymentMethod,
+              },
+            });
+          })
+        );
+      }
+
       return updatedApartment;
     }),
   list: publicProcedure
