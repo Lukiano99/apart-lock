@@ -29,6 +29,7 @@ import {
 import { Box, InputAdornment } from "@mui/material";
 import { useAuthContext } from "@/auth/hooks";
 import { api } from "@/trpc/react";
+import { Iconify } from "@/components/iconify";
 
 // ----------------------------------------------------------------------
 
@@ -98,6 +99,7 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
 
   const defaultValues = useMemo(
     () => ({
+      id: currentApartment?.id,
       adminId: user?.id ?? "",
       name: currentApartment?.name || "",
       location: currentApartment?.location || "",
@@ -132,18 +134,46 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
     }
   }, [currentApartment, defaultValues, reset]);
 
-  const { mutate: createApartment, isPending } =
-    api.apartment.create.useMutation();
+  const { mutate: deleteApartment, isPending: isDeleting } =
+    api.apartment.delete.useMutation();
+
+  const handleDeleteApartment = () => {
+    deleteApartment(
+      { apartmentId: currentApartment?.id ?? "" },
+      {
+        onSuccess: (data) => {
+          toast.success("Uspešno ste obrisali apartman", {
+            description: data.message,
+          });
+          router.refresh();
+          router.push(paths.dashboard.apartments.root);
+        },
+        onError: (data) => {
+          toast.error("Došlo je do greške", {
+            description: data.message,
+          });
+        },
+      }
+    );
+  };
+
+  const { mutate: createOrUpdateApartment, isPending } = currentApartment
+    ? api.apartment.update.useMutation()
+    : api.apartment.create.useMutation();
 
   const onSubmit = handleSubmit((data) => {
     console.log({ data });
     console.log({ userId: user?.id });
 
-    createApartment(data, {
+    createOrUpdateApartment(data, {
       onSuccess: (data) => {
-        toast.success("Uspešno ste kreirali apartman", {
-          description: data.id,
-        });
+        toast.success(
+          `Uspešno ste ${currentApartment ? "ažurirali" : "kreirali"} apartman`,
+          {
+            description: data.id,
+          }
+        );
+        router.refresh();
         router.push(paths.apartments.details(data.id));
       },
       onError: (data) => {
@@ -304,7 +334,12 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
   );
 
   const renderActions = (
-    <Stack direction="row" alignItems="center" flexWrap="wrap">
+    <Stack
+      direction="row"
+      flexWrap="wrap"
+      justifyContent="flex-end"
+      spacing={2}
+    >
       {/* <FormControlLabel
         control={
           <Switch defaultChecked inputProps={{ id: "publish-switch" }} />
@@ -313,12 +348,26 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
         sx={{ flexGrow: 1, pl: 3 }}
       /> */}
 
+      {currentApartment && (
+        <LoadingButton
+          type="button"
+          variant="contained"
+          size="large"
+          color="error"
+          startIcon={<Iconify icon={"mdi:trash"} />}
+          loading={isDeleting}
+          onClick={handleDeleteApartment}
+          sx={{ ml: 2 }}
+        >
+          Obriši apartman
+        </LoadingButton>
+      )}
       <LoadingButton
         type="submit"
         variant="contained"
         size="large"
-        fullWidth
-        loading={isSubmitting}
+        loading={isPending}
+        startIcon={<Iconify icon={"mdi:check"} />}
         sx={{ ml: 2 }}
       >
         {!currentApartment ? "Kreirajte apartman" : "Sačuvajte izmene"}

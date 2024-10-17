@@ -77,14 +77,6 @@ export const navData = [
             path: paths.dashboard.apartments.new,
             icon: ICONS.plus,
           },
-          {
-            title: "Izmeni apartman",
-            // todo
-            path: paths.dashboard.apartments.edit(
-              `1fd69fbe-589c-42c5-92e3-017cd7c6e946`
-            ),
-            icon: ICONS.edit,
-          },
         ],
       },
     ],

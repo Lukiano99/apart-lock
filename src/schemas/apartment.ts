@@ -23,6 +23,7 @@ export type NewApartmentSchemaType = z.infer<typeof NewApartmentSchema>;
 export type IApartmentItem = z.infer<typeof NewApartmentSchema>;
 
 export const NewApartmentSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1, { message: "Naziv apartmana je obavezan!" }),
   location: z.string().min(1, {
     message: "Lokacija je obavezana",

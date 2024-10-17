@@ -1,36 +1,24 @@
 "use client";
 
-import type { ITourItem } from "src/types/tour";
-
-import { paths } from "src/routes/paths";
-
 import { DashboardContent } from "src/layouts/dashboard";
 
-// import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-
 import { ApartmentNewEditForm } from "../apartment-new-edit-form";
+import { Typography } from "@mui/material";
+import { IApartmentItem } from "@/schemas/apartment";
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  tour?: ITourItem;
+  apartment?: IApartmentItem;
 };
 
-export function TourEditView({ tour }: Props) {
+export function ApartmentEditView({ apartment }: Props) {
   return (
     <DashboardContent>
-      {/* <CustomBreadcrumbs
-        heading="Edit"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Tour', href: paths.dashboard.tour.root },
-          { name: tour?.name },
-        ]}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      /> */}
-
-      {/* TODO add current appartment for edit later */}
-      <ApartmentNewEditForm />
+      <Typography variant="h4" sx={{ mb: 8 }}>
+        Izmenite apartman
+      </Typography>
+      <ApartmentNewEditForm currentApartment={apartment} />
     </DashboardContent>
   );
 }
