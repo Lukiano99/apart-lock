@@ -1,15 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
-import Stack from '@mui/material/Stack';
-import Collapse from '@mui/material/Collapse';
-import { useTheme } from '@mui/material/styles';
+import Stack from "@mui/material/Stack";
+import Collapse from "@mui/material/Collapse";
+import { useTheme } from "@mui/material/styles";
 
-import { NavList } from './nav-list';
-import { navSectionClasses } from '../classes';
-import { navSectionCssVars } from '../css-vars';
-import { NavUl, NavLi, Subheader } from '../styles';
+import { NavList } from "./nav-list";
+import { navSectionClasses } from "../classes";
+import { navSectionCssVars } from "../css-vars";
+import { NavUl, NavLi, Subheader } from "../styles";
 
-import type { NavGroupProps, NavSectionProps } from '../types';
+import type { NavGroupProps, NavSectionProps } from "../types";
 
 // ----------------------------------------------------------------------
 
@@ -29,8 +29,12 @@ export function NavSectionVertical({
   };
 
   return (
-    <Stack component="nav" className={navSectionClasses.vertical.root} sx={{ ...cssVars, ...sx }}>
-      <NavUl sx={{ flex: '1 1 auto', gap: 'var(--nav-item-gap)' }}>
+    <Stack
+      component="nav"
+      className={navSectionClasses.vertical.root}
+      sx={{ ...cssVars, ...sx }}
+    >
+      <NavUl sx={{ flex: "1 1 auto", gap: "var(--nav-item-gap)" }}>
         {data.map((group) => (
           <Group
             key={group.subheader ?? group.items[0].title}
@@ -48,7 +52,13 @@ export function NavSectionVertical({
 
 // ----------------------------------------------------------------------
 
-function Group({ items, render, subheader, slotProps, enabledRootRedirect }: NavGroupProps) {
+function Group({
+  items,
+  render,
+  subheader,
+  slotProps,
+  enabledRootRedirect,
+}: NavGroupProps) {
   const [open, setOpen] = useState(true);
 
   const handleToggle = useCallback(() => {
@@ -56,7 +66,7 @@ function Group({ items, render, subheader, slotProps, enabledRootRedirect }: Nav
   }, []);
 
   const renderContent = (
-    <NavUl sx={{ gap: 'var(--nav-item-gap)' }}>
+    <NavUl sx={{ gap: "var(--nav-item-gap)" }}>
       {items.map((list) => (
         <NavList
           key={list.title}

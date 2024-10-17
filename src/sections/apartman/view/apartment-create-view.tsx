@@ -6,24 +6,18 @@ import { DashboardContent } from "src/layouts/dashboard";
 
 // import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { TourNewEditForm } from "../tour-new-edit-form";
+import { ApartmentNewEditForm } from "../apartment-new-edit-form";
+import { Typography } from "@mui/material";
 
 // ----------------------------------------------------------------------
 
-export function TourCreateView() {
+export function ApartmentCreateView() {
   return (
     <DashboardContent>
-      {/* <CustomBreadcrumbs
-        heading="Create a new tour"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Tour', href: paths.dashboard.tour.root },
-          { name: 'New tour' },
-        ]}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      /> */}
-
-      <TourNewEditForm />
+      <Typography variant="h4" sx={{ mb: 8 }}>
+        Unesite novi apartman
+      </Typography>
+      <ApartmentNewEditForm />
     </DashboardContent>
   );
 }

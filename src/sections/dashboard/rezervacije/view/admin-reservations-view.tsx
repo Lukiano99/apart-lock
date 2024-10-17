@@ -167,7 +167,7 @@ export function AdminReservationsView() {
     ...RESERVATION_STATUSES,
   ];
 
-  if (data && data.reservations.length === 0) {
+  if (!data || data.reservations.length === 0) {
     return (
       <DashboardContent maxWidth="xl">
         <Typography variant="h3" sx={{ mb: 5 }}>

@@ -67,11 +67,9 @@ export const schemaHelper = {
    * defaultValue === '' | <p></p>
    */
   editor: (props?: InputProps) =>
-    zod
-      .string()
-      .min(8, {
-        message: props?.message?.required_error ?? "Editor is required!",
-      }),
+    zod.string().min(8, {
+      message: props?.message?.required_error ?? "Editor is required!",
+    }),
   /**
    * Object
    * defaultValue === null
@@ -123,7 +121,8 @@ export const schemaHelper = {
       } else if (data.length < minFiles) {
         ctx.addIssue({
           code: zod.ZodIssueCode.custom,
-          message: `Must have at least ${minFiles} items!`,
+          // message: `Must have at least ${minFiles} items!`,
+          message: `Morate imati najmanje ${minFiles} priloga!`,
         });
       }
 

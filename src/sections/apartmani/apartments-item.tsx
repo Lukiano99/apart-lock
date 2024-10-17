@@ -2,12 +2,12 @@ import type { ITourItem } from "src/types/tour";
 
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
+
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
-
 import { paths } from "src/routes/paths";
 import { RouterLink } from "src/routes/components";
 
@@ -21,6 +21,8 @@ import { Apartment, Image as ApartmentImage } from "@prisma/client";
 import { useEffect, useState } from "react";
 import qs from "query-string";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/auth/hooks";
+import { Button, IconButton } from "@mui/material";
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +38,9 @@ export function ApartmentItem({ apartment, onView, onEdit, onDelete }: Props) {
   const popover = usePopover();
 
   const router = useRouter();
+
+  const { authenticated } = useAuthContext();
+
   const [queryParams, setQueryParams] = useState<string | null>(null);
 
   useEffect(() => {
@@ -163,12 +168,14 @@ export function ApartmentItem({ apartment, onView, onEdit, onDelete }: Props) {
       }}
     >
       {/* Admins only */}
-      {/* <IconButton
-        onClick={popover.onOpen}
-        sx={{ position: "absolute", bottom: 20, right: 8 }}
-      >
-        <Iconify icon="eva:more-vertical-fill" />
-      </IconButton> */}
+      {authenticated && (
+        <IconButton
+          onClick={popover.onOpen}
+          sx={{ position: "absolute", bottom: 20, right: 8 }}
+        >
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton>
+      )}
 
       {[
         {
@@ -238,11 +245,13 @@ export function ApartmentItem({ apartment, onView, onEdit, onDelete }: Props) {
             onClick={() => {
               popover.onClose();
               onView();
+              router.push(paths.dashboard.apartments.edit(apartment.id));
             }}
           >
-            <Iconify icon="solar:eye-bold" />
-            View
+            <Iconify icon="mdi:pencil" />
+            Izmeni
           </MenuItem>
+
           {/* Admins only can edit */}
           {/* <MenuItem
             onClick={() => {

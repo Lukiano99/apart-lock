@@ -65,11 +65,11 @@ export const NewTourSchema = zod
     services: zod
       .string()
       .array()
-      .min(2, { message: "Must have at least 2 items!" }),
+      .min(2, { message: "Morate imati bar 2 item-a!" }),
     tags: zod
       .string()
       .array()
-      .min(2, { message: "Must have at least 2 items!" }),
+      .min(2, { message: "Morate imati bar 2 item-a!" }),
   })
   .refine(
     (data) => !fIsAfter(data.available.startDate, data.available.endDate),
