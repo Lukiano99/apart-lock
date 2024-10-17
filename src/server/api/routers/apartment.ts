@@ -134,7 +134,6 @@ export const apartmentRouter = createTRPCRouter({
         });
       }
 
-      console.log({ rooms: input.rooms });
       // Azuriranje soba
 
       // Upsert sobe
