@@ -213,8 +213,8 @@ export function ApartmentDetailsContent({ apartment }: Props) {
               alignItems="center"
               sx={{
                 ...(!apartment?.services
-                  .map((service) => service.name)
-                  .includes(service.name) && {
+                  .map((service) => service.id.toString())
+                  .includes(service.id) && {
                   color: "text.disabled",
                 }),
               }}
@@ -224,8 +224,8 @@ export function ApartmentDetailsContent({ apartment }: Props) {
                 sx={{
                   color: "primary.main",
                   ...(!apartment?.services
-                    .map((service) => service.name)
-                    .includes(service.name) && {
+                    .map((service) => service.id.toString())
+                    .includes(service.id) && {
                     // .includes(service.name) && {
                     color: "text.disabled",
                   }),

@@ -112,15 +112,27 @@ export const apartmentRouter = createTRPCRouter({
           },
 
           // Ažuriranje servisa (usluga) - ako ih ima
+          // Prvo uklanjanje svih servisa
           services: {
-            connect: input.services
-              ? input.services.map((serviceId) => ({
-                  id: Number(serviceId),
-                }))
-              : undefined,
+            set: [], // Ukloni sve postojeće servise
           },
         },
       });
+
+      if (input.services && input.services.length > 0) {
+        await ctx.db.apartment.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            services: {
+              connect: input.services.map((serviceId) => ({
+                id: Number(serviceId),
+              })),
+            },
+          },
+        });
+      }
 
       return updatedApartment;
     }),
