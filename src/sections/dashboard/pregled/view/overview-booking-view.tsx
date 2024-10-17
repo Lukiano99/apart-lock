@@ -100,7 +100,7 @@ export function OverviewBookingView() {
               title="Prodatih"
               percent={0}
               total={
-                data.reservations.filter((res) => res.paymentMethod === "CARD")
+                data.reservations.filter((res) => res.status === "CONFIRMED")
                   .length
               }
               icon={<CheckInIllustration />}
