@@ -29,7 +29,8 @@ export function TourEditView({ tour }: Props) {
         sx={{ mb: { xs: 3, md: 5 } }}
       /> */}
 
-      <ApartmentNewEditForm currentApartment={tour} />
+      {/* TODO add current appartment for edit later */}
+      <ApartmentNewEditForm />
     </DashboardContent>
   );
 }

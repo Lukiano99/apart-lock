@@ -116,6 +116,39 @@ export const apartmentRouter = createTRPCRouter({
       return availableApartments;
     }),
 
+  listAdminApartments: publicProcedure
+    .input(
+      z.object({
+        adminId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const adminExists = await ctx.db.admin.findUnique({
+        where: {
+          id: input.adminId,
+        },
+      });
+
+      if (!adminExists) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Administrator sa datim ID-om ne postoji.",
+        });
+      }
+
+      const apartments = await ctx.db.apartment.findMany({
+        where: {
+          adminId: input.adminId,
+        },
+        include: {
+          images: true,
+          services: true,
+          rooms: true,
+        },
+      });
+
+      return apartments;
+    }),
   get: publicProcedure
     .input(
       z.object({

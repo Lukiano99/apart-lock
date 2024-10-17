@@ -1,5 +1,10 @@
-const ApartmentDetailsPage = () => {
-  return <div>Apartments list page</div>;
-};
+import AdminApartmentsListView from "@/sections/dashboard/apartmani/view/admin-apartments-list";
+import { CONFIG } from "src/config-global";
 
-export default ApartmentDetailsPage;
+// ----------------------------------------------------------------------
+
+export const metadata = { title: `Pregled apartmana - ${CONFIG.appName}` };
+
+export default function Page() {
+  return <AdminApartmentsListView />;
+}
