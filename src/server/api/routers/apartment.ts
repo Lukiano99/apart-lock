@@ -44,14 +44,13 @@ export const apartmentRouter = createTRPCRouter({
           },
 
           // Kreiranje servisa (usluga) - ako ih ima
-          services: input.services
-            ? {
-                connectOrCreate: input.services.map((serviceName) => ({
-                  where: { name: serviceName },
-                  create: { name: serviceName },
-                })),
-              }
-            : undefined,
+          services: {
+            connect: input.services
+              ? input.services.map((serviceId) => ({
+                  id: Number(serviceId),
+                }))
+              : undefined,
+          },
         },
       });
 

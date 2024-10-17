@@ -144,6 +144,7 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
         toast.success("Uspešno ste kreirali apartman", {
           description: data.id,
         });
+        router.push(paths.apartments.details(data.id));
       },
       onError: (data) => {
         toast.error("Došlo je do greške", {
