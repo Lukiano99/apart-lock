@@ -8,7 +8,7 @@ import { DashboardContent } from "src/layouts/dashboard";
 
 // import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { TourNewEditForm } from "../tour-new-edit-form";
+import { ApartmentNewEditForm } from "../apartment-new-edit-form";
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +29,7 @@ export function TourEditView({ tour }: Props) {
         sx={{ mb: { xs: 3, md: 5 } }}
       /> */}
 
-      <TourNewEditForm currentTour={tour} />
+      <ApartmentNewEditForm currentApartment={tour} />
     </DashboardContent>
   );
 }

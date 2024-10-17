@@ -1,9 +1,62 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { ApartmentsFiltersSchema } from "@/schemas/apartment";
+import {
+  ApartmentsFiltersSchema,
+  NewApartmentSchema,
+} from "@/schemas/apartment";
+import { TRPCError } from "@trpc/server";
 
 export const apartmentRouter = createTRPCRouter({
+  create: publicProcedure
+    .input(NewApartmentSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Proveri da li već postoji apartman sa istim imenom na istoj lokaciji (opciono)
+      const existingApartment = await ctx.db.apartment.findFirst({
+        where: {
+          name: input.name,
+          location: input.location,
+        },
+      });
+
+      if (existingApartment) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Apartman sa istim imenom i lokacijom već postoji.",
+        });
+      }
+
+      // Kreiraj novi apartman
+      const newApartment = await ctx.db.apartment.create({
+        data: {
+          name: input.name,
+          location: input.location,
+          price: input.price,
+          description: input.description || "", // Opcionalni opis, može biti prazan
+          requiresPayment: input.paymentRequired,
+          adminId: input.adminId, // ID administratora koji kreira apartman
+
+          // Kreiranje slika
+          images: {
+            create: input.images.map((imageUrl) => ({
+              imageUrl,
+            })),
+          },
+
+          // Kreiranje servisa (usluga) - ako ih ima
+          services: input.services
+            ? {
+                connectOrCreate: input.services.map((serviceName) => ({
+                  where: { name: serviceName },
+                  create: { name: serviceName },
+                })),
+              }
+            : undefined,
+        },
+      });
+
+      return newApartment;
+    }),
   list: publicProcedure
     .input(ApartmentsFiltersSchema)
     .query(async ({ ctx, input }) => {
@@ -15,27 +68,34 @@ export const apartmentRouter = createTRPCRouter({
               : undefined,
 
           location: input.location ? input.location : undefined,
+          OR: [
+            // Apartmani koji nemaju sobe
+            { rooms: { none: {} } },
+            {
+              rooms: {
+                some: {
+                  bed_count: {
+                    gte: input.guests.adults + input.guests.children,
+                  },
 
-          rooms: {
-            some: {
-              bed_count: { gte: input.guests.adults + input.guests.children },
-
-              reservations:
-                input.startDate && input.endDate
-                  ? {
-                      none: {
-                        OR: [
-                          // Reservation check-in is before the given end date, and reservation check-out is after the given start date
-                          {
-                            check_in: { lt: input.endDate },
-                            check_out: { gt: input.startDate },
+                  reservations:
+                    input.startDate && input.endDate
+                      ? {
+                          none: {
+                            OR: [
+                              // Reservation check-in is before the given end date, and reservation check-out is after the given start date
+                              {
+                                check_in: { lt: input.endDate },
+                                check_out: { gt: input.startDate },
+                              },
+                            ],
                           },
-                        ],
-                      },
-                    }
-                  : undefined,
+                        }
+                      : undefined,
+                },
+              },
             },
-          },
+          ],
         },
         include: {
           rooms: true,
