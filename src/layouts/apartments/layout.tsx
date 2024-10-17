@@ -66,8 +66,6 @@ export function ApartmentsLayout({
 
   const settings = useSettingsContext();
 
-  const { authenticated } = useAuthContext();
-
   const navColorVars = useNavColorVars(theme, settings);
 
   const layoutQuery: Breakpoint = "lg";
@@ -169,29 +167,6 @@ export function ApartmentsLayout({
             ),
             rightArea: (
               <Box display="flex" alignItems="center" gap={{ xs: 0, sm: 0.75 }}>
-                {/* -- Dashboard button -- */}
-                {authenticated && (
-                  <Button
-                    LinkComponent={RouterLink}
-                    variant="contained"
-                    href={paths.dashboard.root}
-                    color="primary"
-                    startIcon={<Iconify icon={"ic:round-dashboard"} />}
-                  >
-                    Dashboard
-                  </Button>
-                )}
-                {/* -- Login button -- */}
-                {!authenticated && (
-                  <Button
-                    LinkComponent={RouterLink}
-                    variant="text"
-                    href={paths.auth.supabase.signIn}
-                    color="primary"
-                  >
-                    Prijavi se
-                  </Button>
-                )}
                 {/* -- Searchbar -- */}
                 <Searchbar data={navData} />
                 {/* -- Language popover -- */}
