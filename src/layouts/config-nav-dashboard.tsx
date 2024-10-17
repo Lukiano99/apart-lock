@@ -37,6 +37,9 @@ const ICONS = {
   analytics: icon("ic-analytics"),
   dashboard: icon("ic-dashboard"),
   parameter: icon("ic-parameter"),
+  apartments: icon("ic-apartments"),
+  plus: icon("ic-plus"),
+  edit: icon("ic-edit"),
 };
 
 // ----------------------------------------------------------------------
@@ -58,15 +61,30 @@ export const navData = [
         path: paths.dashboard.reservations,
         icon: ICONS.file,
       },
-    ],
-  },
-  {
-    subheader: "Apartmani",
-    items: [
       {
-        title: "Unesi apartman",
-        path: paths.dashboard.apartments,
-        icon: ICONS.blog,
+        title: "Apartmani",
+        path: paths.dashboard.apartments.root,
+        icon: ICONS.apartments,
+        children: [
+          {
+            title: "Vaši apartmani",
+            path: paths.dashboard.apartments.root,
+            icon: ICONS.blog,
+          },
+          {
+            title: "Unesi novi apartman",
+            path: paths.dashboard.apartments.new,
+            icon: ICONS.plus,
+          },
+          {
+            title: "Izmeni apartman",
+            // todo
+            path: paths.dashboard.apartments.edit(
+              `1fd69fbe-589c-42c5-92e3-017cd7c6e946`
+            ),
+            icon: ICONS.edit,
+          },
+        ],
       },
     ],
   },
