@@ -195,12 +195,12 @@ export function ApartmentsLayout({
                 {/* -- Searchbar -- */}
                 <Searchbar data={navData} />
                 {/* -- Language popover -- */}
-                <LanguagePopover
+                {/* <LanguagePopover
                   data={[
                     { value: "en", label: "English", countryCode: "GB" },
                     { value: "rs", label: "Serbian", countryCode: "RS" },
                   ]}
-                />
+                /> */}
 
                 {/* -- Notifications popover -- */}
                 {/* <NotificationsDrawer data={_notifications} /> */}
