@@ -37,7 +37,6 @@ export function OverviewBookingView() {
     // adminId: "f811e9b5-f284-4310-aca5-0033e2a47d06",
     // adminId: "",
   });
-  console.log({ res: data?.reservations });
   const reservationStatuses: ReservationStatus[] = [
     "PENDING",
     "AWAITING_CONFIRMATION",
