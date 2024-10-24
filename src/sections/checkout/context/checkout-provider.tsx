@@ -98,7 +98,8 @@ function Container({ children }: Props) {
 
   const initialStep = useCallback(() => {
     if (!activeStep) {
-      const href = createUrl("go", 0);
+      // const href = createUrl("go", 0);
+      const href = createUrl("go", 1);
       router.push(href);
     }
   }, [activeStep, router]);
@@ -281,5 +282,5 @@ function createUrl(type: "back" | "next" | "go", activeStep: number) {
 
   const stepParams = new URLSearchParams({ step: `${step}` }).toString();
 
-  return `${paths.product.checkout}?${stepParams}`;
+  return `${paths.test.reservation}?${stepParams}`;
 }

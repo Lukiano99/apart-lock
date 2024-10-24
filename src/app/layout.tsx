@@ -25,6 +25,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { HydrateClient } from "@/trpc/server";
 import { Snackbar } from "@/components/snackbar";
 import { AuthProvider as SupabaseAuthProvider } from "@/auth/context/supabase";
+import { CheckoutProvider } from "@/sections/checkout/context";
 
 // ----------------------------------------------------------------------
 
@@ -61,20 +62,22 @@ export default async function RootLayout({ children }: Props) {
         <I18nProvider lang={CONFIG.isStaticExport ? undefined : lang}>
           <TRPCReactProvider>
             <HydrateClient>
-              <LocalizationProvider>
-                <AuthProvider>
-                  <SettingsProvider settings={defaultSettings}>
-                    <ThemeProvider>
-                      <Snackbar />
-                      <MotionLazy>
-                        <ProgressBar />
-                        <SettingsDrawer />
-                        {children}
-                      </MotionLazy>
-                    </ThemeProvider>
-                  </SettingsProvider>
-                </AuthProvider>
-              </LocalizationProvider>
+              <CheckoutProvider>
+                <LocalizationProvider>
+                  <AuthProvider>
+                    <SettingsProvider settings={defaultSettings}>
+                      <ThemeProvider>
+                        <Snackbar />
+                        <MotionLazy>
+                          <ProgressBar />
+                          <SettingsDrawer />
+                          {children}
+                        </MotionLazy>
+                      </ThemeProvider>
+                    </SettingsProvider>
+                  </AuthProvider>
+                </LocalizationProvider>
+              </CheckoutProvider>
             </HydrateClient>
           </TRPCReactProvider>
         </I18nProvider>

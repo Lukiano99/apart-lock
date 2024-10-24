@@ -5,6 +5,7 @@ const ROOTS = {
   DASHBOARD: "/admin",
   APPARTMENTS: "/apartmani",
   RESERVATION: "/rezervacija",
+  TEST: "/test",
 };
 
 // ----------------------------------------------------------------------
@@ -69,5 +70,9 @@ export const paths = {
     roomReservation: (apartmentId: string, roomId: string) =>
       `${ROOTS.APPARTMENTS}/${apartmentId}/sobe/${roomId}/rezervacija`,
     edit: (id: string) => `${ROOTS.APPARTMENTS}/tour/${id}/edit`,
+  },
+  test: {
+    root: ROOTS.TEST,
+    reservation: `${ROOTS.TEST}/reservation`,
   },
 };

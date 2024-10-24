@@ -18,7 +18,6 @@ import { useSettingsContext } from "src/components/settings";
 import { Main } from "./main";
 import { NavMobile } from "./nav-mobile";
 import { layoutClasses } from "../classes";
-// import { NavVertical } from "./nav-vertical";
 import { NavHorizontal } from "./nav-horizontal";
 import { _account } from "../config-nav-account";
 import { Searchbar } from "../components/searchbar";
@@ -27,19 +26,7 @@ import { MenuButton } from "../components/menu-button";
 import { LayoutSection } from "../core/layout-section";
 import { HeaderSection } from "../core/header-section";
 import { StyledDivider, useNavColorVars } from "./styles";
-// import { AccountDrawer } from "../components/account-drawer";
-// import { SettingsButton } from "../components/settings-button";
-// import { LanguagePopover } from "../components/language-popover";
-// import { ContactsPopover } from "../components/contacts-popover";
-import { WorkspacesPopover } from "../components/workspaces-popover";
 import { navData as apartmentsNavData } from "../config-nav-apartments";
-import { NotificationsDrawer } from "../components/notifications-drawer";
-import { LanguagePopover } from "../components/language-popover";
-import { useAuthContext } from "@/auth/hooks";
-import { Button } from "@mui/material";
-import { RouterLink } from "@/routes/components";
-import { paths } from "@/routes/paths";
-import { Iconify } from "@/components/iconify";
 
 // ----------------------------------------------------------------------
 
