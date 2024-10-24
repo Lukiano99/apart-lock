@@ -25,12 +25,13 @@ import { RoomsTableToolbar } from "../rooms-table-toolbar";
 import { paths } from "@/routes/paths";
 import { api, RouterOutputs } from "@/trpc/react";
 import { RouterLink } from "@/routes/components";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import qs from "query-string";
 import { LoadingIcon } from "yet-another-react-lightbox";
 import { fDuration } from "@/utils/format-time";
+import { useCheckoutContext } from "@/sections/checkout/context";
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
@@ -138,6 +139,9 @@ type RowItemProps = {
 };
 
 function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
+  const checkout = useCheckoutContext();
+  const router = useRouter();
+
   const available =
     !row.reservations.some(
       (reservation) =>
@@ -194,6 +198,15 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
     console.info("DELETE", row.id);
   };
 
+  const handleReservation = () => {
+    // TODO
+    // checkout.addApartmentAndRoom(row.apartmentId, row.id);
+    // checkout.addDateAndGuests();
+
+    // router.push(`${paths.apartments.roomReservation(row.apartmentId, row.id)}`)
+    router.push(`${paths.test.reservation}`);
+  };
+
   return (
     <TableRow>
       <TableCell>
@@ -240,12 +253,10 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
 
       <TableCell>
         <Button
-          component={RouterLink}
-          href={`${paths.apartments.roomReservation(row.apartmentId, row.id)}${finalQueryString}`}
           variant="contained"
           color="primary"
           disabled={!available}
-          target="_blank"
+          onClick={handleReservation}
         >
           Rezerviši
         </Button>
