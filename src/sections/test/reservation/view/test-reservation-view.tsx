@@ -8,7 +8,7 @@ import { Box, Stack, Typography } from "@mui/material";
 type Props = {
   title?: string;
 };
-const TestView = ({ title = "Test" }: Props) => {
+const TestReservationView = ({ title = "Test" }: Props) => {
   return (
     <ApartmentsContent maxWidth="xl">
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
@@ -25,18 +25,10 @@ const TestView = ({ title = "Test" }: Props) => {
               varAlpha(theme.vars.palette.grey["500Channel"], 0.04),
             border: (theme) => `dashed 1px ${theme.vars.palette.divider}`,
           }}
-        >
-          <Button
-            LinkComponent={RouterLink}
-            href="http://localhost:3000/test/reservation"
-            variant="contained"
-          >
-            Rezervisi
-          </Button>
-        </Box>
+        ></Box>
       </Stack>
     </ApartmentsContent>
   );
 };
 
-export default TestView;
+export default TestReservationView;
