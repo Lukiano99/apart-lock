@@ -32,6 +32,7 @@ import qs from "query-string";
 import { LoadingIcon } from "yet-another-react-lightbox";
 import { fDuration } from "@/utils/format-time";
 import { useCheckoutContext } from "@/sections/checkout/context";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
@@ -140,6 +141,9 @@ type RowItemProps = {
 
 function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
   const checkout = useCheckoutContext();
+
+  const { setField } = useLocalStorage();
+
   const router = useRouter();
 
   const available =
@@ -204,6 +208,7 @@ function RowItem({ row, startDate, endDate, guests }: RowItemProps) {
     // checkout.addDateAndGuests();
 
     // router.push(`${paths.apartments.roomReservation(row.apartmentId, row.id)}`)
+
     router.push(`${paths.test.reservation}`);
   };
 

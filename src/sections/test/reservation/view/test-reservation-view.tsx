@@ -6,6 +6,7 @@ import { BlankView } from "@/sections/blank/view";
 import { CheckoutOrderComplete } from "@/sections/checkout/checkout-order-complete";
 import { CheckoutSteps } from "@/sections/checkout/checkout-steps";
 import { useCheckoutContext } from "@/sections/checkout/context";
+import { useReservationContext } from "@/sections/reservation/context";
 import { varAlpha } from "@/theme/styles";
 import { Button, Container, Grid } from "@mui/material";
 import { Box, Stack, Typography } from "@mui/material";
@@ -15,10 +16,11 @@ type Props = {
   title?: string;
 };
 const TestReservationView = ({ title = "Test" }: Props) => {
+  const reservation = useReservationContext();
   const checkout = useCheckoutContext();
 
   useEffect(() => {
-    checkout.initialStep();
+    reservation.initialStep();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -27,27 +29,29 @@ const TestReservationView = ({ title = "Test" }: Props) => {
       <Container sx={{ mb: 10 }}>
         <Grid
           container
-          justifyContent={checkout.completed ? "center" : "flex-start"}
+          justifyContent={reservation.completed ? "center" : "flex-start"}
         >
           <Grid xs={12} md={12}>
             <CheckoutSteps
-              activeStep={checkout.activeStep}
+              activeStep={reservation.activeStep}
               steps={RESERVATION_CHECKOUT_STEPS}
             />
           </Grid>
         </Grid>
 
         <>
-          {checkout.activeStep === 0 && <BlankView title="CheckoutCart" />}
+          {reservation.activeStep === 0 && <BlankView title="CheckoutCart" />}
 
-          {checkout.activeStep === 1 && <BlankView title="Customer details" />}
+          {reservation.activeStep === 1 && (
+            <BlankView title="Customer details" />
+          )}
 
-          {checkout.activeStep === 2 && <BlankView title="Finishing" />}
+          {reservation.activeStep === 2 && <BlankView title="Finishing" />}
 
-          {checkout.completed && (
+          {reservation.completed && (
             <CheckoutOrderComplete
               open
-              onReset={checkout.onReset}
+              onReset={reservation.onReset}
               onDownloadPDF={() => {}}
             />
           )}
