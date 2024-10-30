@@ -1,3 +1,4 @@
+"use client";
 import { RESERVATION_CHECKOUT_STEPS } from "@/_mock/_reservation";
 import { CustomerReservationSchemaType } from "@/schemas/reservation";
 import React, { useCallback, useMemo, useState, createContext } from "react";
