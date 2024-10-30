@@ -7,7 +7,13 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 
 const TuyaView = () => {
-  const [encryptedPassword, setEncryptedPassword] = useState("");
+  const [apiResponse, setApiResponse] = useState<{
+    id: null | string;
+    name: null | string;
+  }>({
+    id: null,
+    name: null,
+  });
 
   const test = env.NEXT_PUBLIC_TUYA_URL;
 
@@ -17,10 +23,15 @@ const TuyaView = () => {
     // setEncryptedPassword(newPassword);
     const data = await tuyaApiRequest(
       "GET",
-      `v1.0/devices/${process.env.NEXT_PUBLIC_TUYA_DIDALOCK_DEVICE_ID}/door-lock/temp-passwords`
+      `/v1.0/users/${env.NEXT_PUBLIC_TUYA_USER_UUID}/devices`
     );
     console.log(data);
-    setEncryptedPassword("izvrseno, proveri konzolu");
+    const responseData = JSON.stringify(data);
+
+    setApiResponse({
+      id: data.result[0].id,
+      name: data.result[0].name,
+    });
   };
 
   return (
@@ -29,10 +40,13 @@ const TuyaView = () => {
       <Stack width={300} spacing={4} mt={10}>
         <Stack width={300} spacing={4} mt={10}>
           <Button variant="contained" onClick={handleCreatePassword}>
-            Kreiraj sifru
+            Izlistaj uredjaje
           </Button>
-          <Typography variant="body2" color={"primary"}>
-            {encryptedPassword}
+          <Typography variant="body2" color={"primary"} maxWidth={400}>
+            device_name: {apiResponse.name}
+          </Typography>
+          <Typography variant="body2" color={"primary"} maxWidth={400}>
+            device_id: {apiResponse.id}
           </Typography>
           <Typography variant="body2" color={"secondary"}>
             {test}

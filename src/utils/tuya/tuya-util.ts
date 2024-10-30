@@ -17,11 +17,10 @@ function getTimestamp(): number {
 // Pribavlja access token od Tuya API-ja
 async function fetchAccessToken(): Promise<string> {
   const timestamp = getTimestamp();
-  // const signStr = `${TUYA_CLIENT_ID}${timestamp}`;
-  // const signature = generateSignature(signStr, TUYA_SECRET!);
+
   const nonce = "";
   const signStr = createSignUrl({}, "GET", `/v1.0/token?grant_type=1`, "");
-  const signature = calcSign(
+  const signature = calcSignToken(
     TUYA_CLIENT_ID,
     timestamp,
     nonce,
@@ -31,7 +30,7 @@ async function fetchAccessToken(): Promise<string> {
 
   // console.log("Iz access tokena");
   // console.log({ signStr });
-  console.log({ signature });
+  // console.log({ signature });
 
   const response = await axios.get(`${TUYA_URL}/v1.0/token?grant_type=1`, {
     headers: {
@@ -69,6 +68,8 @@ function createSignUrl(
     .join("&");
   const sha256 = CryptoJS.SHA256(body);
 
+  // console.log({ sha256: sha256.toString() });
+
   const signUrl = `${method}\n${sha256}\n\n${path}${sortedParams && `?${sortedParams}`}`;
 
   // console.log({ signUrl });
@@ -90,16 +91,23 @@ export async function tuyaApiRequest(
   body: any = {}
 ) {
   const timestamp = getTimestamp();
+  // const timestamp = 1730213605;
+  const nonce = "";
   const accessToken = await getAccessToken();
-  const signStr = createSignUrl(queryParams, method, path, body);
-  const signature = generateSignature(
-    `${TUYA_CLIENT_ID}${accessToken}${timestamp}${signStr}`,
-    TUYA_SECRET!
+  const signStr = createSignUrl({}, "GET", path, "");
+
+  const signature = calcSignApiCall(
+    TUYA_CLIENT_ID,
+    accessToken,
+    timestamp,
+    nonce,
+    signStr,
+    TUYA_SECRET
   );
 
-  // console.log("Iz requesta");
-  // console.log({ signStr });
-  // console.log({ signature });
+  console.log("Iz requesta");
+  console.log({ signature });
+  // console.log({ signStr }); // ovaj je dobar, kao u postman-u
 
   const headers = {
     client_id: TUYA_CLIENT_ID,
@@ -124,8 +132,8 @@ export async function tuyaApiRequest(
     throw error;
   }
 }
-
-function calcSign(
+// Token verification calculation
+function calcSignToken(
   clientId: string,
   timestamp: number,
   nonce: string,
@@ -137,10 +145,28 @@ function calcSign(
   var hashInBase64 = hash.toString();
   var signUp = hashInBase64.toUpperCase();
 
-  // console.log({ str });
+  console.log({ str });
   // console.log({ hash });
   // console.log({ hashInBase64 });
-  console.log({ signUp });
+  // console.log({ signUp });
 
+  return signUp;
+}
+
+// Business verification calculation
+function calcSignApiCall(
+  clientId: string,
+  accessToken: string,
+  timestamp: number,
+  nonce: string,
+  signStr: string,
+  secret: string
+) {
+  var str = clientId + accessToken + timestamp + nonce + signStr;
+  var hash = CryptoJS.HmacSHA256(str, secret);
+  var hashInBase64 = hash.toString();
+  var signUp = hashInBase64.toUpperCase();
+
+  console.log({ accessToken });
   return signUp;
 }
