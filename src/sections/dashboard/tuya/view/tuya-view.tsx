@@ -7,17 +7,11 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 
 const TuyaView = () => {
-  const [apiResponse, setApiResponse] = useState<{
-    id: null | string;
-    name: null | string;
-  }>({
-    id: null,
-    name: null,
-  });
+  const [apiResponse, setApiResponse] = useState("");
 
   const test = env.NEXT_PUBLIC_TUYA_URL;
 
-  const handleCreatePassword = async () => {
+  const handleListDevices = async () => {
     // const password = "1234567";
     // const newPassword = createTemporaryPassword(password);
     // setEncryptedPassword(newPassword);
@@ -25,13 +19,23 @@ const TuyaView = () => {
       "GET",
       `/v1.0/users/${env.NEXT_PUBLIC_TUYA_USER_UUID}/devices`
     );
+    // const data = await tuyaApiRequest(
+    //   "POST",
+    //   `/v1.0/devices/${env.NEXT_PUBLIC_TUYA_DIDALOCK_DEVICE_ID}/door-lock/password-ticket`
+    // );
     console.log(data);
-    const responseData = JSON.stringify(data);
 
-    setApiResponse({
-      id: data.result[0].id,
-      name: data.result[0].name,
-    });
+    setApiResponse(JSON.stringify(data).toWellFormed());
+  };
+  const handlePasswordTicket = async () => {
+    const data = await tuyaApiRequest(
+      "POST",
+      `/v1.0/devices/${env.NEXT_PUBLIC_TUYA_DIDALOCK_DEVICE_ID}/door-lock/password-ticket`
+    );
+
+    console.log(data);
+
+    setApiResponse(JSON.stringify(data).toWellFormed());
   };
 
   return (
@@ -39,14 +43,14 @@ const TuyaView = () => {
       <Typography variant="h3">Tuya Testing 🔑</Typography>
       <Stack width={300} spacing={4} mt={10}>
         <Stack width={300} spacing={4} mt={10}>
-          <Button variant="contained" onClick={handleCreatePassword}>
+          <Button variant="contained" onClick={handleListDevices}>
             Izlistaj uredjaje
           </Button>
+          <Button variant="contained" onClick={handlePasswordTicket}>
+            Get Password Ticket
+          </Button>
           <Typography variant="body2" color={"primary"} maxWidth={400}>
-            device_name: {apiResponse.name}
-          </Typography>
-          <Typography variant="body2" color={"primary"} maxWidth={400}>
-            device_id: {apiResponse.id}
+            {apiResponse}
           </Typography>
           <Typography variant="body2" color={"secondary"}>
             {test}

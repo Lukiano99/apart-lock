@@ -44,10 +44,8 @@ async function fetchAccessToken(): Promise<string> {
   if (response.data.success === true)
     accessToken = response.data.result.access_token;
 
-  console.log({ resp: response });
-
   if (!accessToken) throw Error("Tuya access token error");
-  console.log({ accessToken });
+  // console.log({ accessToken });
   return accessToken;
 }
 
@@ -88,14 +86,13 @@ export async function tuyaApiRequest(
   method: "GET" | "POST",
   path: string,
   queryParams: Record<string, any> = {},
-  body: any = {}
+  body: any = ""
 ) {
   const timestamp = getTimestamp();
-  // const timestamp = 1730213605;
+  // const timestamp = 1730213625;
   const nonce = "";
   const accessToken = await getAccessToken();
-  const signStr = createSignUrl({}, "GET", path, "");
-
+  const signStr = createSignUrl({}, method, path, "");
   const signature = calcSignApiCall(
     TUYA_CLIENT_ID,
     accessToken,
@@ -106,8 +103,8 @@ export async function tuyaApiRequest(
   );
 
   console.log("Iz requesta");
-  console.log({ signature });
-  // console.log({ signStr }); // ovaj je dobar, kao u postman-u
+  console.log({ signature }); // ovaj je dobar takodje, kao u postman-u
+  console.log({ signStr }); // ovaj je dobar, kao u postman-u
 
   const headers = {
     client_id: TUYA_CLIENT_ID,
@@ -118,7 +115,8 @@ export async function tuyaApiRequest(
   };
 
   try {
-    const url = `${TUYA_URL}/${path}`;
+    const url = `${TUYA_URL}${path}`;
+    console.log({ url });
     const response = await axios({
       method,
       url,
@@ -145,7 +143,7 @@ function calcSignToken(
   var hashInBase64 = hash.toString();
   var signUp = hashInBase64.toUpperCase();
 
-  console.log({ str });
+  // console.log({ str });
   // console.log({ hash });
   // console.log({ hashInBase64 });
   // console.log({ signUp });
@@ -167,6 +165,6 @@ function calcSignApiCall(
   var hashInBase64 = hash.toString();
   var signUp = hashInBase64.toUpperCase();
 
-  console.log({ accessToken });
+  // console.log({ str });
   return signUp;
 }
