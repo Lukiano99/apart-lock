@@ -41,6 +41,7 @@ const ICONS = {
   plus: icon("ic-plus"),
   edit: icon("ic-edit"),
   ticket: icon("ic-ticket"),
+  key: icon("ic-key"),
 };
 
 // ----------------------------------------------------------------------
@@ -78,6 +79,11 @@ export const navData = [
             icon: ICONS.plus,
           },
         ],
+      },
+      {
+        title: "Tuya test",
+        path: paths.dashboard.tuya,
+        icon: ICONS.key,
       },
     ],
   },

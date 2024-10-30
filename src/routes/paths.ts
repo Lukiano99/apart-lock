@@ -46,6 +46,8 @@ export const paths = {
   dashboard: {
     root: ROOTS.DASHBOARD,
     reservations: `${ROOTS.DASHBOARD}/rezervacije`,
+    tuya: `${ROOTS.DASHBOARD}/tuya`,
+
     apartments: {
       root: `${ROOTS.DASHBOARD}/apartmani`,
       new: `${ROOTS.DASHBOARD}/apartmani/new`,

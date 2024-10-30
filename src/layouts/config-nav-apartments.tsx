@@ -11,8 +11,8 @@ const icon = (name: string) => (
 );
 
 const ICONS = {
-  house: icon("ic_house"),
-  smile: icon("ic_smile"),
+  house: icon("ic-house"),
+  smile: icon("ic-smile"),
 };
 
 // ----------------------------------------------------------------------
