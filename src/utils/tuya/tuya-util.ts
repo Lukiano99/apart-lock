@@ -47,7 +47,7 @@ async function fetchAccessToken(): Promise<string> {
     accessToken = response.data.result.access_token;
 
   if (!accessToken) throw Error("Tuya access token error");
-  // console.log({ accessToken });
+  console.log({ accessToken });
   return accessToken;
 }
 
@@ -110,11 +110,12 @@ function createSignUrl(
     .map((key) => `${key}=${queryParams[key]}`)
     .join("&");
 
-  const formattedBody = body !== "" ? JSON.stringify(body, null, 4) : "";
+  const formattedBody = body !== "" ? JSON.stringify(body) : "";
   const sha256 = CryptoJS.SHA256(formattedBody);
 
   if (path === "/v1.0/devices/bf04f237cdc8bcbabecnj8/door-lock/temp-password") {
     console.log({ sha256: sha256.toString() });
+    console.log(formattedBody);
   }
 
   const signUrl = `${method}\n${sha256}\n\n${path}${sortedParams && `?${sortedParams}`}`;
@@ -146,7 +147,7 @@ export async function tuyaApiRequest(
   const timestamp = getTimestamp();
   // const timestamp =
   //   path === "/v1.0/devices/bf04f237cdc8bcbabecnj8/door-lock/temp-password"
-  //     ? 1730213625
+  //     ? 1730213625000
   //     : getTimestamp();
   // const timestamp = 1730213625;
   const nonce = "";
@@ -200,7 +201,7 @@ function calcSignToken(
   signStr: string,
   secret: string
 ): string {
-  var str = clientId + timestamp + nonce + signStr;
+  var str = clientId + timestamp.toString() + nonce + signStr;
   var hash = CryptoJS.HmacSHA256(str, secret);
   var hashInBase64 = hash.toString();
   var signUp = hashInBase64.toUpperCase();
@@ -223,6 +224,7 @@ function calcSignApiCall(
   secret: string
 ) {
   var str = clientId + accessToken + timestamp + nonce + signStr;
+  // var str = clientId + accessToken + getTimestamp() + nonce + signStr;
   var hash = CryptoJS.HmacSHA256(str, secret);
   var hashInBase64 = hash.toString();
   var signUp = hashInBase64.toUpperCase();
@@ -246,29 +248,17 @@ export async function createTemporaryPassword() {
 
   const body = {
     password: encryptedPassowrd,
-    name: "Sifra iz Postman-a 1234567",
+    name: "ApartLock App Password 1234567",
     password_type: "ticket",
     ticket_id: ticket_id,
-    // effective_time: new Date(Date.now() + 1000 * 60 * 60 * 24).getTime(),
-    // invalid_time: new Date(Date.now() + 5 * (1000 * 60 * 60 * 24)).getTime(),
-    effective_time: 1730375737,
-    invalid_time: 1730804400,
-    phone: "",
-    time_zone: "",
-    schedule_list: [
-      {
-        effective_time: 720,
-        invalid_time: 1080,
-        working_day: 0,
-      },
-    ],
-    relate_dev_list: [],
+    effective_time: 1730807737,
+    invalid_time: 1731239737,
   };
 
   const data = await tuyaApiRequest(
     "POST",
     `/v1.0/devices/${env.NEXT_PUBLIC_TUYA_DIDALOCK_DEVICE_ID}/door-lock/temp-password`,
-    {},
+    undefined,
     body
   );
 
