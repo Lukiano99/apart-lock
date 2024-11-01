@@ -2,9 +2,11 @@
 import { Label } from "@/components/label";
 import { env } from "@/env";
 import { DashboardContent } from "@/layouts/dashboard";
+import { api } from "@/trpc/react";
 import {
   createTemporaryPassword,
   fetchTicketAccessKey,
+  sendEmail,
   tuyaApiRequest,
 } from "@/utils/tuya/tuya-util";
 import { Button, Stack, Typography } from "@mui/material";
@@ -26,12 +28,7 @@ const TuyaView = () => {
   };
 
   const handleTicketAccessKey = async () => {
-    // const data = await tuyaApiRequest(
-    //   "POST",
-    //   `/v1.0/devices/${env.NEXT_PUBLIC_TUYA_DIDALOCK_DEVICE_ID}/door-lock/password-ticket`
-    // );
     const data = await fetchTicketAccessKey();
-
     console.log(data);
 
     setApiResponse(
@@ -42,9 +39,22 @@ const TuyaView = () => {
   };
 
   const handleSetTemporaryPassword = async () => {
-    await createTemporaryPassword();
+    const data = await createTemporaryPassword();
+    console.log(data);
 
-    // console.log(data);
+    setApiResponse(JSON.stringify(data).toWellFormed());
+  };
+
+  const handleSendTuyaEmail = async () => {
+    const data = await sendEmail();
+    console.log(data);
+
+    setApiResponse(JSON.stringify(data).toWellFormed());
+  };
+  const { mutate: sendGmailEmail } = api.email.send.useMutation();
+  const handleSendGmailEmail = async () => {
+    const data = sendGmailEmail();
+    console.log(data);
 
     // setApiResponse(JSON.stringify(data).toWellFormed());
   };
@@ -77,6 +87,22 @@ const TuyaView = () => {
             onClick={handleSetTemporaryPassword}
           >
             Postavi sifru 1234567
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            onClick={handleSendTuyaEmail}
+          >
+            Posalji mail preko Tuya-e
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="info"
+            onClick={handleSendGmailEmail}
+          >
+            Posalji mail preko Gmail-a
           </Button>
         </Stack>
 

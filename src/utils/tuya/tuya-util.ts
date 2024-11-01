@@ -30,10 +30,6 @@ async function fetchAccessToken(): Promise<string> {
     TUYA_SECRET
   );
 
-  // console.log("Iz access tokena");
-  // console.log({ signStr });
-  // console.log({ signature });
-
   const response = await axios.get(`${TUYA_URL}/v1.0/token?grant_type=1`, {
     headers: {
       client_id: TUYA_CLIENT_ID,
@@ -47,15 +43,14 @@ async function fetchAccessToken(): Promise<string> {
     accessToken = response.data.result.access_token;
 
   if (!accessToken) throw Error("Tuya access token error");
-  console.log({ accessToken });
+
   return accessToken;
 }
 
 export async function fetchTicketAccessKey() {
-  const path = `/v1.0/devices/${env.NEXT_PUBLIC_TUYA_DIDALOCK_DEVICE_ID}/door-lock/password-ticket`;
+  const path = `/v1.0/devices/${TUYA_DEVICE_ID}/door-lock/password-ticket`;
   const method = "POST";
   const timestamp = getTimestamp();
-  // const timestamp = 1730213625;
   const nonce = "";
   const accessToken = await getAccessToken();
   const signStr = createSignUrl({}, method, path, "");
@@ -67,10 +62,6 @@ export async function fetchTicketAccessKey() {
     signStr,
     TUYA_SECRET
   );
-
-  // console.log("Iz ticket access key-a");
-  // console.log({ signStr });
-  // console.log({ signature });
 
   const headers = {
     client_id: TUYA_CLIENT_ID,
@@ -94,11 +85,6 @@ export async function fetchTicketAccessKey() {
   }
 }
 
-function generateSignature(signStr: string, secret: string): string {
-  const hash = CryptoJS.HmacSHA256(signStr, secret);
-  return hash.toString(CryptoJS.enc.Hex).toUpperCase();
-}
-
 function createSignUrl(
   queryParams: any,
   method: string,
@@ -113,14 +99,7 @@ function createSignUrl(
   const formattedBody = body !== "" ? JSON.stringify(body) : "";
   const sha256 = CryptoJS.SHA256(formattedBody);
 
-  if (path === "/v1.0/devices/bf04f237cdc8bcbabecnj8/door-lock/temp-password") {
-    console.log({ sha256: sha256.toString() });
-    console.log(formattedBody);
-  }
-
   const signUrl = `${method}\n${sha256}\n\n${path}${sortedParams && `?${sortedParams}`}`;
-
-  // console.log({ signUrl });
 
   return signUrl;
 }
@@ -145,11 +124,6 @@ export async function tuyaApiRequest(
   body: any = ""
 ) {
   const timestamp = getTimestamp();
-  // const timestamp =
-  //   path === "/v1.0/devices/bf04f237cdc8bcbabecnj8/door-lock/temp-password"
-  //     ? 1730213625000
-  //     : getTimestamp();
-  // const timestamp = 1730213625;
   const nonce = "";
   const accessToken = await getAccessToken();
 
@@ -162,13 +136,6 @@ export async function tuyaApiRequest(
     signStr,
     TUYA_SECRET
   );
-  if (path === "/v1.0/devices/bf04f237cdc8bcbabecnj8/door-lock/temp-password") {
-    console.log({ signature });
-    console.log({ signStr });
-  }
-  // console.log("Iz requesta");
-  // console.log({ signature }); // ovaj je dobar takodje, kao u postman-u
-  // console.log({ signStr }); // ovaj je dobar, kao u postman-u
 
   const headers = {
     client_id: TUYA_CLIENT_ID,
@@ -206,11 +173,6 @@ function calcSignToken(
   var hashInBase64 = hash.toString();
   var signUp = hashInBase64.toUpperCase();
 
-  // console.log({ str });
-  // console.log({ hash });
-  // console.log({ hashInBase64 });
-  // console.log({ signUp });
-
   return signUp;
 }
 
@@ -224,12 +186,10 @@ function calcSignApiCall(
   secret: string
 ) {
   var str = clientId + accessToken + timestamp + nonce + signStr;
-  // var str = clientId + accessToken + getTimestamp() + nonce + signStr;
   var hash = CryptoJS.HmacSHA256(str, secret);
   var hashInBase64 = hash.toString();
   var signUp = hashInBase64.toUpperCase();
 
-  // console.log({ str });
   return signUp;
 }
 
@@ -240,11 +200,6 @@ export async function createTemporaryPassword() {
   const access_key = ticket.result.ticket_key;
   const decrypted_access_key = decrypt_AES_128(access_key, TUYA_SECRET);
   const encryptedPassowrd = encrypt_AES_128(password, decrypted_access_key);
-
-  // console.log({ access_key });
-  // console.log({ decripted_access_key: decrypted_access_key });
-  console.log({ encryptedPassowrd });
-  // console.log({ ticket_id });
 
   const body = {
     password: encryptedPassowrd,
@@ -257,10 +212,34 @@ export async function createTemporaryPassword() {
 
   const data = await tuyaApiRequest(
     "POST",
-    `/v1.0/devices/${env.NEXT_PUBLIC_TUYA_DIDALOCK_DEVICE_ID}/door-lock/temp-password`,
+    `/v1.0/devices/${TUYA_DEVICE_ID}/door-lock/temp-password`,
     undefined,
     body
   );
 
-  console.log({ data });
+  return data;
+}
+
+export async function sendEmail() {
+  const password = "1234567";
+  const ticket = await getAccessTicketKey();
+  const ticket_id = ticket.result.ticket_id;
+  const access_key = ticket.result.ticket_key;
+  const decrypted_access_key = decrypt_AES_128(access_key, TUYA_SECRET);
+  const encryptedPassowrd = encrypt_AES_128(password, decrypted_access_key);
+
+  const body = {
+    to_address: "l.stojadinovic99@gmail.com",
+    template_id: "MAIL_4309536561",
+    // reply_to_address: "test@example.com",
+    // template_param: '{"code":"1234"}',
+  };
+  const data = await tuyaApiRequest(
+    "POST",
+    `/v1.0/iot-03/messages/mails/actions/push`,
+    undefined,
+    body
+  );
+
+  return data;
 }
