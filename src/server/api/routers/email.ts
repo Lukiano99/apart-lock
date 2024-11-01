@@ -9,8 +9,6 @@ const config = {
 };
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  //   port: 587,
-  //   secure: false, // true for port 465, false for other ports
   auth: {
     user: config.user,
     pass: config.password,
@@ -22,7 +20,7 @@ export const emailRouter = createTRPCRouter({
     const TEMPORARY_PASSWORD = "1234567";
     const info = await transporter.sendMail({
       from: '"ApartLock Admin 🔑" <noreply@apartlock.com>', // sender address
-      to: "l.stojadinovic99@gmail.com, dimitrije.peric@hotmail.com", // list of receivers
+      to: "l.stojadinovic99@gmail.com", // list of receivers
       subject: "ŠIFRA APARTMANA", // Subject line
       date: new Date().toLocaleDateString(),
       html: `<html lang="rs">
