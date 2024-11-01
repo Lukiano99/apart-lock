@@ -1,5 +1,4 @@
 "use client";
-import { Label } from "@/components/label";
 import { env } from "@/env";
 import { DashboardContent } from "@/layouts/dashboard";
 import { api } from "@/trpc/react";
@@ -39,7 +38,13 @@ const TuyaView = () => {
   };
 
   const handleSetTemporaryPassword = async () => {
-    const data = await createTemporaryPassword();
+    const password = "1234567";
+    const data = await createTemporaryPassword({
+      password,
+      customer: "hard coded 1234567",
+      check_in: new Date(Date.now() - 2 * 1000 * 60 * 60 * 24).getTime(),
+      check_out: new Date(Date.now() + 5 * 1000 * 60 * 60 * 24).getTime(),
+    });
     console.log(data);
 
     setApiResponse(JSON.stringify(data).toWellFormed());

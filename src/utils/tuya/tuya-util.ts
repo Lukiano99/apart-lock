@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import axios from "axios";
-import { decrypt_AES_128, encrypt_AES_128 } from "./encript-decript";
+import { decrypt_AES_128, encrypt_AES_128 } from "./encrypt-decrypt";
 var CryptoJS = require("crypto-js");
 
 const TUYA_URL = env.NEXT_PUBLIC_TUYA_URL;
@@ -145,6 +145,8 @@ export async function tuyaApiRequest(
     access_token: accessToken,
   };
 
+  console.log(JSON.stringify(body));
+
   try {
     const url = `${TUYA_URL}${path}`;
     const response = await axios({
@@ -193,8 +195,19 @@ function calcSignApiCall(
   return signUp;
 }
 
-export async function createTemporaryPassword() {
-  const password = "1234567";
+interface createTemporaryPasswordProps {
+  password: string;
+  customer: string;
+  check_in: number;
+  check_out: number;
+}
+export async function createTemporaryPassword({
+  password,
+  customer,
+  check_in,
+  check_out,
+}: createTemporaryPasswordProps) {
+  // const password = "1234567";
   const ticket = await getAccessTicketKey();
   const ticket_id = ticket.result.ticket_id;
   const access_key = ticket.result.ticket_key;
@@ -203,13 +216,14 @@ export async function createTemporaryPassword() {
 
   const body = {
     password: encryptedPassowrd,
-    name: "ApartLock App Password 1234567",
+    name: `ApartLock | Customer: ${customer}`,
     password_type: "ticket",
     ticket_id: ticket_id,
-    effective_time: 1730807737,
-    invalid_time: 1731239737,
+    effective_time: check_in,
+    invalid_time: check_out,
+    // effective_time: new Date(Date.now() - 1 * 1000 * 60 * 60 * 24).getTime(),
   };
-
+  console.log;
   const data = await tuyaApiRequest(
     "POST",
     `/v1.0/devices/${TUYA_DEVICE_ID}/door-lock/temp-password`,

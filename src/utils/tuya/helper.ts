@@ -1,4 +1,4 @@
-import { encrypt_AES_128 } from "./encript-decript";
+import { encrypt_AES_128 } from "./encrypt-decrypt";
 
 export const createTemporaryPassword = (password: string) => {
   const secret = "95b146954c904bc0a28531ee058ef8aa";
