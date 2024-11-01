@@ -73,10 +73,11 @@ export function CheckoutOrderComplete({
             </>
           )}
           <br />
-          Ako ste plaćanje izvršili karticom, šifra se nalazi iznad, u suprotnom
-          ćete je dobiti putem email-a kada vaša rezervacija bude potvrđena. Za
-          sva pitanja ili nedoumice, slobodno nas kontaktirajte <br />
-          Sve najbolje!
+          Ako ste izvršili plaćanje karticom, šifra će vam odmah biti prikazana
+          na ekranu i takođe će biti poslana na vaš email. U slučaju da plaćate
+          gotovinom, šifra će vam biti dostavljena putem email-a kada vaš host
+          potvrdi rezervaciju. Za sva pitanja ili nedoumice, slobodno nas
+          kontaktirajte. Želimo vam sve najbolje!
         </Typography>
 
         <Divider sx={{ width: 1, borderStyle: "dashed" }} />

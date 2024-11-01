@@ -68,7 +68,9 @@ const ReservationOverview = ({ apartment, room }: ReservationOverviewProps) => {
       {isLoading &&
         Array(3)
           .fill(null)
-          .map((_, idx) => <Skeleton key={idx} sx={{ height: 50 }} />)}
+          .map((_, idx) => (
+            <Skeleton key={`${idx} skeleton`} sx={{ height: 50 }} />
+          ))}
       {!isLoading &&
         [
           {
@@ -110,10 +112,7 @@ const ReservationOverview = ({ apartment, room }: ReservationOverviewProps) => {
       <Typography variant="h3" color={"orange"}>
         Cena
       </Typography>
-      {isLoading &&
-        Array(1)
-          .fill(null)
-          .map((_) => <Skeleton sx={{ height: 50 }} />)}
+      {isLoading && <Skeleton sx={{ height: 50 }} />}
       {!isLoading && (
         <Stack spacing={1.5} direction="row">
           <Iconify icon="solar:hand-money-bold-duotone" />

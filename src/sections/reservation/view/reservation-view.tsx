@@ -9,6 +9,7 @@ import ReservationApartmentOverview from "../reservation-apartment-overview";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import qs from "query-string";
+import { LoadingScreen } from "@/components/loading-screen";
 
 // ----------------------------------------------------------------------
 
@@ -73,7 +74,7 @@ export function ReservationView({ apartment, room }: ReservationViewProps) {
               guests={guests}
             />
           )}
-          {isLoading && <Skeleton />}
+          {isLoading && <LoadingScreen />}
         </Grid>
       </Grid>
     </ApartmentsContent>

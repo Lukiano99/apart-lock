@@ -89,7 +89,7 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
   const {
     mutate: completeReservation,
     isPending: isLoadingCompleteReservation,
-  } = api.reservation.updatePaymentMethod.useMutation();
+  } = api.reservation.updateStatus.useMutation();
 
   if (isPending) {
     return <SplashScreen />;

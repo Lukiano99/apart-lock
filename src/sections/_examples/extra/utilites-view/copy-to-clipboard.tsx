@@ -14,6 +14,7 @@ import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { toast } from "src/components/snackbar";
 import { Iconify } from "src/components/iconify";
 import { ComponentContainer, ComponentBlock } from "../../mui/component-block";
+import { Label } from "@/components/label";
 
 // ----------------------------------------------------------------------
 

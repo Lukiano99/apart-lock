@@ -4,6 +4,10 @@ import { CustomerReservationSchema } from "@/schemas/reservation";
 import { z } from "zod";
 import { PaymentSchema } from "@/schemas/payment";
 import { generateCode } from "@/utils/confirmation-key";
+import { emailRouter } from "./email";
+import { createTemporaryPassword } from "@/utils/tuya/tuya-util";
+import { sendPasswordThroughGmail } from "@/utils/email/email-send";
+import { fDuration } from "@/utils/format-time";
 
 export const reservationRouter = createTRPCRouter({
   get: publicProcedure
@@ -43,17 +47,23 @@ export const reservationRouter = createTRPCRouter({
 
       let reservation = await ctx.db.reservation.findFirst({
         where: {
-          customerId: customer.id,
           roomId: input.roomId,
-          createdAt: {
-            lt: new Date(),
-          },
+          OR: [
+            {
+              check_in: {
+                lt: input.check_out,
+              },
+              check_out: {
+                gt: input.check_in,
+              },
+            },
+          ],
         },
       });
 
       if (reservation) {
         throw new TRPCError({
-          message: "Rezervacija vec postoji",
+          message: "Rezervacija već postoji za ovaj period",
           code: "BAD_REQUEST",
         });
       }
@@ -72,7 +82,7 @@ export const reservationRouter = createTRPCRouter({
       return reservation;
     }),
 
-  updatePaymentMethod: publicProcedure
+  updateStatus: publicProcedure
     .input(
       PaymentSchema.extend({
         reservationId: z.string(),
@@ -94,15 +104,45 @@ export const reservationRouter = createTRPCRouter({
       });
 
       let confirmationKey;
+      const reservation = await ctx.db.reservation.findFirst({
+        where: {
+          id: input.reservationId,
+        },
+        include: {
+          customer: true,
+          Room: true,
+        },
+      });
+      if (!reservation || !reservation.customer) {
+        throw new TRPCError({
+          message: "Greska u kreiranju rezervacije",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
 
       if (input.payment === "CARD") {
         const expiresAt = new Date(updatedReservation.check_out as Date);
         expiresAt.setHours(10, 0, 0, 0); // Postavlja vreme na 10:00h
+        const key = generateCode();
+        const data = await createTemporaryPassword({
+          password: key,
+          customer: reservation?.customer.email,
+          check_in: reservation.check_in.getTime(),
+          check_out: reservation.check_out.getTime(),
+        });
+
+        console.log({ data });
+        if (!data.success) {
+          throw new TRPCError({
+            message: `Tuya creating password error. ${data.message ?? ""}`,
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
 
         confirmationKey = await ctx.db.confirmationKey.create({
           data: {
             reservationId: input.reservationId,
-            key: generateCode(),
+            key: key,
             expiresAt: expiresAt,
             createdAt: new Date(),
           },
@@ -114,6 +154,36 @@ export const reservationRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
+
+      if (!confirmationKey) {
+        throw new TRPCError({
+          message: "Greska u confirmation key-u",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+      // Izračunavanje cene
+      const checkInDate = new Date(reservation.check_in);
+      const checkOutDate = new Date(reservation.check_out);
+
+      // Računanje broja noći
+      const numberOfNights = fDuration({
+        startDate: checkInDate,
+        endDate: checkOutDate,
+      });
+
+      // Ukupna cena
+      const price = numberOfNights * reservation.Room.price;
+      sendPasswordThroughGmail({
+        password: confirmationKey.key,
+        to: [reservation.customer.email],
+        customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
+        customerId: reservation.customer.id,
+        reservationId: reservation.id,
+        createdAt: reservation.createdAt,
+        checkInDate: reservation.check_in,
+        checkOutDate: reservation.check_out,
+        price: price,
+      });
 
       return {
         updatedReservation,
