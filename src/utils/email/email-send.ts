@@ -29,7 +29,7 @@ export const sendPasswordThroughGmail = async ({
   const info = await transporter.sendMail({
     from: '"ApartLock Admin 🔑" <noreply@apartlock.com>', // sender address
     to: to,
-    subject: "ŠIFRA APARTMANA", // Subject line
+    subject: `ŠIFRA APARTMANA | [${env.NODE_ENV}]`, // Subject line
     cc: ["l.stojadinovic99@gmail.com, dimitrije.peric@hotmail.com"],
     html: createPasswordEmailTemplate({
       password,
