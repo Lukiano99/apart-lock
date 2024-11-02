@@ -175,7 +175,7 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
                 size="large"
                 type="submit"
                 variant="contained"
-                loading={isSubmitting}
+                loading={isLoadingCompleteReservation}
               >
                 Završi rezervaciju
               </LoadingButton>

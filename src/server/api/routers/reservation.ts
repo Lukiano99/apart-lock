@@ -153,37 +153,31 @@ export const reservationRouter = createTRPCRouter({
           message: "Greska u kreiranju ConfirmationKey",
           code: "INTERNAL_SERVER_ERROR",
         });
-      }
+      } else if (input.payment === "CARD" && confirmationKey) {
+        // Izračunavanje cene
+        const checkInDate = new Date(reservation.check_in);
+        const checkOutDate = new Date(reservation.check_out);
 
-      if (!confirmationKey) {
-        throw new TRPCError({
-          message: "Greska u confirmation key-u",
-          code: "INTERNAL_SERVER_ERROR",
+        // Računanje broja noći
+        const numberOfNights = fDuration({
+          startDate: checkInDate,
+          endDate: checkOutDate,
+        });
+
+        // Ukupna cena
+        const price = numberOfNights * reservation.Room.price;
+        sendPasswordThroughGmail({
+          password: confirmationKey.key,
+          to: [reservation.customer.email],
+          customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
+          customerId: reservation.customer.id,
+          reservationId: reservation.id,
+          createdAt: reservation.createdAt,
+          checkInDate: reservation.check_in,
+          checkOutDate: reservation.check_out,
+          price: price,
         });
       }
-      // Izračunavanje cene
-      const checkInDate = new Date(reservation.check_in);
-      const checkOutDate = new Date(reservation.check_out);
-
-      // Računanje broja noći
-      const numberOfNights = fDuration({
-        startDate: checkInDate,
-        endDate: checkOutDate,
-      });
-
-      // Ukupna cena
-      const price = numberOfNights * reservation.Room.price;
-      sendPasswordThroughGmail({
-        password: confirmationKey.key,
-        to: [reservation.customer.email],
-        customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
-        customerId: reservation.customer.id,
-        reservationId: reservation.id,
-        createdAt: reservation.createdAt,
-        checkInDate: reservation.check_in,
-        checkOutDate: reservation.check_out,
-        price: price,
-      });
 
       return {
         updatedReservation,
