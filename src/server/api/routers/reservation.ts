@@ -169,7 +169,7 @@ export const reservationRouter = createTRPCRouter({
 
         // Ukupna cena
         const price = numberOfNights * reservation.Room.price;
-        sendPasswordThroughGmail({
+        const emailResponse = await sendPasswordThroughGmail({
           password: confirmationKey.key,
           to: [reservation.customer.email],
           customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
@@ -180,8 +180,8 @@ export const reservationRouter = createTRPCRouter({
           checkOutDate: reservation.check_out,
           price: price,
         });
+        console.log({ emailResponse });
       }
-
       return {
         updatedReservation,
         confirmationKey:

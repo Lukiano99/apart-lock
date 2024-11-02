@@ -41,5 +41,6 @@ export const sendPasswordThroughGmail = async ({
       price,
     }),
   });
+  console.log({ info });
   return info;
 };

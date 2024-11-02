@@ -149,7 +149,7 @@ export const adminReservationRouter = createTRPCRouter({
           });
         }
         console.log({ existingKey });
-        sendPasswordThroughGmail({
+        const emailResponse = await sendPasswordThroughGmail({
           password: existingKey.key,
           to: [reservation.customer.email],
           customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
@@ -165,6 +165,7 @@ export const adminReservationRouter = createTRPCRouter({
               endDate: reservation.check_out,
             }),
         });
+        console.log({ emailResponse });
       }
 
       return updatedReservation; // Vraća ažuriranu rezervaciju
