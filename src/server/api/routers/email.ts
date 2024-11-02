@@ -19,8 +19,8 @@ export const emailRouter = createTRPCRouter({
     const TEMPORARY_PASSWORD = "1234567";
     const info = await transporter.sendMail({
       from: '"ApartLock Admin 🔑" <noreply@apartlock.com>', // sender address
-      to: "l.stojadinovic99@gmail.com", // list of receivers
-      subject: "ŠIFRA APARTMANA", // Subject line
+      cc: ["dimitrije.peric@hotmail.com", "l.stojadinovic99@gmail.com"],
+      subject: "GMAIL service test", // Subject line
       date: new Date().toLocaleDateString(),
       html: `<html lang="rs">
       <head>
@@ -35,13 +35,13 @@ export const emailRouter = createTRPCRouter({
                   <td style="padding: 20px; text-align: center;">
                       <h2 style="color: #333333;">Poštovani korisniče,</h2>
                       <p style="color: #555555; font-size: 16px;">
-                          Šaljemo vam šifru pametne brave za ulaz u vaš apartman.
+                          Ovo je Gmail test
                       </p>
                       <p style="color: #1a73e8; font-size: 24px; font-weight: bold; text-align: center; margin-top: 20px;">
                           ${TEMPORARY_PASSWORD}
                       </p>
                       <p style="color: #555555; font-size: 14px; margin-top: 40px;">
-                          Molimo vas da čuvate ovu šifru na sigurnom mestu i ne delite je s drugima.
+                          Ovo je test sifra.
                       </p>
                   </td>
               </tr>
