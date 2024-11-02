@@ -1,4 +1,8 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { generateCode } from "@/utils/confirmation-key";
+import { sendPasswordThroughGmail } from "@/utils/email/email-send";
+import { fDuration } from "@/utils/format-time";
+import { createTemporaryPassword } from "@/utils/tuya/tuya-util";
 import { ReservationStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -92,10 +96,14 @@ export const adminReservationRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { reservationId, reservationStatus } = input;
-
+      console.log({ input });
       // Proveri da li rezervacija postoji
       const reservation = await ctx.db.reservation.findUnique({
         where: { id: reservationId },
+        include: {
+          customer: true,
+          Room: true,
+        },
       });
 
       if (!reservation) {
@@ -113,25 +121,50 @@ export const adminReservationRouter = createTRPCRouter({
 
       // Ako je status promenjen na CONFIRMED, kreiraj confirmationKey
       if (reservationStatus === "CONFIRMED") {
+        console.log("USAO U CONFIRMED Block");
         // Generiši jedinstveni ključ (može biti nasumičan string ili prema nekoj logici)
-        const confirmationKey = `#${Math.floor(1000 + Math.random() * 9000)}`; // Na primer, generišemo četvorocifreni broj
+        const key = generateCode();
+        const data = await createTemporaryPassword({
+          password: key,
+          customer: reservation.customer.email,
+          check_in: reservation.check_in.getTime(),
+          check_out: reservation.check_out.getTime(),
+        });
+        console.log({ data });
 
         // Proveri da li već postoji confirmationKey za ovu rezervaciju (u slučaju ponovnog update-a)
-        const existingKey = await ctx.db.confirmationKey.findUnique({
+        let existingKey = await ctx.db.confirmationKey.findUnique({
           where: { id: reservationId },
         });
 
         // Ako ključ već postoji, ne kreiramo novi
         if (!existingKey) {
           // Kreiraj novi ConfirmationKey zapis
-          await ctx.db.confirmationKey.create({
+          existingKey = await ctx.db.confirmationKey.create({
             data: {
-              key: confirmationKey,
+              key: key,
               reservationId: reservationId,
               expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // Ključ važi 7 dana
             },
           });
         }
+        console.log({ existingKey });
+        sendPasswordThroughGmail({
+          password: existingKey.key,
+          to: [reservation.customer.email],
+          customerName: `${reservation.customer.firstName} ${reservation.customer.lastName}`,
+          customerId: reservation.customer.id,
+          reservationId: reservation.id,
+          createdAt: reservation.createdAt,
+          checkInDate: reservation.check_in,
+          checkOutDate: reservation.check_out,
+          price:
+            reservation.Room.price *
+            fDuration({
+              startDate: reservation.check_in,
+              endDate: reservation.check_out,
+            }),
+        });
       }
 
       return updatedReservation; // Vraća ažuriranu rezervaciju

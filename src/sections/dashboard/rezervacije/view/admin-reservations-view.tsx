@@ -79,8 +79,6 @@ export function AdminReservationsView() {
     // adminId: "",
   });
 
-  console.log({ res: data?.reservations });
-
   const table = useTable({ defaultOrderBy: "createdAt" });
 
   const router = useRouter();
@@ -195,7 +193,10 @@ export function AdminReservationsView() {
           sx={{
             px: 2.5,
             boxShadow: (theme) =>
-              `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey["500Channel"], 0.08)}`,
+              `inset 0 -2px 0 0 ${varAlpha(
+                theme.vars.palette.grey["500Channel"],
+                0.08
+              )}`,
           }}
         >
           {STATUS_OPTIONS.map((tab) => (

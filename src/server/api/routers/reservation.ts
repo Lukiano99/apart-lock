@@ -114,6 +114,7 @@ export const reservationRouter = createTRPCRouter({
         },
       });
       if (!reservation || !reservation.customer) {
+        console.log("!reservation || !reservation.customer");
         throw new TRPCError({
           message: "Greska u kreiranju rezervacije",
           code: "INTERNAL_SERVER_ERROR",
@@ -149,6 +150,8 @@ export const reservationRouter = createTRPCRouter({
         });
       }
       if (input.payment === "CARD" && !confirmationKey) {
+        console.log("input.payment === CARD && !confirmationKey");
+
         throw new TRPCError({
           message: "Greska u kreiranju ConfirmationKey",
           code: "INTERNAL_SERVER_ERROR",
