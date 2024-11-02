@@ -20,7 +20,7 @@ export const emailRouter = createTRPCRouter({
     const info = await transporter.sendMail({
       from: '"ApartLock Admin 🔑" <noreply@apartlock.com>', // sender address
       cc: ["dimitrije.peric@hotmail.com", "l.stojadinovic99@gmail.com"],
-      subject: "GMAIL service test", // Subject line
+      subject: `[${env.NODE_ENV}] | GMAIL service test`, // Subject line
       date: new Date().toLocaleDateString(),
       html: `<html lang="rs">
       <head>
@@ -35,7 +35,7 @@ export const emailRouter = createTRPCRouter({
                   <td style="padding: 20px; text-align: center;">
                       <h2 style="color: #333333;">Poštovani korisniče,</h2>
                       <p style="color: #555555; font-size: 16px;">
-                          Ovo je Gmail test
+                          Ovo je Gmail test. 
                       </p>
                       <p style="color: #1a73e8; font-size: 24px; font-weight: bold; text-align: center; margin-top: 20px;">
                           ${TEMPORARY_PASSWORD}
