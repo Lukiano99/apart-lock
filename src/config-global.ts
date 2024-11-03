@@ -23,5 +23,6 @@ export const CONFIG = {
     region: process.env.NEXT_PUBLIC_AWS_AMPLIFY_REGION ?? "",
   },
   serverUrl: process.env.NEXT_PUBLIC_SERVER_URL ?? "",
+  redirectPath: paths.apartments.root,
   isStaticExport: true,
 };
