@@ -1,6 +1,9 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { generateCode } from "@/utils/confirmation-key";
-import { sendPasswordThroughGmail } from "@/utils/email/email-send";
+import {
+  sendCanceledReservationThroughGmail,
+  sendPasswordThroughGmail,
+} from "@/utils/email/email-send";
 import { fDuration } from "@/utils/format-time";
 import { createTemporaryPassword } from "@/utils/tuya/tuya-util";
 import { ReservationStatus } from "@prisma/client";
@@ -164,6 +167,13 @@ export const adminReservationRouter = createTRPCRouter({
               startDate: reservation.check_in,
               endDate: reservation.check_out,
             }),
+        });
+        console.log({ emailResponse });
+      }
+
+      if (reservationStatus === "CANCELLED") {
+        const emailResponse = await sendCanceledReservationThroughGmail({
+          to: [reservation.customer.email],
         });
         console.log({ emailResponse });
       }

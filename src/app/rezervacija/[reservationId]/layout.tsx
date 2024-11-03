@@ -15,7 +15,7 @@ const ReservationIdLayout = async ({
   const reservation = await api.reservation.get({
     reservationId: reservationId.toString(),
   });
-  if (reservation) {
+  if (reservation && reservation.status !== "PENDING") {
     return <CreatedReservationStatusView status={reservation.status} />;
   }
   return <>{children}</>;

@@ -1,7 +1,10 @@
 import { env } from "@/env";
 import { SendEmailType } from "@/schemas/email";
 import nodemailer from "nodemailer";
-import { createPasswordEmailTemplate } from "./email-template";
+import {
+  createCanceledReservationEmailTemplate,
+  createPasswordEmailTemplate,
+} from "./email-template";
 
 const config = {
   user: env.EMAIL_APP_USER,
@@ -28,9 +31,9 @@ export const sendPasswordThroughGmail = async ({
   price,
 }: SendEmailType) => {
   const info = await transporter.sendMail({
-    from: '"ApartLock Admin 🔑" <noreply@apartlock.com>', // sender address
+    from: '"ApartLock™️" <noreply@apartlock.com>', // sender address
     to: to,
-    subject: `ŠIFRA APARTMANA | [${env.NODE_ENV}]`, // Subject line
+    subject: `Rezervacija kreirana ✅🎉 | [${env.NODE_ENV}]`, // Subject line
     cc: config.cc_emails,
     html: createPasswordEmailTemplate({
       password,
@@ -42,6 +45,22 @@ export const sendPasswordThroughGmail = async ({
       checkOutDate,
       price,
     }),
+  });
+  console.log({ info });
+  return info;
+};
+
+export const sendCanceledReservationThroughGmail = async ({
+  to,
+}: {
+  to: string[];
+}) => {
+  const info = await transporter.sendMail({
+    from: '"ApartLock™️" <noreply@apartlock.com>', // sender address
+    to: to,
+    subject: `Rezervacija Odbijena ❌🙁 | [${env.NODE_ENV}]`, // Subject line
+    cc: config.cc_emails,
+    html: createCanceledReservationEmailTemplate(),
   });
   console.log({ info });
   return info;
