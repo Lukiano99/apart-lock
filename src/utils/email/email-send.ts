@@ -6,6 +6,7 @@ import { createPasswordEmailTemplate } from "./email-template";
 const config = {
   user: env.EMAIL_APP_USER,
   password: env.EMAIL_APP_PWD,
+  cc_emails: env.CC_ADMIN_EMAILS,
 };
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -30,7 +31,7 @@ export const sendPasswordThroughGmail = async ({
     from: '"ApartLock Admin 🔑" <noreply@apartlock.com>', // sender address
     to: to,
     subject: `ŠIFRA APARTMANA | [${env.NODE_ENV}]`, // Subject line
-    cc: ["l.stojadinovic99@gmail.com, dimitrije.peric@hotmail.com"],
+    cc: config.cc_emails,
     html: createPasswordEmailTemplate({
       password,
       customerName,

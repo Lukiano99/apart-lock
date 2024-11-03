@@ -1,4 +1,5 @@
 import { EmptyContent } from "@/components/empty-content";
+import CreatedReservationStatusView from "@/sections/reservation/created-reservation-status/view/created-reservation-status";
 import { api } from "@/trpc/server";
 
 const ReservationIdLayout = async ({
@@ -14,13 +15,8 @@ const ReservationIdLayout = async ({
   const reservation = await api.reservation.get({
     reservationId: reservationId.toString(),
   });
-  if (reservation && reservation.status !== "PENDING") {
-    return (
-      <EmptyContent
-        title="Rezervacija je kreirana"
-        description={`Status rezervacije: ${reservation.status}`}
-      />
-    );
+  if (reservation) {
+    return <CreatedReservationStatusView status={reservation.status} />;
   }
   return <>{children}</>;
 };

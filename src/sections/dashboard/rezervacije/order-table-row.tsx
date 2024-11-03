@@ -28,6 +28,7 @@ import { api } from "@/trpc/react";
 import { Snackbar, toast } from "@/components/snackbar";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/auth/hooks";
+import { useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +57,10 @@ export function OrderTableRow({
 
   const { user } = useAuthContext();
 
-  const { mutate: mutateReservationStatus, isPending } =
+  const [isAcceptLoading, setIsAcceptLoading] = useState(false);
+  const [isDeclineLoading, setIsDeclineLoading] = useState(false);
+
+  const { mutate: mutateReservationStatus } =
     api.adminReservation.updateStatus.useMutation();
 
   const { refetch } = api.adminReservation.list.useQuery({
@@ -64,6 +68,7 @@ export function OrderTableRow({
   });
 
   const handleAcceptReservation = (reservationId: string) => {
+    setIsAcceptLoading(true);
     mutateReservationStatus(
       { reservationId, reservationStatus: "CONFIRMED" },
       {
@@ -71,17 +76,21 @@ export function OrderTableRow({
           toast.success("Potvrdili ste rezervaciju", {
             description: reservationId,
           });
+          setIsAcceptLoading(false);
           router.refresh();
           refetch();
         },
         onError: (data) => {
           toast.error("Došlo je do greške", { description: data.message });
+          setIsAcceptLoading(false);
           router.refresh();
         },
       }
     );
   };
   const handleDeclineReservation = (reservationId: string) => {
+    setIsDeclineLoading(true);
+
     mutateReservationStatus(
       { reservationId, reservationStatus: "CANCELLED" },
       {
@@ -89,11 +98,14 @@ export function OrderTableRow({
           toast.success("Otkazali ste rezervaciju", {
             description: reservationId,
           });
+          setIsDeclineLoading(false);
+
           router.refresh();
           refetch();
         },
         onError: (data) => {
           toast.error("Došlo je do greške", { description: data.message });
+          setIsDeclineLoading(false);
           router.refresh();
         },
       }
@@ -123,6 +135,13 @@ export function OrderTableRow({
       <TableCell>
         <Stack spacing={2} direction="row" alignItems="center">
           <Box component="span" sx={{ color: "text.disabled" }}>
+            {row.roomNumber}
+          </Box>
+        </Stack>
+      </TableCell>
+      <TableCell>
+        <Stack spacing={2} direction="row" alignItems="center">
+          <Box component="span" sx={{ color: "text.disabled" }}>
             <Label
               variant="inverted"
               color={
@@ -140,7 +159,7 @@ export function OrderTableRow({
       </TableCell>
       <TableCell>
         <Stack spacing={2} direction="row" alignItems="center">
-          <Avatar alt={row.customer.name} src={""} />
+          {/* <Avatar alt={row.customer.name} /> */}
 
           <Stack
             sx={{
@@ -227,7 +246,8 @@ export function OrderTableRow({
               onClick={() => {
                 handleAcceptReservation(row.id);
               }}
-              disabled={isPending}
+              disabled={isAcceptLoading || isDeclineLoading}
+              loading={isAcceptLoading}
             >
               Potvrdi
             </LoadingButton>
@@ -235,7 +255,8 @@ export function OrderTableRow({
               variant="text"
               color="error"
               onClick={() => handleDeclineReservation(row.id)}
-              disabled={isPending}
+              disabled={isDeclineLoading || isAcceptLoading}
+              loading={isDeclineLoading}
             >
               Otkaži
             </LoadingButton>

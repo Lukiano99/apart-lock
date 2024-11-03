@@ -14,6 +14,10 @@ export const env = createEnv({
       .default("development"),
     EMAIL_APP_PWD: z.string(),
     EMAIL_APP_USER: z.string(),
+    CC_ADMIN_EMAILS: z
+      .string()
+      .transform((val) => JSON.parse(val))
+      .pipe(z.array(z.string().email())),
   },
 
   /**
@@ -41,6 +45,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     EMAIL_APP_PWD: process.env.EMAIL_APP_PWD,
     EMAIL_APP_USER: process.env.EMAIL_APP_USER,
+    CC_ADMIN_EMAILS: process.env.CC_ADMIN_EMAILS,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,

@@ -309,7 +309,7 @@ export function ApartmentNewEditForm({ currentApartment }: Props) {
             startAdornment: (
               <InputAdornment position="start">
                 <Box component="span" sx={{ color: "text.disabled" }}>
-                  $
+                  €
                 </Box>
               </InputAdornment>
             ),

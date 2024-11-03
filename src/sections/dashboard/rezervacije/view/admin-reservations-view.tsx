@@ -19,10 +19,7 @@ import DashboardSkeleton from "../../pregled/booking-dashboard-skeleton";
 import { BookingDetails } from "../booking-details";
 import { _bookings } from "@/_mock";
 import { useSetState } from "@/hooks/use-set-state";
-import {
-  IReservationFilters,
-  IReservationItem,
-} from "@/schemas/reservations-table";
+import { IReservationFilters } from "@/schemas/reservations-table";
 import {
   emptyRows,
   getComparator,
@@ -60,10 +57,11 @@ const RESERVATION_STATUSES: {
 ];
 
 const TABLE_HEAD = [
-  { id: "apartment", label: "Apartment" },
-  { id: "confirmationKey", label: "Lock Key" },
-  { id: "name", label: "Customer" },
-  { id: "createdAt", label: "Created" },
+  { id: "apartment", label: "Apartman" },
+  { id: "room", label: "Soba" },
+  { id: "confirmationKey", label: "Lozinka" },
+  { id: "name", label: "Korisnik" },
+  { id: "createdAt", label: "Kreirana" },
   { id: "checkIn", label: "Check in" },
   { id: "checkOut", label: "Check out" },
   { id: "status", label: "Status" },
@@ -296,11 +294,12 @@ export function AdminReservationsView() {
                       key={row.id}
                       row={{
                         apartment: row.Room.apartment.name,
+                        roomNumber: row.Room.number,
                         check_in: row.check_in,
                         check_out: row.check_out,
                         customer: {
                           email: row.customer.email,
-                          name: `${row.customer.firstName}${row.customer.lastName}`,
+                          name: `${row.customer.firstName} ${row.customer.lastName}`,
                           phone: row.customer.phone,
                         },
                         created_at: row.createdAt,

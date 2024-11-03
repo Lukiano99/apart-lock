@@ -15,6 +15,7 @@ export type IReservationItem = z.infer<typeof ReservationssItemSchema>;
 export const ReservationssItemSchema = z.object({
   id: z.string(),
   apartment: z.string(),
+  roomNumber: z.number(),
   customer: z.object({
     name: z.string(),
     email: z.string(),
