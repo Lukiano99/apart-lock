@@ -6,7 +6,6 @@ import type { Viewport } from "next";
 
 import { CONFIG } from "src/config-global";
 import { primary } from "src/theme/core/palette";
-import { schemeConfig } from "src/theme/scheme-config";
 import { ThemeProvider } from "src/theme/theme-provider";
 
 import { ProgressBar } from "src/components/progress-bar";
@@ -51,13 +50,6 @@ export default async function RootLayout({ children }: Props) {
 
   return (
     <html lang={lang ?? "en"} suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var m=localStorage.getItem("${schemeConfig.modeStorageKey}");if(m)document.documentElement.setAttribute("data-${schemeConfig.modeStorageKey}",m)}catch(e){}`,
-          }}
-        />
-      </head>
       <body>
         <I18nProvider lang={CONFIG.isStaticExport ? undefined : lang}>
           <TRPCReactProvider>

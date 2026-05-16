@@ -5,11 +5,11 @@ import { EmptyContent } from "@/components/empty-content";
 // ----------------------------------------------------------------------
 
 type Props = {
-  params: { apartmentId: string };
+  params: Promise<{ apartmentId: string }>;
 };
 
 export default async function Page({ params }: Props) {
-  const { apartmentId } = params;
+  const { apartmentId } = await params;
 
   const currentAppartment = await api.apartment.get({ id: apartmentId });
   if (!currentAppartment) {
