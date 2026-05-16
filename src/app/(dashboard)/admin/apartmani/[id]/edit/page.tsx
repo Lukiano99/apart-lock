@@ -9,11 +9,11 @@ import { CONFIG } from "src/config-global";
 export const metadata = { title: `Pregled apartmana - ${CONFIG.appName}` };
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 const EditapartmentPage = async ({ params }: Props) => {
-  const { id: apartmentId } = params;
+  const { id: apartmentId } = await params;
 
   const apartment = await api.apartment.get({
     id: apartmentId,
