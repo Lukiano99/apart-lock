@@ -180,7 +180,7 @@ const MuiPickersLayout: Components<Theme>['MuiPickersLayout'] = {
   },
 };
 
-const MuiPickersPopper: Components<Theme>['MuiPickersPopper'] = {
+const MuiPickersPopper: any = {
   /** **************************************
    * DEFAULT PROPS
    *************************************** */

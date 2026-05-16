@@ -10,11 +10,11 @@ import Link from "next/link";
 const ReservationIdPage = async ({
   params,
 }: {
-  params: {
+  params: Promise<{
     reservationId: string;
-  };
+  }>;
 }) => {
-  const { reservationId } = params;
+  const { reservationId } = await params;
 
   const reservation = await api.reservation.get({
     reservationId,

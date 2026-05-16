@@ -6,7 +6,7 @@ import type {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid2";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 import { Form } from "src/components/hook-form";
@@ -147,7 +147,7 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
       {!isCompleted && (
         <Form methods={methods} onSubmit={onSubmit}>
           <Grid container spacing={3}>
-            <Grid xs={12} md={8}>
+            <Grid size={{ xs: 12, md: 8 }}>
               <CheckoutPaymentMethods
                 name="payment"
                 options={{
@@ -157,7 +157,7 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
               />
             </Grid>
 
-            <Grid xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <CheckoutBillingInfo
                 customer={customer}
                 onBackStep={checkout.onBackStep}

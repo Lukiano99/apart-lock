@@ -1,7 +1,7 @@
 import type { Theme } from '@mui/material/styles';
 import type { SettingsState } from 'src/components/settings';
 
-import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
+import { createTheme as muiCreateTheme } from '@mui/material/styles';
 
 import { setFont } from './styles/utils';
 import { overridesTheme } from './overrides-theme';
@@ -23,19 +23,18 @@ export function createTheme(settings: SettingsState): Theme {
       ...typography,
       fontFamily: setFont(settings.fontFamily),
     },
-    cssVarPrefix: '',
-    shouldSkipGeneratingVar,
+    cssVariables: {
+      cssVarPrefix: '',
+      shouldSkipGeneratingVar,
+    },
   };
 
-  /**
-   * 1.Update values from settings before creating theme.
-   */
   const updateTheme = updateCoreWithSettings(initialTheme, settings);
 
-  /**
-   * 2.Create theme + add locale + update component with settings.
-   */
-  const theme = extendTheme(updateTheme, updateComponentsWithSettings(settings), overridesTheme);
+  const theme = muiCreateTheme(
+    { ...updateTheme, ...overridesTheme },
+    updateComponentsWithSettings(settings),
+  );
 
   applyJsxDefaultProps(theme);
 

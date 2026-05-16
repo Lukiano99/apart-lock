@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid2";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 import { Form, Field } from "src/components/hook-form";

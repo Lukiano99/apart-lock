@@ -2,14 +2,14 @@ import type { Theme, Components } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-const MuiTimelineDot: Components<Theme>['MuiTimelineDot'] = {
+const MuiTimelineDot: any = {
   /** **************************************
    * STYLE
    *************************************** */
   styleOverrides: { root: { boxShadow: 'none' } },
 };
 
-const MuiTimelineConnector: Components<Theme>['MuiTimelineConnector'] = {
+const MuiTimelineConnector: any = {
   /** **************************************
    * STYLE
    *************************************** */
