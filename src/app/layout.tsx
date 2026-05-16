@@ -4,8 +4,6 @@ import "src/global.css";
 
 import type { Viewport } from "next";
 
-import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
-
 import { CONFIG } from "src/config-global";
 import { primary } from "src/theme/core/palette";
 import { schemeConfig } from "src/theme/scheme-config";
@@ -53,11 +51,14 @@ export default async function RootLayout({ children }: Props) {
 
   return (
     <html lang={lang ?? "en"} suppressHydrationWarning>
-      <body>
-        <InitColorSchemeScript
-          // defaultMode={schemeConfig.defaultMode}
-          modeStorageKey={schemeConfig.modeStorageKey}
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var m=localStorage.getItem("${schemeConfig.modeStorageKey}");if(m)document.documentElement.setAttribute("data-${schemeConfig.modeStorageKey}",m)}catch(e){}`,
+          }}
         />
+      </head>
+      <body>
         <I18nProvider lang={CONFIG.isStaticExport ? undefined : lang}>
           <TRPCReactProvider>
             <HydrateClient>

@@ -35,9 +35,6 @@ const MuiCheckbox: Components<Theme>['MuiCheckbox'] = {
    *************************************** */
   defaultProps: {
     size: 'small',
-    icon: <CheckboxIcon />,
-    checkedIcon: <CheckboxCheckedIcon />,
-    indeterminateIcon: <CheckboxIndeterminateIcon />,
   },
 
   /** **************************************

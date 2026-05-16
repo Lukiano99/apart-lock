@@ -13,7 +13,7 @@ import { varAlpha, stylesMode } from '../../styles';
  * Icons
  */
 /* https://icon-sets.iconify.design/solar/info-circle-bold/ */
-const AlertInfoIcon = (props: SvgIconProps) => (
+export const AlertInfoIcon = (props: SvgIconProps) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -25,7 +25,7 @@ const AlertInfoIcon = (props: SvgIconProps) => (
 );
 
 /* https://icon-sets.iconify.design/solar/check-circle-bold/ */
-const AlertSuccessIcon = (props: SvgIconProps) => (
+export const AlertSuccessIcon = (props: SvgIconProps) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -37,7 +37,7 @@ const AlertSuccessIcon = (props: SvgIconProps) => (
 );
 
 /* https:// icon-sets.iconify.design/solar/danger-triangle-bold/ */
-const AlertWarningIcon = (props: SvgIconProps) => (
+export const AlertWarningIcon = (props: SvgIconProps) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -49,7 +49,7 @@ const AlertWarningIcon = (props: SvgIconProps) => (
 );
 
 /* https://icon-sets.iconify.design/solar/danger-bold/ */
-const AlertErrorIcon = (props: SvgIconProps) => (
+export const AlertErrorIcon = (props: SvgIconProps) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -83,14 +83,7 @@ const MuiAlert: Components<Theme>['MuiAlert'] = {
   /** **************************************
    * DEFAULT PROPS
    *************************************** */
-  defaultProps: {
-    iconMapping: {
-      error: <AlertErrorIcon />,
-      info: <AlertInfoIcon />,
-      success: <AlertSuccessIcon />,
-      warning: <AlertWarningIcon />,
-    },
-  },
+  defaultProps: {},
 
   /** **************************************
    * STYLE

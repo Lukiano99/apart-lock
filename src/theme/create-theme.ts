@@ -7,6 +7,7 @@ import { setFont } from './styles/utils';
 import { overridesTheme } from './overrides-theme';
 import { shadows, typography, components, colorSchemes, customShadows } from './core';
 import { updateCoreWithSettings, updateComponentsWithSettings } from './with-settings/update-theme';
+import { applyJsxDefaultProps } from './jsx-default-props';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +36,8 @@ export function createTheme(settings: SettingsState): Theme {
    * 2.Create theme + add locale + update component with settings.
    */
   const theme = extendTheme(updateTheme, updateComponentsWithSettings(settings), overridesTheme);
+
+  applyJsxDefaultProps(theme);
 
   return theme;
 }
