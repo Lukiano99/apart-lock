@@ -37,8 +37,6 @@ const MuiRadio: Components<Theme>['MuiRadio'] = {
    *************************************** */
   defaultProps: {
     size: 'small',
-    icon: <RadioIcon />,
-    checkedIcon: <RadioCheckedIcon />,
   },
 
   /** **************************************

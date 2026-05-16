@@ -12,7 +12,7 @@ import { paper, varAlpha, menuItem } from '../../styles';
  * Icons
  * https://icon-sets.iconify.design/eva/arrow-ios-downward-fill/
  */
-const ArrowDownIcon = (props: SvgIconProps) => (
+export const ArrowDownIcon = (props: SvgIconProps) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -27,7 +27,7 @@ const MuiAutocomplete: Components<Theme>['MuiAutocomplete'] = {
   /** **************************************
    * DEFAULT PROPS
    *************************************** */
-  defaultProps: { popupIcon: <ArrowDownIcon /> },
+  defaultProps: {},
 
   /** **************************************
    * STYLE

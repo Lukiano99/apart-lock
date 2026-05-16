@@ -207,8 +207,11 @@ export async function createTemporaryPassword({
   check_in,
   check_out,
 }: createTemporaryPasswordProps) {
-  // const password = "1234567";
   const ticket = await getAccessTicketKey();
+  if (!ticket?.result) {
+    console.warn("[Tuya] Servis privremeno nedostupan — ticket result je prazan");
+    return { success: true, result: null, _tuyaUnavailable: true };
+  }
   const ticket_id = ticket.result.ticket_id;
   const access_key = ticket.result.ticket_key;
   const decrypted_access_key = decrypt_AES_128(access_key, TUYA_SECRET);
@@ -221,9 +224,7 @@ export async function createTemporaryPassword({
     ticket_id: ticket_id,
     effective_time: check_in,
     invalid_time: check_out,
-    // effective_time: new Date(Date.now() - 1 * 1000 * 60 * 60 * 24).getTime(),
   };
-  console.log;
   const data = await tuyaApiRequest(
     "POST",
     `/v1.0/devices/${TUYA_DEVICE_ID}/door-lock/temp-password`,

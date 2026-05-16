@@ -1,4 +1,4 @@
-import type { ColorSystemOptions } from '@mui/material/styles';
+import type { CssVarsThemeOptions } from '@mui/material/styles';
 
 import COLORS from './colors.json';
 import { varAlpha, createPaletteChannel } from '../styles';
@@ -140,7 +140,7 @@ export const darkPalette = {
 
 // ----------------------------------------------------------------------
 
-export const colorSchemes: Partial<Record<'dark' | 'light', ColorSystemOptions>> = {
+export const colorSchemes: CssVarsThemeOptions['colorSchemes'] = {
   light: { palette: lightPalette },
   dark: { palette: darkPalette },
 };

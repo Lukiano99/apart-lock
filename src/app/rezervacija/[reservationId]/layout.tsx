@@ -6,12 +6,12 @@ const ReservationIdLayout = async ({
   params,
   children,
 }: {
-  params: {
+  params: Promise<{
     reservationId: string;
-  };
+  }>;
   children: React.ReactNode;
 }) => {
-  const { reservationId } = params;
+  const { reservationId } = await params;
   const reservation = await api.reservation.get({
     reservationId: reservationId.toString(),
   });

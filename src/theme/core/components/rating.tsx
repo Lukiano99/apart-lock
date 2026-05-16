@@ -23,7 +23,7 @@ const MuiRating: Components<Theme>['MuiRating'] = {
   /** **************************************
    * DEFAULT PROPS
    *************************************** */
-  defaultProps: { emptyIcon: <RatingIcon />, icon: <RatingIcon /> },
+  defaultProps: {},
 
   /** **************************************
    * STYLE

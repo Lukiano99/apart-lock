@@ -78,7 +78,7 @@ const MuiChip: Components<Theme>['MuiChip'] = {
   /** **************************************
    * DEFAULT PROPS
    *************************************** */
-  defaultProps: { deleteIcon: <ChipDeleteIcon /> },
+  defaultProps: {},
 
   /** **************************************
    * VARIANTS

@@ -1,0 +1,13 @@
+diff --git a/node_modules/@emotion/styled/base/dist/emotion-styled-base.development.esm.js b/node_modules/@emotion/styled/base/dist/emotion-styled-base.development.esm.js
+index 12edc69..371112b 100644
+--- a/node_modules/@emotion/styled/base/dist/emotion-styled-base.development.esm.js
++++ b/node_modules/@emotion/styled/base/dist/emotion-styled-base.development.esm.js
+@@ -204,6 +204,8 @@ var createStyled
+         }
+ 
+         mergedProps.theme = React.useContext(ThemeContext);
++      } else if (Object.isFrozen(props)) {
++        mergedProps = Object.assign({}, props);
+       }
+ 
+       if (typeof props.className === 'string') {

@@ -2,8 +2,8 @@ import { CONFIG } from "@/config-global";
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-export function createClient() {
-  const cookieStore = cookies();
+export async function createClient() {
+  const cookieStore = await cookies();
 
   return createServerClient(
     `${CONFIG.supabase.url}`,

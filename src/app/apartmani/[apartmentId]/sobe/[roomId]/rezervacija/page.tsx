@@ -6,9 +6,9 @@ import { api } from "@/trpc/server";
 const ReservationPage = async ({
   params,
 }: {
-  params: { apartmentId: string; roomId: string };
+  params: Promise<{ apartmentId: string; roomId: string }>;
 }) => {
-  const { apartmentId, roomId } = params;
+  const { apartmentId, roomId } = await params;
   const apartment = await api.apartment.get({
     id: apartmentId,
   });

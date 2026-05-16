@@ -1,7 +1,7 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid2";
 
 import { DashboardContent } from "src/layouts/dashboard";
 import {
@@ -84,8 +84,8 @@ export function OverviewBookingView() {
         Dobrodošli nazad, {user?.displayName} 👋
       </Typography>
       {!isPending && data && data.reservations && (
-        <Grid container spacing={3} disableEqualOverflow>
-          <Grid xs={12} md={4}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <BookingWidgetSummary
               title="Ukupno rezervacija"
               percent={0}
@@ -94,7 +94,7 @@ export function OverviewBookingView() {
             />
           </Grid>
 
-          <Grid xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <BookingWidgetSummary
               title="Prodatih"
               percent={0}
@@ -106,7 +106,7 @@ export function OverviewBookingView() {
             />
           </Grid>
 
-          <Grid xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <BookingWidgetSummary
               title="Nedovršene rezervacije"
               percent={0}
@@ -118,8 +118,8 @@ export function OverviewBookingView() {
             />
           </Grid>
 
-          <Grid container xs={12}>
-            <Grid xs={12} md={7} lg={8}>
+          <Grid container size={12}>
+            <Grid size={{ xs: 12, md: 7, lg: 8 }}>
               <Box
                 sx={{
                   mb: 3,
@@ -225,7 +225,7 @@ export function OverviewBookingView() {
               </Box>
             </Grid>
 
-            <Grid xs={12} md={5} lg={4}>
+            <Grid size={{ xs: 12, md: 5, lg: 4 }}>
               <Box sx={{ gap: 3, display: "flex", flexDirection: "column" }}>
                 <BookingAvailable
                   title="Iskorišćenost apartmana"
