@@ -46,12 +46,12 @@ export function updateCoreWithSettings(
       ...colorSchemes,
       light: {
         palette: {
-          ...colorSchemes?.light?.palette,
+          ...(typeof colorSchemes?.light === 'object' ? colorSchemes.light.palette : undefined),
           /** [1] */
           primary: updatedPrimary,
           /** [2] */
           background: {
-            ...colorSchemes?.light?.palette?.background,
+            ...(typeof colorSchemes?.light === 'object' ? colorSchemes.light.palette?.background : undefined),
             default: getBackgroundDefault(settings.contrast),
             defaultChannel: hexToRgbChannel(getBackgroundDefault(settings.contrast)),
           },
@@ -59,7 +59,7 @@ export function updateCoreWithSettings(
       },
       dark: {
         palette: {
-          ...colorSchemes?.dark?.palette,
+          ...(typeof colorSchemes?.dark === 'object' ? colorSchemes.dark.palette : undefined),
           /** [1] */
           primary: updatedPrimary,
         },

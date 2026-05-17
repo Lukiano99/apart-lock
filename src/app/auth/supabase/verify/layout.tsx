@@ -1,5 +1,7 @@
 import { AuthCenteredLayout } from "@/layouts/auth-centered";
 
+export const dynamic = "force-dynamic";
+
 // ----------------------------------------------------------------------
 
 type Props = {

@@ -52,7 +52,8 @@ export function PaymentNewCardForm({
 
   const showPassword = useBoolean();
 
-  const { reservationId } = useParams();
+  const params = useParams();
+  const reservationId = params?.reservationId;
 
   const methods = useForm<CreditCardSchemaType>({
     mode: "onSubmit",

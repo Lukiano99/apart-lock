@@ -3,6 +3,8 @@ import { DashboardLayout } from "src/layouts/dashboard";
 import { AuthGuard } from "src/auth/guard";
 import { CONFIG } from "@/config-global";
 
+export const dynamic = "force-dynamic";
+
 // ----------------------------------------------------------------------
 
 type Props = {

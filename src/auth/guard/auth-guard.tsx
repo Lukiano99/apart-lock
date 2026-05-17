@@ -30,7 +30,7 @@ export function AuthGuard({ children }: Props) {
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams?.toString());
       params.set(name, value);
 
       return params.toString();
@@ -54,7 +54,7 @@ export function AuthGuard({ children }: Props) {
         supabase: paths.auth.supabase.signIn,
       }[method];
 
-      const href = `${signInPath}?${createQueryString("returnTo", pathname)}`;
+      const href = `${signInPath}?${createQueryString("returnTo", pathname ?? '')}`;
 
       router.replace(href);
       return;

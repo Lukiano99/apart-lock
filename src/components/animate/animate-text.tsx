@@ -41,7 +41,7 @@ export function AnimateText({
   className,
   ...other
 }: AnimateTextProps) {
-  const ref = useRef(null);
+  const ref = useRef<Element>(null!);
 
   const controls = useAnimation();
 
@@ -101,7 +101,7 @@ export function AnimateText({
       <span className={animateTextClasses.srOnly}>{textArray.join(' ')}</span>
 
       <Box
-        component={m.span}
+        component={m.span as any}
         ref={ref}
         initial="initial"
         animate={controls}
@@ -131,7 +131,7 @@ export function AnimateText({
                 >
                   {word.split('').map((char, charIndex) => (
                     <Box
-                      component={m.span}
+                      component={m.span as any}
                       key={`${char}-${charIndex}`}
                       variants={variants ?? varFade().in}
                       data-index={charIndex}

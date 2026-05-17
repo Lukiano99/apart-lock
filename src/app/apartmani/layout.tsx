@@ -1,5 +1,7 @@
 import { ApartmentsLayout } from "@/layouts/apartments";
 
+export const dynamic = "force-dynamic";
+
 // ----------------------------------------------------------------------
 
 type Props = {

@@ -33,7 +33,7 @@ export function ApartmentFiltersResult({ filters, totalResults, sx }: Props) {
   const searchParams = useSearchParams();
 
   // Parse current search params from URL
-  const params = qs.parse(searchParams.toString());
+  const params = qs.parse(searchParams?.toString() ?? '');
 
   const handleRemoveServices = useCallback(
     (inputValue: string) => {

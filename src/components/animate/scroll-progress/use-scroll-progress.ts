@@ -16,7 +16,7 @@ export type UseScrollProgressReturn = {
 export type UseScrollProgress = 'document' | 'container';
 
 export function useScrollProgress(target: UseScrollProgress = 'document'): UseScrollProgressReturn {
-  const elementRef = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null!);
 
   const options = { container: elementRef };
 

@@ -114,7 +114,7 @@ export function UpgradeBlock({ sx, ...other }: StackProps) {
       />
 
       <Box
-        component={m.img}
+        component={m.img as any}
         animate={{ y: [12, -12, 12] }}
         transition={{
           duration: 8,
