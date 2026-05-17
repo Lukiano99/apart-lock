@@ -4,6 +4,7 @@ import "src/global.css";
 
 import type { Viewport } from "next";
 
+import { Suspense } from "react";
 import { CONFIG } from "src/config-global";
 import { primary } from "src/theme/core/palette";
 import { ThemeProvider } from "src/theme/theme-provider";
@@ -60,7 +61,7 @@ export default async function RootLayout({ children }: Props) {
                     <ThemeProvider>
                       <Snackbar />
                       <MotionLazy>
-                        <ProgressBar />
+                        <Suspense><ProgressBar /></Suspense>
                         <SettingsDrawer />
                         {children}
                       </MotionLazy>

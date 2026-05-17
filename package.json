@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "overrides": {
+    "@mui/material-nextjs": {
+      "next": "$next"
+    }
+  },
   "scripts": {
     "build": "next build",
     "db:generate": "prisma migrate dev",

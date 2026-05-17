@@ -50,10 +50,11 @@ export function CheckoutPaymentMethods({ name, options, ...other }: Props) {
 
   const openForm = useBoolean();
 
-  const { reservationId } = useParams();
+  const params = useParams();
+  const reservationId = params?.reservationId;
   const { data: creditCards, refetch } =
     api.creditCard.getByReservationId.useQuery({
-      reservationId: reservationId.toString(),
+      reservationId: String(reservationId ?? ''),
     });
 
   return (

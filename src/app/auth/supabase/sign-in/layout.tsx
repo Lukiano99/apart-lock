@@ -1,6 +1,8 @@
 import { AuthCenteredLayout } from "@/layouts/auth-centered";
 import { GuestGuard } from "src/auth/guard";
 
+export const dynamic = "force-dynamic";
+
 // ----------------------------------------------------------------------
 
 type Props = {

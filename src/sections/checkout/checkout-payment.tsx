@@ -56,7 +56,8 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [displayConfirmKey, setDisplayConfirmKey] = useState("");
 
-  const { reservationId } = useParams();
+  const params = useParams();
+  const reservationId = params?.reservationId;
 
   const methods = useForm<PaymentSchemaType>({
     resolver: zodResolver(
@@ -83,7 +84,7 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
   });
 
   const { data: room, isPending } = api.room.get.useQuery({
-    reservationId: reservationId ? reservationId.toString() : "",
+    reservationId: reservationId ? String(reservationId) : "",
   });
 
   const {
@@ -111,7 +112,7 @@ export function CheckoutPayment({ customer }: CheckoutPaymentProps) {
   const onSubmit = handleSubmit((data: PaymentSchemaType) => {
     completeReservation(
       {
-        reservationId: reservationId.toString(),
+        reservationId: String(reservationId ?? ''),
         ...data,
       },
       {
