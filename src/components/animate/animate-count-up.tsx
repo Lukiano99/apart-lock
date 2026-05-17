@@ -30,7 +30,7 @@ export function AnimateCountUp({
   component = 'p',
   ...other
 }: AnimateCountUpProps) {
-  const ref = useRef(null);
+  const ref = useRef<Element>(null!);
 
   const shortNumber = shortenNumber(to);
 
